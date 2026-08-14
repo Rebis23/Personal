@@ -17,7 +17,7 @@ YouTube (feed RSS, ogni giorno alle 18:00)
    │  nuovo video?
    ▼
 [Ingest — GitHub Actions]
-   ├─ Apify scarica il video (YouTube blocca i runner GitHub; ~3 cent/video)
+   ├─ Video: yt-dlp gratis → Apify → cartella Google Drive (file master)
    ├─ Whisper trascrive in locale (timing parola per parola, gratis)
    ├─ Claude (claude-opus-5) legge la trascrizione → sceglie 3 clip
    │     + scrive caption e hashtag per ognuna, nel tono Media Profit
@@ -166,3 +166,21 @@ i cookie di un account YouTube loggato — ma non è necessario.
    (Settings → Secrets and variables → Actions)
 
 Se dopo mesi i download tornano a fallire, ripeti l'esportazione.
+
+## Sorgente video da Google Drive (`GDRIVE_API_KEY` + `GDRIVE_FOLDER_ID`)
+
+YouTube combatte tutti i downloader automatici, quindi la via garantita è il
+file master: quando esce un video, chi lo ha montato trascina l'export nella
+cartella Drive dedicata. La pipeline prende sempre il file più recente non
+ancora usato. Setup (una volta sola):
+
+1. **Cartella**: su Drive crea una cartella (es. «Reels Factory Inbox») →
+   tasto destro → Condividi → Accesso generale: **Chiunque abbia il link**
+   (Visualizzatore). L'ID della cartella è la parte finale dell'URL dopo
+   `/folders/` → secret `GDRIVE_FOLDER_ID`
+2. **API key**: [console.cloud.google.com](https://console.cloud.google.com) →
+   nuovo progetto («reels-factory») → menu ☰ → API e servizi → Libreria →
+   cerca **Google Drive API** → Abilita → poi API e servizi → Credenziali →
+   Crea credenziali → **Chiave API** → copia → secret `GDRIVE_API_KEY`
+3. Da lì in poi: pubblichi il video su YouTube + trascini il file nella
+   cartella. Al giro delle 18:00 la pipeline fa il resto.

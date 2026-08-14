@@ -54,6 +54,10 @@ jobs:
           # Apify scarica i video al posto nostro (YouTube blocca gli IP
           # dei runner GitHub); pochi centesimi a video, coperti dal piano free
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          # Piano B che funziona sempre: cartella Google Drive dove il team
+          # carica il file master del video
+          GDRIVE_API_KEY: ${{ secrets.GDRIVE_API_KEY }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
           # Opzionale: cookie YouTube (cookies.txt) per tentare prima il
           # download diretto gratuito
           YT_COOKIES: ${{ secrets.YT_COOKIES }}
