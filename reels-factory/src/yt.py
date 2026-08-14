@@ -1,7 +1,9 @@
 """YouTube: rilevamento nuovi video (feed RSS, zero API key) e download via yt-dlp."""
 
 import json
+import os
 import subprocess
+import tempfile
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,6 +14,24 @@ NS = {
     "atom": "http://www.w3.org/2005/Atom",
     "yt": "http://www.youtube.com/xml/schemas/2015",
 }
+
+_cookie_file: Path | None = None
+
+
+def _cookie_args() -> list[str]:
+    """YouTube blocca gli IP dei datacenter (GitHub Actions incluso) con
+    "Sign in to confirm you're not a bot". Il secret YT_COOKIES (contenuto di
+    un cookies.txt esportato dal browser) sblocca il download."""
+    global _cookie_file
+    cookies = os.environ.get("YT_COOKIES", "").strip()
+    if not cookies:
+        return []
+    if _cookie_file is None:
+        f = tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False)
+        f.write(cookies + "\n")
+        f.close()
+        _cookie_file = Path(f.name)
+    return ["--cookies", str(_cookie_file)]
 
 
 def fetch_recent_videos(channel_id: str) -> list[dict]:
@@ -48,7 +68,8 @@ def _run(cmd: list[str]) -> subprocess.CompletedProcess:
 
 def get_video_info(video_id: str) -> dict | None:
     """Metadati del video (durata inclusa) senza scaricarlo."""
-    proc = _run(["yt-dlp", "--dump-json", "--no-download", f"https://www.youtube.com/watch?v={video_id}"])
+    proc = _run(["yt-dlp", *_cookie_args(), "--dump-json", "--no-download",
+                 f"https://www.youtube.com/watch?v={video_id}"])
     if proc.returncode != 0:
         print(f"  ⚠️ yt-dlp info fallito per {video_id}: {proc.stderr[-500:]}")
         return None
@@ -60,7 +81,7 @@ def download_video(video_id: str, workdir: Path) -> Path | None:
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / f"{video_id}.mp4"
     proc = _run([
-        "yt-dlp",
+        "yt-dlp", *_cookie_args(),
         "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[height<=1080][ext=mp4]/bv*[height<=1080]+ba/b",
         "--merge-output-format", "mp4",
         "--retries", "5",
@@ -81,7 +102,7 @@ def download_auto_subs(video_id: str, workdir: Path, lang: str = "it") -> Path |
     workdir.mkdir(parents=True, exist_ok=True)
     base = workdir / f"{video_id}.subs"
     proc = _run([
-        "yt-dlp",
+        "yt-dlp", *_cookie_args(),
         "--skip-download",
         "--write-auto-subs", "--write-subs",
         "--sub-langs", f"{lang},{lang}-orig",
