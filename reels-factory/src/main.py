@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, instagram, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, drive, instagram, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -85,22 +85,35 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     # poi Apify come fallback affidabile
     info = yt.get_video_info(vid)
     duration = (info or {}).get("duration") or apify.get_duration(vid) or 0
-    if duration == 0:
-        print("   Durata non recuperabile, riprovo alla prossima esecuzione")
-        return False
-    if duration < cfg["youtube"]["min_duration_seconds"]:
+    # Con durata ignota si prosegue comunque: se c'è un file (es. da Drive)
+    # il video è certamente uno vero, non uno Short
+    if 0 < duration < cfg["youtube"]["min_duration_seconds"]:
         print(f"   ⏭️ Troppo corto ({duration}s): probabilmente uno Short, salto")
         _mark(st, v, "skipped_short")
         return True
 
-    # Download del video: yt-dlp gratis se possibile, altrimenti Apify
+    # Download del video, a cascata: yt-dlp gratis → Apify → cartella Google
+    # Drive (il file master caricato dal team: la via che funziona sempre)
     vdir = WORKDIR / vid
+    drive_file_id = None
     source = yt.download_video(vid, vdir)
     if source is None:
         source = apify.download_video(vid, vdir, quality=cfg["apify"]["video_quality"])
+    if source is None and drive.is_configured():
+        used = st.get("used_drive_files", [])
+        f = drive.find_new_file(used)
+        if f is not None:
+            print(f"  📁 Uso il file da Google Drive: {f['name']}")
+            source = drive.download_file(f["id"], vdir / f"{vid}.mp4")
+            drive_file_id = f["id"]
+        else:
+            print("  📁 Nessun nuovo file nella cartella Drive")
     if source is None:
-        print("   Download impossibile, riprovo alla prossima esecuzione")
+        print("   Download impossibile: carica il file del video nella cartella "
+              "Drive dedicata, riprovo alla prossima esecuzione")
         return False
+    if drive_file_id:
+        st.setdefault("used_drive_files", []).append(drive_file_id)
 
     # Trascrizione con Whisper: parola-per-parola, nessuna dipendenza dai
     # sottotitoli automatici di YouTube
