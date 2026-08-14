@@ -1,0 +1,62 @@
+# ============================================================
+# Reels Factory — configurazione
+# Pipeline: nuovo video YouTube → clip verticali sottotitolate → Reels Instagram
+# I segreti (token, chiavi) NON vanno qui: vanno nei GitHub Secrets.
+# ============================================================
+
+youtube:
+  # ID del canale (inizia con "UC..."). Si trova in: YouTube Studio →
+  # Impostazioni → Canale → Impostazioni avanzate, oppure nell'URL del canale.
+  channel_id: "UC0sLHvRLSH1M-u_Hn12lMew"   # canale Media Profit
+  # Ignora video più vecchi di N giorni (evita di processare tutto l'archivio
+  # alla prima esecuzione)
+  max_age_days: 14
+  # Sotto questa durata il video è considerato uno Short e viene ignorato
+  min_duration_seconds: 180
+  # Se i sottotitoli automatici non sono ancora pronti, riprova fino a N ore
+  # dalla pubblicazione; dopo, il video viene marcato come saltato
+  subs_wait_hours: 72
+
+clips:
+  # Quante clip estrarre da ogni video
+  per_video: 3
+  min_seconds: 20
+  max_seconds: 75
+  # "blur"  = video originale centrato su sfondo sfocato (sicuro per ogni ripresa)
+  # "crop"  = ritaglio centrale 9:16 (meglio se il soggetto è sempre al centro)
+  vertical_mode: "blur"
+
+subtitles:
+  font: "DejaVu Sans"
+  font_size: 64
+  # Colori in formato ASS &HBBGGRR& (BGR!). Giallo evidenziato, bianco base.
+  highlight_color: "&H00FFFF&"   # giallo
+  base_color: "&HFFFFFF&"        # bianco
+  # Parole per riga di sottotitolo
+  words_per_line: 3
+  # Posizione verticale (0 = alto, 1 = basso). 0.72 = terzo inferiore.
+  vertical_position: 0.72
+
+instagram:
+  # Aggiunti in coda alla caption generata da Claude
+  default_hashtags: "#mediaprofit #youtube #personalbrand #acquisizioneclienti #liberiprofessionisti"
+  # Firma opzionale aggiunta a ogni caption (lascia vuoto per disattivare)
+  caption_footer: ""
+  # true = pubblica davvero; false = fa tutto tranne la pubblicazione (test)
+  # ⚠️ MODALITÀ PROVA attiva per il collaudo iniziale: rimettere true dopo l'ok
+  auto_publish: false
+
+claude:
+  model: "claude-opus-5"
+  # Istruzioni extra per la selezione delle clip (tono, cosa cercare).
+  # Claude riceve anche il contesto brand qui sotto.
+  brand_context: |
+    Brand: Media Profit (mediaprofit.it), fondatore Lorenzo Ricchieri.
+    Target: liberi professionisti italiani (coach, consulenti, formatori)
+    35-45 anni che vogliono acquisire clienti high-ticket tramite YouTube
+    invece di sfinirsi con reels e storie su Instagram.
+    Tono: iperrealismo, verità diretta, no fuffa, no promesse miracolose,
+    mai da guru. Angoli che funzionano: "le views non pagano le bollette",
+    stanchezza da contenuti quotidiani, qualità dei lead, autorità di settore.
+    Le clip migliori sono: momenti con un'affermazione forte o contrarian,
+    un dato concreto, una storia di cliente, o la demolizione di un mito.
