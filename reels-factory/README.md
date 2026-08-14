@@ -136,7 +136,7 @@ secret**. Servono questi 8 segreti:
 | "Sottotitoli automatici non ancora pronti" | Normale nelle prime ore dopo la pubblicazione: riprova da solo al giro successivo |
 | Errore Graph API `190` | Token Instagram scaduto → rigenera (o passa al token System User) |
 | Errore Graph API su `video_url` | Il bucket R2 non è pubblico → controlla `R2_PUBLIC_BASE_URL` |
-| Download YouTube fallisce su Actions | YouTube a volte limita gli IP dei runner: il video viene ritentato al giro dopo; se persiste, valutare i cookie yt-dlp |
+| Download fallisce con «Sign in to confirm you're not a bot» | YouTube blocca gli IP dei runner: serve il secret `YT_COOKIES` (vedi sotto) |
 | Clip tagliata male / hook debole | Affina `claude.brand_context` con esempi di cosa vuoi (Claude segue le istruzioni alla lettera) |
 
 ## Limiti noti
@@ -145,3 +145,21 @@ secret**. Servono questi 8 segreti:
 - **Reels**: durata 3-90s consigliata (rispettata dalla config di default)
 - I sottotitoli usano la trascrizione automatica di YouTube: qualche parola
   può essere imprecisa. In pratica per l'italiano parlato chiaro è ottima.
+
+## Cookie YouTube (`YT_COOKIES`)
+
+YouTube blocca i download dagli IP dei datacenter. Soluzione: dare a yt-dlp
+i cookie di un account YouTube loggato.
+
+1. **Usa un account Google di riserva**, non quello del canale (nel raro caso
+   in cui YouTube segnali l'attività, non rischia l'account principale)
+2. Apri una **finestra in incognito** → login su youtube.com con quell'account
+   → apri un video qualsiasi
+3. Con l'estensione **«Get cookies.txt LOCALLY»** (Chrome) esporta i cookie
+   della scheda youtube.com → si scarica `cookies.txt`
+4. **Chiudi la finestra in incognito senza fare logout** (così i cookie
+   esportati restano validi a lungo)
+5. Copia tutto il contenuto di `cookies.txt` nel secret **`YT_COOKIES`**
+   (Settings → Secrets and variables → Actions)
+
+Se dopo mesi i download tornano a fallire, ripeti l'esportazione.
