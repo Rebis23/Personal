@@ -1,0 +1,89 @@
+"""Generazione sottotitoli ASS stile Reels: gruppi di poche parole, in maiuscolo,
+con evidenziazione karaoke della parola pronunciata."""
+
+from pathlib import Path
+
+ASS_HEADER = """[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Reel,{font},{size},{highlight},{base},&H00000000,&H96000000,-1,0,0,0,100,100,0,0,1,5,2,2,60,60,{margin_v},1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+
+
+def _ass_time(seconds: float) -> str:
+    cs = round(max(0.0, seconds) * 100)
+    h, rem = divmod(cs, 360000)
+    m, rem = divmod(rem, 6000)
+    s, cs = divmod(rem, 100)
+    return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
+
+
+def _ass_color(short_bgr: str) -> str:
+    """Da "&H00FFFF&" (BGR) al formato completo ASS &HAABBGGRR."""
+    hexpart = short_bgr.strip("&H").strip("&").zfill(6)[-6:]
+    return f"&H00{hexpart.upper()}"
+
+
+def _escape(text: str) -> str:
+    return text.replace("\\", "").replace("{", "(").replace("}", ")")
+
+
+def build_ass(
+    words: list[dict],
+    out_path: Path,
+    *,
+    font: str = "DejaVu Sans",
+    font_size: int = 64,
+    highlight_color: str = "&H00FFFF&",
+    base_color: str = "&HFFFFFF&",
+    words_per_line: int = 3,
+    vertical_position: float = 0.72,
+) -> Path:
+    """Scrive il file .ass. `words` ha tempi relativi all'inizio della clip.
+
+    Il karaoke ASS parte dal colore Secondary (base) e "riempie" con il
+    Primary (evidenziazione) parola per parola tramite i tag \\k.
+    """
+    margin_v = int((1.0 - vertical_position) * 1920)
+    header = ASS_HEADER.format(
+        font=font,
+        size=font_size,
+        highlight=_ass_color(highlight_color),
+        base=_ass_color(base_color),
+        margin_v=margin_v,
+    )
+
+    lines: list[str] = []
+    for i in range(0, len(words), words_per_line):
+        group = words[i:i + words_per_line]
+        start = group[0]["start"]
+        end = group[-1]["end"]
+        if end - start < 0.15:
+            end = start + 0.15
+        parts = []
+        cursor = start
+        for w in group:
+            # Eventuale silenzio prima della parola: karaoke "vuoto"
+            gap_cs = round((w["start"] - cursor) * 100)
+            if gap_cs > 2:
+                parts.append(f"{{\\k{gap_cs}}}")
+            dur_cs = max(1, round((w["end"] - w["start"]) * 100))
+            parts.append(f"{{\\k{dur_cs}}}{_escape(w['word'].upper())} ")
+            cursor = w["end"]
+        text = "".join(parts).rstrip()
+        lines.append(
+            f"Dialogue: 0,{_ass_time(start)},{_ass_time(end)},Reel,,0,0,0,,{text}"
+        )
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
+    return out_path

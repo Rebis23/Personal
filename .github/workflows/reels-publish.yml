@@ -1,0 +1,64 @@
+# Reels Factory — PUBLISH
+# Una volta al giorno pubblica su Instagram (come Reel) la prossima clip
+# in coda. Le clip di un video escono quindi distribuite su più giorni.
+
+name: "Reels Factory · Publish"
+
+on:
+  schedule:
+    # 09:30 UTC = 11:30 ora italiana (estate) / 10:30 (inverno)
+    - cron: "30 9 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (non pubblica davvero)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: reels-factory-state
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa dipendenze Python
+        working-directory: reels-factory
+        run: pip install -r requirements.txt
+
+      - name: Pubblica la prossima clip in coda
+        working-directory: reels-factory
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+        run: python -m src.main publish
+
+      - name: Commit dello stato aggiornato
+        run: |
+          git config user.name "reels-factory-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reels-factory/state/queue.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Reels Factory: stato aggiornato dopo publish [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          else
+            echo "Nessuna modifica allo stato"
+          fi

@@ -1,0 +1,61 @@
+# Reels Factory — INGEST
+# Controlla se è uscito un nuovo video sul canale YouTube; se sì lo scarica,
+# fa scegliere a Claude i momenti migliori, monta le clip verticali con
+# sottotitoli e le mette in coda di pubblicazione (stato committato nel repo).
+
+name: "Reels Factory · Ingest"
+
+on:
+  schedule:
+    # Una volta al giorno alle 16:00 UTC = 18:00 ora italiana (estate) / 17:00 (inverno)
+    - cron: "0 16 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: reels-factory-state
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa ffmpeg e font
+        run: sudo apt-get update -q && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
+
+      - name: Installa dipendenze Python
+        working-directory: reels-factory
+        run: pip install -r requirements.txt
+
+      - name: Ingest nuovi video
+        working-directory: reels-factory
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
+        run: python -m src.main ingest
+
+      - name: Commit dello stato aggiornato
+        run: |
+          git config user.name "reels-factory-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reels-factory/state/queue.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Reels Factory: stato aggiornato dopo ingest [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          else
+            echo "Nessuna modifica allo stato"
+          fi
