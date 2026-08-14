@@ -7,15 +7,22 @@
 youtube:
   # ID del canale (inizia con "UC..."). Si trova in: YouTube Studio →
   # Impostazioni → Canale → Impostazioni avanzate, oppure nell'URL del canale.
-  channel_id: "UC0sLHvRLSH1M-u_Hn12lMew"   # canale Media Profit
+  channel_id: "UC0sLHvRLSH1M-u_Hn12lMew"   # canale Lorenzo Ricchieri
   # Ignora video più vecchi di N giorni (evita di processare tutto l'archivio
   # alla prima esecuzione)
   max_age_days: 14
   # Sotto questa durata il video è considerato uno Short e viene ignorato
   min_duration_seconds: 180
-  # Se i sottotitoli automatici non sono ancora pronti, riprova fino a N ore
-  # dalla pubblicazione; dopo, il video viene marcato come saltato
-  subs_wait_hours: 72
+
+apify:
+  # Qualità del video scaricato via Apify (il download diretto da YouTube è
+  # bloccato dai runner GitHub; Apify lo fa per noi a pochi centesimi a video)
+  video_quality: "1080p"
+
+whisper:
+  # Modello di trascrizione: "small" = veloce (~5-10 min per un video da 20'),
+  # "medium" = più preciso ma ~2-3x più lento
+  model: "small"
 
 clips:
   # Quante clip estrarre da ogni video
