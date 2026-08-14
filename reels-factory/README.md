@@ -17,7 +17,8 @@ YouTube (feed RSS, ogni giorno alle 18:00)
    │  nuovo video?
    ▼
 [Ingest — GitHub Actions]
-   ├─ yt-dlp scarica video + sottotitoli automatici (timing parola per parola)
+   ├─ Apify scarica il video (YouTube blocca i runner GitHub; ~3 cent/video)
+   ├─ Whisper trascrive in locale (timing parola per parola, gratis)
    ├─ Claude (claude-opus-5) legge la trascrizione → sceglie 3 clip
    │     + scrive caption e hashtag per ognuna, nel tono Media Profit
    ├─ ffmpeg taglia, converte 9:16, imprime sottotitoli karaoke
@@ -82,7 +83,7 @@ chiave. Con 1 video a settimana la spesa è di pochi centesimi al mese.
 ### 5. GitHub Secrets
 
 Nel repo: **Settings → Secrets and variables → Actions → New repository
-secret**. Servono questi 8 segreti:
+secret**. Servono questi 9 segreti:
 
 | Secret | Valore |
 |---|---|
@@ -94,6 +95,7 @@ secret**. Servono questi 8 segreti:
 | `R2_SECRET_ACCESS_KEY` | Secret Key del token R2 |
 | `R2_BUCKET` | nome del bucket (es. `mediaprofit-reels`) |
 | `R2_PUBLIC_BASE_URL` | URL pubblico del bucket (es. `https://pub-xxx.r2.dev`) |
+| `APIFY_TOKEN` | token API di [console.apify.com](https://console.apify.com) (piano free) |
 
 ### 6. Primo test
 
@@ -136,7 +138,7 @@ secret**. Servono questi 8 segreti:
 | "Sottotitoli automatici non ancora pronti" | Normale nelle prime ore dopo la pubblicazione: riprova da solo al giro successivo |
 | Errore Graph API `190` | Token Instagram scaduto → rigenera (o passa al token System User) |
 | Errore Graph API su `video_url` | Il bucket R2 non è pubblico → controlla `R2_PUBLIC_BASE_URL` |
-| Download fallisce con «Sign in to confirm you're not a bot» | YouTube blocca gli IP dei runner: serve il secret `YT_COOKIES` (vedi sotto) |
+| Download fallisce con «Sign in to confirm you're not a bot» | Normale: il download diretto è bloccato, la pipeline passa da sola ad Apify. Se fallisce anche Apify, controlla il secret `APIFY_TOKEN` e i crediti su console.apify.com |
 | Clip tagliata male / hook debole | Affina `claude.brand_context` con esempi di cosa vuoi (Claude segue le istruzioni alla lettera) |
 
 ## Limiti noti
@@ -146,10 +148,11 @@ secret**. Servono questi 8 segreti:
 - I sottotitoli usano la trascrizione automatica di YouTube: qualche parola
   può essere imprecisa. In pratica per l'italiano parlato chiaro è ottima.
 
-## Cookie YouTube (`YT_COOKIES`)
+## Cookie YouTube (`YT_COOKIES`) — opzionale
 
-YouTube blocca i download dagli IP dei datacenter. Soluzione: dare a yt-dlp
-i cookie di un account YouTube loggato.
+Il download dei video passa da Apify (secret `APIFY_TOKEN`). In aggiunta,
+se vuoi tentare prima il download diretto gratuito, puoi dare a yt-dlp
+i cookie di un account YouTube loggato — ma non è necessario.
 
 1. **Usa un account Google di riserva**, non quello del canale (nel raro caso
    in cui YouTube segnali l'attività, non rischia l'account principale)

@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-from . import brain, instagram, state as state_mod, storage, subtitles, transcript, video, yt
+from . import apify, brain, instagram, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -81,35 +81,34 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     vid = v["video_id"]
     print(f"\n🎬 Video: {v['title']} ({vid})")
 
+    # Durata: prima la via gratuita (yt-dlp, funziona se YouTube non blocca),
+    # poi Apify come fallback affidabile
     info = yt.get_video_info(vid)
-    if info is None:
-        print("   Riprovo alla prossima esecuzione")
+    duration = (info or {}).get("duration") or apify.get_duration(vid) or 0
+    if duration == 0:
+        print("   Durata non recuperabile, riprovo alla prossima esecuzione")
         return False
-
-    duration = info.get("duration") or 0
     if duration < cfg["youtube"]["min_duration_seconds"]:
         print(f"   ⏭️ Troppo corto ({duration}s): probabilmente uno Short, salto")
         _mark(st, v, "skipped_short")
         return True
 
+    # Download del video: yt-dlp gratis se possibile, altrimenti Apify
     vdir = WORKDIR / vid
-    subs_path = yt.download_auto_subs(vid, vdir)
-    if subs_path is None:
-        age_h = yt.video_age_hours(v["published"])
-        if age_h < cfg["youtube"]["subs_wait_hours"]:
-            print(f"   ⏳ Sottotitoli automatici non ancora pronti ({age_h:.0f}h dalla "
-                  "pubblicazione), riprovo alla prossima esecuzione")
-            return False
-        print("   ⏭️ Sottotitoli mai arrivati entro il limite, salto il video")
-        _mark(st, v, "skipped_no_subs")
-        return True
+    source = yt.download_video(vid, vdir)
+    if source is None:
+        source = apify.download_video(vid, vdir, quality=cfg["apify"]["video_quality"])
+    if source is None:
+        print("   Download impossibile, riprovo alla prossima esecuzione")
+        return False
 
-    words = transcript.parse_json3(subs_path)
+    # Trascrizione con Whisper: parola-per-parola, nessuna dipendenza dai
+    # sottotitoli automatici di YouTube
+    words = transcribe.transcribe_words(source, model_size=cfg["whisper"]["model"])
     if len(words) < 50:
         print("   ⏭️ Trascrizione troppo scarna, salto")
-        _mark(st, v, "skipped_no_subs")
+        _mark(st, v, "skipped_no_transcript")
         return True
-    print(f"   📝 Trascrizione: {len(words)} parole")
 
     clip_cfg = cfg["clips"]
     picks = brain.select_clips(
@@ -126,11 +125,6 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         _mark(st, v, "no_clips_found")
         return True
     print(f"   🧠 Claude ha scelto {len(picks)} clip")
-
-    source = yt.download_video(vid, vdir)
-    if source is None:
-        print("   Riprovo alla prossima esecuzione")
-        return False
 
     sub_cfg = cfg["subtitles"]
     queued = []

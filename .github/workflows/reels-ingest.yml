@@ -32,6 +32,12 @@ jobs:
       - name: Installa ffmpeg e font
         run: sudo apt-get update -q && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
 
+      - name: Cache modello Whisper
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-small-v1
+
       - name: Installa dipendenze Python
         working-directory: reels-factory
         run: pip install -r requirements.txt
@@ -45,8 +51,11 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
           R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
-          # Cookie YouTube (cookies.txt): sbloccano il download dagli IP
-          # dei runner GitHub, che YouTube altrimenti blocca come bot
+          # Apify scarica i video al posto nostro (YouTube blocca gli IP
+          # dei runner GitHub); pochi centesimi a video, coperti dal piano free
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          # Opzionale: cookie YouTube (cookies.txt) per tentare prima il
+          # download diretto gratuito
           YT_COOKIES: ${{ secrets.YT_COOKIES }}
         run: python -m src.main ingest
 
