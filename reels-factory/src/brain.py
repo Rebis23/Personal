@@ -55,7 +55,9 @@ def select_clips(
     min_seconds: int,
     max_seconds: int,
 ) -> list[ClipPick]:
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    # .strip(): i segreti incollati nei GitHub Secrets possono contenere
+    # un a-capo finale, che renderebbe illegale l'header HTTP
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
 
     system = SYSTEM_PROMPT.format(
         brand_context=brand_context.strip(),
