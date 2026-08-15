@@ -64,6 +64,9 @@ demolizione di miti, momenti di verità diretta.
 - Evita: saluti iniziali, call-to-action al canale, riferimenti ad altri momenti del \
 video ("come dicevo prima", "lo vediamo dopo"), spiegazioni che richiedono contesto.
 - Le clip NON devono sovrapporsi tra loro.
+- VINCOLO RIGIDO sulla durata: ogni clip deve durare tra {min_s} e {max_s} secondi. \
+Una clip più lunga di {max_s}s verrà troncata a {max_s}s: scegli tu il taglio giusto \
+piuttosto che farlo fare a una forbice cieca.
 - I marcatori [mm:ss] nella trascrizione indicano il tempo: usali per stimare \
 start_seconds e end_seconds con precisione.
 
@@ -118,10 +121,15 @@ def select_clips(
     if selection is None:
         raise RuntimeError("Risposta di Claude non parsabile secondo lo schema")
 
-    # Filtro di sicurezza sulle durate, poi ordino per posizione nel video
-    valid = [
-        c for c in selection.clips
-        if (max_seconds + 10) >= (c.end_seconds - c.start_seconds) >= (min_seconds - 5)
-    ]
-    valid.sort(key=lambda c: c.start_seconds)
-    return valid[:clips_per_video]
+    # Durate fuori dai limiti: le clip troppo lunghe si ACCORCIANO alla
+    # durata massima (mai buttate — è successo che Claude proponesse tagli
+    # lunghi e la coda restasse vuota); solo le inutilizzabili si scartano
+    picked = []
+    for c in sorted(selection.clips, key=lambda c: c.start_seconds):
+        dur = c.end_seconds - c.start_seconds
+        if dur < max(8, min_seconds - 5):
+            continue
+        if dur > max_seconds:
+            c.end_seconds = c.start_seconds + max_seconds
+        picked.append(c)
+    return picked[:clips_per_video]
