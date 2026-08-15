@@ -60,7 +60,7 @@ def _corner_mask(radius: int, out_path: Path) -> Path:
 
 def render_clip(
     source: Path,
-    ass_file: Path,
+    ass_file: Path | None,
     out_path: Path,
     *,
     start: float,
@@ -77,6 +77,8 @@ def render_clip(
     music_gain_db: float = -20.0,
     ducking: bool = True,
     whoosh: Path | None = None,
+    pop: Path | None = None,
+    pop_times: list[float] | None = None,
 ) -> Path:
     """Taglia [start, end], converte in 1080x1920 e imprime i sottotitoli.
 
@@ -90,9 +92,13 @@ def render_clip(
     """
     duration = max(1.0, end - start)
 
-    ass_arg = f"ass={ass_file.name}"
-    if fonts_dir is not None:
-        ass_arg += f":fontsdir={fonts_dir}"
+    # Senza file .ass i sottotitoli non vengono impressi qui (li disegna
+    # Remotion in un secondo passaggio)
+    ass_arg = None
+    if ass_file is not None:
+        ass_arg = f"ass={ass_file.name}"
+        if fonts_dir is not None:
+            ass_arg += f":fontsdir={fonts_dir}"
 
     inputs = ["-ss", f"{start:.3f}", "-t", f"{duration:.3f}", "-i", str(source)]
     parts = [_vertical_filter(vertical_mode, duration, zoom)]
@@ -119,21 +125,24 @@ def render_clip(
         last = "[vover]"
 
     if vertical_mode == "square" and corner_radius > 0:
-        mask_png = _corner_mask(corner_radius, ass_file.parent / "corners.png")
+        aux_dir = ass_file.parent if ass_file is not None else out_path.parent
+        mask_png = _corner_mask(corner_radius, aux_dir / "corners.png")
         inputs += ["-loop", "1", "-i", str(mask_png)]
         idx = n_inputs
         n_inputs += 1
         parts.append(f"{last}[{idx}:v]overlay=0:0:shortest=1[vcorn]")
         last = "[vcorn]"
 
-    parts.append(f"{last}{ass_arg}[vout]")
+    parts.append(f"{last}{ass_arg}[vout]" if ass_arg else f"{last}null[vout]")
 
     # ------------------------------------------------------- sound design ---
     audio_map = ["-map", "0:a?"]
     mix_srcs: list[str] = []
     has_whoosh = (whoosh is not None and cutaway is not None
                   and cutaway_duration > 0.25)
-    if music is not None or has_whoosh:
+    pop_times = [t for t in (pop_times or []) if 0.3 < t < duration - 0.5][:4]
+    has_pops = pop is not None and len(pop_times) > 0
+    if music is not None or has_whoosh or has_pops:
         parts.append("[0:a]aformat=sample_rates=44100:channel_layouts=stereo[voice]")
 
     if music is not None:
@@ -156,8 +165,23 @@ def render_clip(
         else:
             voice_lbl, music_lbl = "[voice]", "[mus]"
         mix_srcs = [voice_lbl, music_lbl]
-    elif has_whoosh:
+    elif has_whoosh or has_pops:
         mix_srcs = ["[voice]"]
+
+    if has_pops:
+        # Colpo soft in corrispondenza delle parole enfatizzate
+        inputs += ["-i", str(pop)]
+        p_idx = n_inputs
+        n_inputs += 1
+        n = len(pop_times)
+        parts.append(
+            f"[{p_idx}:a]aformat=sample_rates=44100:channel_layouts=stereo,"
+            f"volume=-12dB,asplit={n}" + "".join(f"[pp{i}]" for i in range(n))
+        )
+        for i, t in enumerate(pop_times):
+            ms = int(t * 1000)
+            parts.append(f"[pp{i}]adelay={ms}|{ms}[pd{i}]")
+            mix_srcs.append(f"[pd{i}]")
 
     if has_whoosh:
         inputs += ["-i", str(whoosh)]
@@ -193,7 +217,8 @@ def render_clip(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     # cwd = cartella del file .ass, così il filtro "ass=" non ha problemi
     # di escaping del percorso
-    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ass_file.parent)
+    workdir = ass_file.parent if ass_file is not None else out_path.parent
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=workdir)
     if proc.returncode != 0 or not out_path.exists():
         raise RuntimeError(f"ffmpeg fallito:\n{proc.stderr[-1500:]}")
     return out_path

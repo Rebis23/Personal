@@ -38,6 +38,12 @@ clips:
   corner_radius: 96
   # Lento zoom-in progressivo (0 = disattivato — scelta di Lorenzo)
   zoom: 0
+  # Motore delle caption: "remotion" (premium, animato) con fallback
+  # automatico su "ass" (classico) se Remotion non è disponibile
+  renderer: "remotion"
+  # Card iniziale con l'hook a schermo intero (stile Williamson)
+  hook_card: true
+  hook_card_seconds: 1.3
 
 subtitles:
   # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)
@@ -70,6 +76,8 @@ audio:
   ducking: true
   # Effetto whoosh all'ingresso dello spezzone film
   whoosh_on_cutaway: true
+  # Colpo soft quando appare una parola enfatizzata
+  pop_on_emphasis: true
 
 movies:
   # Spezzoni di film pertinenti nelle clip. Due sorgenti possibili:

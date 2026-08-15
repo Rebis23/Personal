@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, clipcafe, drive, instagram, moviesource, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, clipcafe, drive, instagram, moviesource, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -150,16 +150,6 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         start, end = transcript.snap_to_words(words, pick.start_seconds, pick.end_seconds)
         clip_words = transcript.words_in_clip(words, start, end)
 
-        ass_file = subtitles.build_ass(
-            clip_words, vdir / f"{clip_id}.ass",
-            font=sub_cfg["font"], font_size=sub_cfg["font_size"],
-            highlight_color=sub_cfg["highlight_color"], base_color=sub_cfg["base_color"],
-            words_per_line=sub_cfg["words_per_line"],
-            vertical_position=sub_cfg["vertical_position"],
-            style=sub_cfg.get("style", "word"),
-            uppercase=sub_cfg.get("uppercase", False),
-        )
-
         # Spezzone di film (facoltativo): se Claude l'ha proposto e almeno una
         # sorgente è configurata. Qualsiasi problema qui NON blocca la clip.
         cutaway, cut_at, cut_dur, cut_src = None, 0.0, 0.0, 0.0
@@ -187,9 +177,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             clip_len = end - start
             cut_at = min(max(rel, 2.0), max(2.0, clip_len - cut_dur - 1.0))
 
-        # Sound design: base musicale (scelta stabile per clip) + whoosh
+        # Sound design: base musicale (scelta stabile per clip) + whoosh + pop
+        # sulle parole enfatizzate da Claude
         audio_cfg = cfg.get("audio", {})
-        music = whoosh = None
+        music = whoosh = pop = None
         if audio_cfg.get("music", True):
             beds = sorted(AUDIO_DIR.glob("bed-*.mp3"))
             if beds:
@@ -200,11 +191,17 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             wf = AUDIO_DIR / "sfx-whoosh.wav"
             whoosh = wf if wf.is_file() else None
 
-        out_mp4 = vdir / f"{clip_id}.mp4"
-        video.render_clip(
-            source, ass_file, out_mp4,
+        emph = {"".join(c for c in w.lower() if c.isalnum())
+                for w in pick.emphasis_words}
+        pop_times: list[float] = []
+        if audio_cfg.get("pop_on_emphasis", True) and emph:
+            pf = AUDIO_DIR / "sfx-pop.wav"
+            if pf.is_file():
+                pop = pf
+                pop_times = remotion_render.emphasis_times(clip_words, emph)
+
+        render_common = dict(
             start=start, end=end, vertical_mode=cfg["clips"]["vertical_mode"],
-            fonts_dir=FONTS_DIR if FONTS_DIR.is_dir() else None,
             cutaway=cutaway, cutaway_at=cut_at, cutaway_duration=cut_dur,
             cutaway_src_offset=cut_src,
             corner_radius=cfg["clips"].get("corner_radius", 96),
@@ -212,8 +209,48 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             music=music,
             music_gain_db=audio_cfg.get("music_gain_db", -20),
             ducking=audio_cfg.get("ducking", True),
-            whoosh=whoosh,
+            whoosh=whoosh, pop=pop, pop_times=pop_times,
         )
+
+        out_mp4 = vdir / f"{clip_id}.mp4"
+        rendered = False
+        if cfg["clips"].get("renderer", "remotion") == "remotion":
+            try:
+                base_mp4 = vdir / f"{clip_id}-base.mp4"
+                video.render_clip(source, None, base_mp4, **render_common)
+                pages = remotion_render.build_pages(
+                    clip_words, emph,
+                    words_per_screen=sub_cfg["words_per_line"],
+                )
+                hook_card_s = float(cfg["clips"].get("hook_card_seconds", 1.3)) \
+                    if cfg["clips"].get("hook_card", True) else 0.0
+                remotion_render.render(
+                    base_mp4, out_mp4,
+                    pages=pages, duration=end - start,
+                    font_size=sub_cfg["font_size"],
+                    vertical_position=sub_cfg["vertical_position"],
+                    uppercase=sub_cfg.get("uppercase", False),
+                    hook_text=pick.hook, hook_seconds=hook_card_s,
+                )
+                rendered = True
+            except Exception as e:  # noqa: BLE001 — il fallback ASS tiene viva la pipeline
+                print(f"   ⚠️ Remotion fallito, uso il renderer classico: {e}")
+        if not rendered:
+            ass_file = subtitles.build_ass(
+                clip_words, vdir / f"{clip_id}.ass",
+                font=sub_cfg["font"], font_size=sub_cfg["font_size"],
+                highlight_color=sub_cfg["highlight_color"],
+                base_color=sub_cfg["base_color"],
+                words_per_line=sub_cfg["words_per_line"],
+                vertical_position=sub_cfg["vertical_position"],
+                style=sub_cfg.get("style", "word"),
+                uppercase=sub_cfg.get("uppercase", False),
+            )
+            video.render_clip(
+                source, ass_file, out_mp4,
+                fonts_dir=FONTS_DIR if FONTS_DIR.is_dir() else None,
+                **render_common,
+            )
 
         r2_key = f"reels/{vid}/{clip_id}.mp4"
         media_url = storage.upload_clip(out_mp4, r2_key)
