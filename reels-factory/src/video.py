@@ -73,12 +73,20 @@ def render_clip(
     cutaway_src_offset: float = 0.0,
     corner_radius: int = 96,
     zoom: float = 0.0,
+    music: Path | None = None,
+    music_gain_db: float = -20.0,
+    ducking: bool = True,
+    whoosh: Path | None = None,
 ) -> Path:
     """Taglia [start, end], converte in 1080x1920 e imprime i sottotitoli.
 
     Se `cutaway` è indicato, lo spezzone (muto) viene mostrato al posto del
     video del parlato da `cutaway_at` (secondi dall'inizio della clip) per
     `cutaway_duration` secondi; l'audio del parlato continua sotto.
+
+    Sound design: `music` è la base musicale in sottofondo (in loop, con
+    dissolvenza finale; se `ducking` è attivo si abbassa da sola quando c'è
+    la voce); `whoosh` è l'effetto riprodotto all'ingresso del cutaway.
     """
     duration = max(1.0, end - start)
 
@@ -119,13 +127,63 @@ def render_clip(
         last = "[vcorn]"
 
     parts.append(f"{last}{ass_arg}[vout]")
+
+    # ------------------------------------------------------- sound design ---
+    audio_map = ["-map", "0:a?"]
+    mix_srcs: list[str] = []
+    has_whoosh = (whoosh is not None and cutaway is not None
+                  and cutaway_duration > 0.25)
+    if music is not None or has_whoosh:
+        parts.append("[0:a]aformat=sample_rates=44100:channel_layouts=stereo[voice]")
+
+    if music is not None:
+        inputs += ["-stream_loop", "-1", "-i", str(music)]
+        m_idx = n_inputs
+        n_inputs += 1
+        fade_start = max(0.0, duration - 1.2)
+        parts.append(
+            f"[{m_idx}:a]aformat=sample_rates=44100:channel_layouts=stereo,"
+            f"atrim=duration={duration:.3f},volume={music_gain_db:.1f}dB,"
+            f"afade=t=out:st={fade_start:.3f}:d=1.2[mus]"
+        )
+        if ducking:
+            parts.append("[voice]asplit=2[v1][v2]")
+            parts.append(
+                "[mus][v2]sidechaincompress=threshold=0.05:ratio=8"
+                ":attack=20:release=500[musd]"
+            )
+            voice_lbl, music_lbl = "[v1]", "[musd]"
+        else:
+            voice_lbl, music_lbl = "[voice]", "[mus]"
+        mix_srcs = [voice_lbl, music_lbl]
+    elif has_whoosh:
+        mix_srcs = ["[voice]"]
+
+    if has_whoosh:
+        inputs += ["-i", str(whoosh)]
+        w_idx = n_inputs
+        n_inputs += 1
+        delay_ms = max(0, int((cutaway_at - 0.25) * 1000))
+        parts.append(
+            f"[{w_idx}:a]aformat=sample_rates=44100:channel_layouts=stereo,"
+            f"adelay={delay_ms}|{delay_ms},volume=-8dB[wh]"
+        )
+        mix_srcs.append("[wh]")
+
+    if len(mix_srcs) > 1:
+        parts.append(
+            f"{''.join(mix_srcs)}amix=inputs={len(mix_srcs)}"
+            ":duration=first:normalize=0,alimiter=limit=0.97[aout]"
+        )
+        audio_map = ["-map", "[aout]"]
+
     filter_complex = ";".join(parts)
 
     cmd = [
         "ffmpeg", "-y",
         *inputs,
         "-filter_complex", filter_complex,
-        "-map", "[vout]", "-map", "0:a?",
+        "-map", "[vout]", *audio_map,
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
         "-r", "30", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "128k", "-ar", "44100",

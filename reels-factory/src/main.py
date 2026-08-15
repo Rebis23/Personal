@@ -9,6 +9,7 @@ Eseguito da GitHub Actions (vedi .github/workflows/reels-*.yml), ma funziona
 anche in locale se hai ffmpeg, yt-dlp e le variabili d'ambiente configurate.
 """
 
+import hashlib
 import os
 import sys
 from pathlib import Path
@@ -20,6 +21,7 @@ from . import apify, brain, clipcafe, drive, instagram, moviesource, state as st
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
 FONTS_DIR = ROOT / "assets" / "fonts"
+AUDIO_DIR = ROOT / "assets" / "audio"
 MAX_VIDEOS_PER_RUN = 1  # limita la durata di ogni esecuzione
 
 
@@ -185,6 +187,19 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             clip_len = end - start
             cut_at = min(max(rel, 2.0), max(2.0, clip_len - cut_dur - 1.0))
 
+        # Sound design: base musicale (scelta stabile per clip) + whoosh
+        audio_cfg = cfg.get("audio", {})
+        music = whoosh = None
+        if audio_cfg.get("music", True):
+            beds = sorted(AUDIO_DIR.glob("bed-*.mp3"))
+            if beds:
+                music = beds[int(hashlib.md5(clip_id.encode()).hexdigest(), 16)
+                             % len(beds)]
+                print(f"   🎵 Base musicale: {music.name}")
+        if audio_cfg.get("whoosh_on_cutaway", True):
+            wf = AUDIO_DIR / "sfx-whoosh.wav"
+            whoosh = wf if wf.is_file() else None
+
         out_mp4 = vdir / f"{clip_id}.mp4"
         video.render_clip(
             source, ass_file, out_mp4,
@@ -194,6 +209,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             cutaway_src_offset=cut_src,
             corner_radius=cfg["clips"].get("corner_radius", 96),
             zoom=cfg["clips"].get("zoom", 0),
+            music=music,
+            music_gain_db=audio_cfg.get("music_gain_db", -20),
+            ducking=audio_cfg.get("ducking", True),
+            whoosh=whoosh,
         )
 
         r2_key = f"reels/{vid}/{clip_id}.mp4"
