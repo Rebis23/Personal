@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, clipcafe, drive, instagram, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, clipcafe, drive, instagram, moviesource, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -158,24 +158,32 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             uppercase=sub_cfg.get("uppercase", False),
         )
 
-        # Spezzone di film (facoltativo): se Claude l'ha proposto e Clip.cafe
-        # è configurato. Qualsiasi problema qui NON blocca la clip.
-        cutaway, cut_at, cut_dur = None, 0.0, 0.0
-        cc_cfg = cfg.get("clipcafe", {})
-        if (cc_cfg.get("enabled") and clipcafe.is_configured()
-                and pick.movie_query.strip()):
-            found = clipcafe.find_clip(
-                pick.movie_query,
-                max_seconds=cc_cfg.get("max_seconds", 6),
-            )
-            if found:
-                cutaway = clipcafe.download(found, vdir / f"{clip_id}-film.mp4")
-            if cutaway is not None:
-                cut_dur = min(found["duration"], cc_cfg.get("max_seconds", 6))
-                # Dentro la clip: mai nei primi 2s (l'hook è sacro), mai oltre la fine
-                rel = pick.movie_insert_at_seconds - start
-                clip_len = end - start
-                cut_at = min(max(rel, 2.0), max(2.0, clip_len - cut_dur - 1.0))
+        # Spezzone di film (facoltativo): se Claude l'ha proposto e almeno una
+        # sorgente è configurata. Qualsiasi problema qui NON blocca la clip.
+        cutaway, cut_at, cut_dur, cut_src = None, 0.0, 0.0, 0.0
+        mv_cfg = cfg.get("movies", {})
+        if mv_cfg.get("enabled") and pick.movie_query.strip():
+            max_s = mv_cfg.get("max_seconds", 5)
+            for src_name in mv_cfg.get("sources", ["clipcafe", "youtube"]):
+                if src_name == "clipcafe" and clipcafe.is_configured():
+                    found = clipcafe.find_clip(pick.movie_query, max_seconds=max_s)
+                    if found and clipcafe.download(found, vdir / f"{clip_id}-film.mp4"):
+                        cutaway = vdir / f"{clip_id}-film.mp4"
+                        cut_dur = min(found["duration"], max_s)
+                        break
+                elif src_name == "youtube" and moviesource.is_configured():
+                    found = moviesource.find_clip(pick.movie_query, vdir,
+                                                  max_seconds=max_s)
+                    if found:
+                        cutaway = found["path"]
+                        cut_dur = found["duration"]
+                        cut_src = found["src_offset"]
+                        break
+        if cutaway is not None:
+            # Dentro la clip: mai nei primi 2s (l'hook è sacro), mai oltre la fine
+            rel = pick.movie_insert_at_seconds - start
+            clip_len = end - start
+            cut_at = min(max(rel, 2.0), max(2.0, clip_len - cut_dur - 1.0))
 
         out_mp4 = vdir / f"{clip_id}.mp4"
         video.render_clip(
@@ -183,8 +191,9 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             start=start, end=end, vertical_mode=cfg["clips"]["vertical_mode"],
             fonts_dir=FONTS_DIR if FONTS_DIR.is_dir() else None,
             cutaway=cutaway, cutaway_at=cut_at, cutaway_duration=cut_dur,
-            corner_radius=cfg["clips"].get("corner_radius", 48),
-            zoom=cfg["clips"].get("zoom", 0.06),
+            cutaway_src_offset=cut_src,
+            corner_radius=cfg["clips"].get("corner_radius", 96),
+            zoom=cfg["clips"].get("zoom", 0),
         )
 
         r2_key = f"reels/{vid}/{clip_id}.mp4"
