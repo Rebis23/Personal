@@ -32,6 +32,15 @@ class ClipPick(BaseModel):
             "0 se movie_query è vuota."
         ),
     )
+    emphasis_words: list[str] = Field(
+        default_factory=list,
+        description=(
+            "2-5 parole ESATTE pronunciate nella clip (singole parole, come "
+            "compaiono nel testo) che portano il peso del messaggio: verranno "
+            "enfatizzate visivamente (corsivo) e con un accento sonoro. Scegli "
+            "sostantivi/verbi forti, mai articoli o congiunzioni."
+        ),
+    )
 
 
 class ClipSelection(BaseModel):

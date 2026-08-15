@@ -21,7 +21,7 @@ permissions:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
 
@@ -62,6 +62,27 @@ jobs:
         with:
           path: ~/.cache/huggingface
           key: whisper-small-v1
+
+      # Remotion: il motore che disegna le caption animate premium.
+      # Il browser headless che usa per il rendering finisce dentro
+      # node_modules, quindi la cache copre anche quello.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Cache Remotion
+        uses: actions/cache@v4
+        with:
+          path: reels-factory/remotion/node_modules
+          key: remotion-${{ hashFiles('reels-factory/remotion/package-lock.json') }}
+
+      - name: Installa Remotion
+        working-directory: reels-factory/remotion
+        run: |
+          if [ ! -d node_modules/remotion ]; then
+            npm ci --no-audit --no-fund
+          fi
+          npx remotion browser ensure
 
       - name: Installa dipendenze Python
         working-directory: reels-factory
