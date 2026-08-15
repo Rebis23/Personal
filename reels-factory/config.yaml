@@ -34,13 +34,18 @@ clips:
   # "blur"   = video originale centrato su sfondo sfocato
   # "crop"   = ritaglio centrale 9:16 a pieno schermo
   vertical_mode: "square"
+  # Raggio degli angoli arrotondati del riquadro video (0 = spigoli vivi)
+  corner_radius: 48
+  # Lento zoom-in progressivo per dare vita all'inquadratura (0 = disattivato)
+  zoom: 0.06
 
 subtitles:
   # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)
   # "karaoke" = gruppi di parole con evidenziazione progressiva
   style: "word"
-  # Nunito Black: font tondo e pieno, incluso nel repo (assets/fonts)
-  font: "Nunito"
+  # Font tondo pieno (file in assets/fonts). Alternative pronte:
+  # "Baloo 2 ExtraBold", "Rounded Mplus 1c ExtraBold", "Nunito"
+  font: "Fredoka"
   font_size: 112
   # true = PAROLE IN MAIUSCOLO, false = come pronunciate
   uppercase: false
