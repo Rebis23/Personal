@@ -41,9 +41,10 @@ clips:
   # Motore delle caption: "remotion" (premium, animato) con fallback
   # automatico su "ass" (classico) se Remotion non è disponibile
   renderer: "remotion"
-  # Card iniziale con l'hook a schermo intero (stile Williamson)
+  # Banner bianco con l'hook (testo nero) sopra la testa di chi parla.
+  # seconds: 0 = visibile per tutta la clip
   hook_card: true
-  hook_card_seconds: 1.3
+  hook_card_seconds: 0
 
 subtitles:
   # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)
@@ -97,8 +98,8 @@ instagram:
   # Firma opzionale aggiunta a ogni caption (lascia vuoto per disattivare)
   caption_footer: ""
   # true = pubblica davvero; false = fa tutto tranne la pubblicazione (test)
-  # ⚠️ MODALITÀ PROVA attiva per il collaudo iniziale: rimettere true dopo l'ok
-  auto_publish: false
+  # ✅ Attivato il 15/08 sera su ok di Lorenzo: 1 Reel al giorno alle 11:30
+  auto_publish: true
 
 claude:
   model: "claude-opus-5"

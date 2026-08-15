@@ -222,15 +222,14 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                     clip_words, emph,
                     words_per_screen=sub_cfg["words_per_line"],
                 )
-                hook_card_s = float(cfg["clips"].get("hook_card_seconds", 1.3)) \
-                    if cfg["clips"].get("hook_card", True) else 0.0
                 remotion_render.render(
                     base_mp4, out_mp4,
                     pages=pages, duration=end - start,
                     font_size=sub_cfg["font_size"],
                     vertical_position=sub_cfg["vertical_position"],
                     uppercase=sub_cfg.get("uppercase", False),
-                    hook_text=pick.hook, hook_seconds=hook_card_s,
+                    hook_text=pick.hook if cfg["clips"].get("hook_card", True) else "",
+                    hook_seconds=float(cfg["clips"].get("hook_card_seconds", 0)),
                 )
                 rendered = True
             except Exception as e:  # noqa: BLE001 — il fallback ASS tiene viva la pipeline

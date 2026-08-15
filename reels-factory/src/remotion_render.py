@@ -51,7 +51,9 @@ def build_pages(words: list[dict], emphasis: set[str],
             "start": round(max(0.0, start), 3),
             "end": round(max(start + 0.15, end), 3),
             "words": [
-                {"text": w["word"].strip(), "em": norm(w["word"]) in emphasis}
+                # lstrip: Whisper a volte produce parole tipo "'attenzione"
+                {"text": w["word"].strip().lstrip("'’"),
+                 "em": norm(w["word"]) in emphasis}
                 for w in g
             ],
         })
