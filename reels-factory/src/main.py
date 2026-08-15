@@ -183,6 +183,8 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             start=start, end=end, vertical_mode=cfg["clips"]["vertical_mode"],
             fonts_dir=FONTS_DIR if FONTS_DIR.is_dir() else None,
             cutaway=cutaway, cutaway_at=cut_at, cutaway_duration=cut_dur,
+            corner_radius=cfg["clips"].get("corner_radius", 48),
+            zoom=cfg["clips"].get("zoom", 0.06),
         )
 
         r2_key = f"reels/{vid}/{clip_id}.mp4"

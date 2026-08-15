@@ -24,8 +24,9 @@ Style: Reel,{font},{size},{highlight},{base},&H00000000,&H96000000,-1,0,0,0,100,
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
 
-# Parola singola: bianco pieno, bordo nero morbido semi-trasparente e ombra
-# leggera, allineamento centrale (la posizione esatta arriva con \pos).
+# Parola singola: bianco pieno e pulito — nessun bordo, nessuna ombra
+# (come il riferimento scelto da Lorenzo). Allineamento centrale, la
+# posizione esatta arriva con \pos.
 ASS_HEADER_WORD = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 1080
@@ -35,7 +36,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Word,{font},{size},{base},{base},&H78000000,&H8C000000,-1,0,0,0,100,100,0,0,1,3,3,5,40,40,0,1
+Style: Word,{font},{size},{base},{base},&HFF000000,&HFF000000,-1,0,0,0,100,100,0,0,1,0,0,5,40,40,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

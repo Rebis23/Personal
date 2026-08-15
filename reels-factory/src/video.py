@@ -4,17 +4,27 @@ impressi, eventuale spezzone di film in sovraimpressione (cutaway)."""
 import subprocess
 from pathlib import Path
 
+SQUARE_Y = 420  # il quadrato 1080x1080 parte qui sulla tela 1080x1920
 
-def _vertical_filter(mode: str) -> str:
+
+def _vertical_filter(mode: str, duration: float, zoom: float) -> str:
     if mode == "crop":
         # Ritaglio centrale 9:16 a piena altezza
         return "[0:v]crop=ih*9/16:ih,scale=1080:1920,setsar=1[vmain]"
     if mode == "square":
         # Stile Modern Wisdom: video ritagliato quadrato (persona al centro)
-        # su tela nera 9:16
+        # su tela nera 9:16, con un lento push-in per dare vita all'inquadratura
+        push = ""
+        if zoom > 0:
+            rate = zoom / max(1.0, duration * 30)
+            push = (
+                f",zoompan=z='1+{rate:.7f}*in'"
+                ":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+                ":d=1:s=1080x1080:fps=30"
+            )
         return (
-            "[0:v]crop=ih:ih,scale=1080:1080,setsar=1,"
-            "pad=1080:1920:0:420:black[vmain]"
+            f"[0:v]crop=ih:ih,scale=1080:1080,setsar=1{push},"
+            f"pad=1080:1920:0:{SQUARE_Y}:black[vmain]"
         )
     # Default "blur": video intero centrato su sfondo sfocato
     return (
@@ -24,6 +34,28 @@ def _vertical_filter(mode: str) -> str:
         "[fg]scale=1080:-2[fgs];"
         "[bgb][fgs]overlay=(W-w)/2:(H-h)/2,setsar=1[vmain]"
     )
+
+
+def _corner_mask(radius: int, out_path: Path) -> Path:
+    """PNG 1080x1920 trasparente con gli angoli del quadrato coperti di nero:
+    sovrapposto al video, arrotonda gli angoli del riquadro (lo sfondo è nero).
+    Antialias tramite disegno a 4x e ridimensionamento."""
+    from PIL import Image, ImageDraw, ImageOps
+
+    s = 4
+    mask = Image.new("L", (1080 * s, 1080 * s), 0)
+    d = ImageDraw.Draw(mask)
+    d.rounded_rectangle(
+        [0, 0, 1080 * s - 1, 1080 * s - 1], radius=radius * s, fill=255,
+    )
+    mask = mask.resize((1080, 1080), Image.LANCZOS)
+
+    corners = Image.new("RGBA", (1080, 1920), (0, 0, 0, 0))
+    black = Image.new("RGBA", (1080, 1080), (0, 0, 0, 255))
+    black.putalpha(ImageOps.invert(mask))
+    corners.paste(black, (0, SQUARE_Y), black)
+    corners.save(out_path)
+    return out_path
 
 
 def render_clip(
@@ -38,6 +70,8 @@ def render_clip(
     cutaway: Path | None = None,
     cutaway_at: float = 0.0,
     cutaway_duration: float = 0.0,
+    corner_radius: int = 48,
+    zoom: float = 0.06,
 ) -> Path:
     """Taglia [start, end], converte in 1080x1920 e imprime i sottotitoli.
 
@@ -52,23 +86,33 @@ def render_clip(
         ass_arg += f":fontsdir={fonts_dir}"
 
     inputs = ["-ss", f"{start:.3f}", "-t", f"{duration:.3f}", "-i", str(source)]
-    parts = [_vertical_filter(vertical_mode)]
+    parts = [_vertical_filter(vertical_mode, duration, zoom)]
+    last = "[vmain]"
+    n_inputs = 1
 
     if cutaway is not None and cutaway_duration > 0.25:
         inputs += ["-i", str(cutaway)]
+        idx = n_inputs
+        n_inputs += 1
         t1, t2 = cutaway_at, cutaway_at + cutaway_duration
         parts.append(
-            "[1:v]crop=ih:ih,scale=1080:1080,setsar=1,fps=30,"
+            f"[{idx}:v]crop=ih:ih,scale=1080:1080,setsar=1,fps=30,"
             f"trim=duration={cutaway_duration:.3f},"
             f"setpts=PTS-STARTPTS+{t1:.3f}/TB[cut]"
         )
         parts.append(
-            f"[vmain][cut]overlay=(W-w)/2:(H-h)/2:eof_action=pass"
+            f"{last}[cut]overlay=(W-w)/2:{SQUARE_Y}:eof_action=pass"
             f":enable='between(t,{t1:.3f},{t2:.3f})'[vover]"
         )
         last = "[vover]"
-    else:
-        last = "[vmain]"
+
+    if vertical_mode == "square" and corner_radius > 0:
+        mask_png = _corner_mask(corner_radius, ass_file.parent / "corners.png")
+        inputs += ["-loop", "1", "-i", str(mask_png)]
+        idx = n_inputs
+        n_inputs += 1
+        parts.append(f"{last}[{idx}:v]overlay=0:0:shortest=1[vcorn]")
+        last = "[vcorn]"
 
     parts.append(f"{last}{ass_arg}[vout]")
     filter_complex = ";".join(parts)
