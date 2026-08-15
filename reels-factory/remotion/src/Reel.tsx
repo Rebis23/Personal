@@ -128,48 +128,55 @@ const CaptionPage: React.FC<{
   );
 };
 
-// ----------------------------------------------------------- HOOK CARD ---
+// --------------------------------------------------------- HOOK BANNER ---
+// Banner bianco con testo nero sopra la testa di chi parla (mai a schermo
+// pieno, mai su nero): entra con una molla mentre il video già scorre.
+// seconds = 0 → resta visibile per tutta la clip.
 
-const HookCard: React.FC<{text: string; seconds: number}> = ({text, seconds}) => {
+const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const total = Math.round(seconds * fps);
+  const total = seconds > 0 ? Math.round(seconds * fps) : Number.MAX_SAFE_INTEGER;
   if (frame > total) {
     return null;
   }
-  const fadeOut = interpolate(frame, [total - 9, total], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const fadeOut =
+    seconds > 0
+      ? interpolate(frame, [total - 9, total], [1, 0], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        })
+      : 1;
   const entrance = spring({
     frame,
     fps,
-    config: {damping: 18, stiffness: 160, mass: 0.7},
-    durationInFrames: 16,
+    config: {damping: 15, stiffness: 190, mass: 0.7},
+    durationInFrames: 18,
   });
-  const scale = interpolate(entrance, [0, 1], [0.96, 1]);
+  const scale = interpolate(entrance, [0, 1], [0.88, 1]);
+  const opacity = interpolate(frame, [0, 4], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
 
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: `rgba(0,0,0,${0.94 * fadeOut})`,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <AbsoluteFill style={{alignItems: 'center'}}>
       <div
         style={{
-          opacity: fadeOut,
+          position: 'absolute',
+          top: 190,
+          opacity: opacity * fadeOut,
           transform: `scale(${scale})`,
-          width: '80%',
+          maxWidth: '86%',
+          backgroundColor: 'white',
+          color: 'black',
           textAlign: 'center',
           fontFamily: 'Instrument Sans',
           fontWeight: 700,
-          fontSize: 92,
-          lineHeight: 1.14,
-          letterSpacing: '0.01em',
-          color: 'white',
-          textTransform: 'uppercase',
+          fontSize: 58,
+          lineHeight: 1.22,
+          padding: '26px 44px',
+          borderRadius: 30,
+          boxShadow: '0 14px 44px rgba(0,0,0,0.5)',
         }}
       >
         {text}
@@ -186,12 +193,7 @@ export const Reel: React.FC<ReelProps> = (props) => {
   const t = frame / fps;
   const fontCss = useFonts();
 
-  // Niente caption finché la hook card è a schermo
-  const captionsFrom = props.hookText ? props.hookSeconds : 0;
-  const activePage =
-    t >= captionsFrom
-      ? props.pages.find((p) => t >= p.start && t < p.end)
-      : undefined;
+  const activePage = props.pages.find((p) => t >= p.start && t < p.end);
 
   return (
     <AbsoluteFill style={{backgroundColor: 'black'}}>
@@ -205,8 +207,8 @@ export const Reel: React.FC<ReelProps> = (props) => {
           uppercase={props.uppercase}
         />
       ) : null}
-      {props.hookText && props.hookSeconds > 0 ? (
-        <HookCard text={props.hookText} seconds={props.hookSeconds} />
+      {props.hookText ? (
+        <HookBanner text={props.hookText} seconds={props.hookSeconds} />
       ) : null}
     </AbsoluteFill>
   );
