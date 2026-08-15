@@ -81,23 +81,31 @@ def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path
     """Scarica il video via Apify. Ritorna il percorso del file mp4 o None."""
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / f"{video_id}.mp4"
-    try:
-        row = _run_actor({
-            "videoUrls": [f"https://www.youtube.com/watch?v={video_id}"],
-            "quality": quality,
-            "format": "mp4",
-        })[0]
-        url = row.get("downloadUrl")
-        if not url:
-            raise ApifyError("nessun downloadUrl nella risposta")
-        with requests.get(url, stream=True, timeout=120) as r:
-            r.raise_for_status()
-            with open(out, "wb") as f:
-                for chunk in r.iter_content(chunk_size=1 << 20):
-                    f.write(chunk)
-        size_mb = out.stat().st_size / 1e6
-        print(f"  ⬇️ Video scaricato via Apify ({size_mb:.0f} MB)")
-        return out
-    except (ApifyError, requests.RequestException) as e:
-        print(f"  ⚠️ Apify download fallito: {e}")
-        return None
+    for attempt in (1, 2):
+        try:
+            row = _run_actor({
+                "videoUrls": [f"https://www.youtube.com/watch?v={video_id}"],
+                "quality": quality,
+                "format": "mp4",
+            })[0]
+            url = row.get("downloadUrl")
+            if not url:
+                raise ApifyError("nessun downloadUrl nella risposta")
+            # Il file sta nel key-value store privato dell'account: senza
+            # autenticazione risponde 403
+            headers = {}
+            if "api.apify.com" in url:
+                headers["Authorization"] = f"Bearer {_token()}"
+            with requests.get(url, headers=headers, stream=True, timeout=120) as r:
+                r.raise_for_status()
+                with open(out, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=1 << 20):
+                        f.write(chunk)
+            size_mb = out.stat().st_size / 1e6
+            print(f"  ⬇️ Video scaricato via Apify ({size_mb:.0f} MB)")
+            return out
+        except (ApifyError, requests.RequestException) as e:
+            print(f"  ⚠️ Apify download fallito (tentativo {attempt}/2): {e}")
+            if attempt == 1:
+                time.sleep(30)
+    return None
