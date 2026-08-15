@@ -24,9 +24,9 @@ Style: Reel,{font},{size},{highlight},{base},&H00000000,&H96000000,-1,0,0,0,100,
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
 
-# Parola singola: bianco pieno e pulito — nessun bordo, nessuna ombra
-# (come il riferimento scelto da Lorenzo). Allineamento centrale, la
-# posizione esatta arriva con \pos.
+# Gruppi di 2-3 parole: bianco pieno con una leggera ombra morbida attorno
+# (bordo nero semi-trasparente sfumato con \blur). Allineamento centrale,
+# la posizione esatta arriva con \pos.
 ASS_HEADER_WORD = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 1080
@@ -36,7 +36,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Word,{font},{size},{base},{base},&HFF000000,&HFF000000,-1,0,0,0,100,100,0,0,1,0,0,5,40,40,0,1
+Style: Word,{font},{size},{base},{base},&H82000000,&H96000000,-1,0,0,0,100,100,0,0,1,3,2,5,60,60,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -78,7 +78,8 @@ def build_ass(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     if style == "word":
         content = _build_word(words, font, font_size, base_color,
-                              vertical_position, uppercase)
+                              vertical_position, uppercase,
+                              words_per_screen=words_per_line)
     else:
         content = _build_karaoke(words, font, font_size, highlight_color,
                                  base_color, words_per_line, vertical_position,
@@ -96,29 +97,43 @@ def _build_word(
     base_color: str,
     vertical_position: float,
     uppercase: bool,
+    words_per_screen: int = 3,
 ) -> str:
     header = ASS_HEADER_WORD.format(
         font=font, size=font_size, base=_ass_color(base_color),
     )
     x, y = 540, int(vertical_position * 1920)
 
+    # Gruppi di massimo `words_per_screen` parole, spezzati anche sulle
+    # pause naturali del parlato
+    groups: list[list[dict]] = []
+    cur: list[dict] = []
+    for w in words:
+        if cur and (len(cur) >= words_per_screen
+                    or w["start"] - cur[-1]["end"] > 0.7):
+            groups.append(cur)
+            cur = []
+        cur.append(w)
+    if cur:
+        groups.append(cur)
+
     lines: list[str] = []
-    for i, w in enumerate(words):
-        start = w["start"]
-        # La parola resta a schermo fino alla successiva (niente sfarfallio),
+    for i, g in enumerate(groups):
+        start = g[0]["start"]
+        # Il gruppo resta a schermo fino al successivo (niente sfarfallio),
         # ma nei silenzi lunghi sparisce dopo un attimo
-        if i + 1 < len(words):
-            end = min(words[i + 1]["start"], w["end"] + 0.8)
+        if i + 1 < len(groups):
+            end = min(groups[i + 1][0]["start"], g[-1]["end"] + 0.8)
         else:
-            end = w["end"] + 0.4
-        if end - start < 0.12:
-            end = start + 0.12
-        text = _escape(w["word"].strip())
+            end = g[-1]["end"] + 0.4
+        if end - start < 0.15:
+            end = start + 0.15
+        text = _escape(" ".join(w["word"].strip() for w in g))
         if uppercase:
             text = text.upper()
         lines.append(
             f"Dialogue: 0,{_ass_time(start)},{_ass_time(end)},Word,,0,0,0,,"
-            f"{{\\pos({x},{y})}}{text}"
+            f"{{\\pos({x},{y})\\blur2}}{text}"
         )
     return header + "\n".join(lines) + "\n"
 

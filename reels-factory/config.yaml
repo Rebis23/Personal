@@ -46,17 +46,30 @@ subtitles:
   # Font scelto da Lorenzo (file in assets/fonts). Alternative pronte:
   # "Fredoka", "Baloo 2 ExtraBold", "Rounded Mplus 1c ExtraBold", "Nunito"
   font: "Instrument Sans"
-  font_size: 104
+  # Grande e importante (gruppi di 2-3 parole per schermata)
+  font_size: 128
   # true = PAROLE IN MAIUSCOLO, false = come pronunciate
   uppercase: false
   # Colori in formato ASS &HBBGGRR& (BGR!)
   base_color: "&HFFFFFF&"        # bianco
   highlight_color: "&H00FFFF&"   # giallo (usato solo dallo stile karaoke)
-  # Parole per riga (solo stile karaoke)
+  # Parole per schermata (stile word) / per riga (stile karaoke)
   words_per_line: 3
   # Posizione verticale del testo (0 = alto, 1 = basso).
   # 0.68 = sul petto, dentro il riquadro ma sotto il viso
   vertical_position: 0.68
+
+audio:
+  # Sound design: base musicale in sottofondo (file bed-*.mp3 in assets/audio,
+  # in loop, dissolvenza finale). Per aggiungere musica tua: metti gli mp3
+  # lì con nome bed-<nome>.mp3 — la scelta ruota da clip a clip.
+  music: true
+  # Volume della musica rispetto alla voce (dB)
+  music_gain_db: -20
+  # La musica si abbassa da sola quando parli (sidechain compression)
+  ducking: true
+  # Effetto whoosh all'ingresso dello spezzone film
+  whoosh_on_cutaway: true
 
 movies:
   # Spezzoni di film pertinenti nelle clip. Due sorgenti possibili:
