@@ -70,8 +70,9 @@ def render_clip(
     cutaway: Path | None = None,
     cutaway_at: float = 0.0,
     cutaway_duration: float = 0.0,
-    corner_radius: int = 48,
-    zoom: float = 0.06,
+    cutaway_src_offset: float = 0.0,
+    corner_radius: int = 96,
+    zoom: float = 0.0,
 ) -> Path:
     """Taglia [start, end], converte in 1080x1920 e imprime i sottotitoli.
 
@@ -91,6 +92,9 @@ def render_clip(
     n_inputs = 1
 
     if cutaway is not None and cutaway_duration > 0.25:
+        # -ss prima dell'input: lo spezzone parte dal momento giusto della scena
+        if cutaway_src_offset > 0:
+            inputs += ["-ss", f"{cutaway_src_offset:.3f}"]
         inputs += ["-i", str(cutaway)]
         idx = n_inputs
         n_inputs += 1

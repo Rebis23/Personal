@@ -8,15 +8,16 @@ generi — il video è processabile appena pubblicato.
 from pathlib import Path
 
 
-def transcribe_words(video_path: Path, model_size: str = "small") -> list[dict]:
+def transcribe_words(video_path: Path, model_size: str = "small",
+                     language: str = "it") -> list[dict]:
     """Ritorna [{word, start, end}] in secondi, stessa forma di transcript.parse_json3."""
     from faster_whisper import WhisperModel  # import pigro: pacchetto pesante
 
-    print(f"  🎙️ Trascrizione con Whisper ({model_size})...")
+    print(f"  🎙️ Trascrizione con Whisper ({model_size}, {language})...")
     model = WhisperModel(model_size, device="cpu", compute_type="int8")
     segments, info = model.transcribe(
         str(video_path),
-        language="it",
+        language=language,
         word_timestamps=True,
         vad_filter=True,
     )

@@ -35,18 +35,18 @@ clips:
   # "crop"   = ritaglio centrale 9:16 a pieno schermo
   vertical_mode: "square"
   # Raggio degli angoli arrotondati del riquadro video (0 = spigoli vivi)
-  corner_radius: 48
-  # Lento zoom-in progressivo per dare vita all'inquadratura (0 = disattivato)
-  zoom: 0.06
+  corner_radius: 96
+  # Lento zoom-in progressivo (0 = disattivato — scelta di Lorenzo)
+  zoom: 0
 
 subtitles:
   # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)
   # "karaoke" = gruppi di parole con evidenziazione progressiva
   style: "word"
-  # Font tondo pieno (file in assets/fonts). Alternative pronte:
-  # "Baloo 2 ExtraBold", "Rounded Mplus 1c ExtraBold", "Nunito"
-  font: "Fredoka"
-  font_size: 112
+  # Font scelto da Lorenzo (file in assets/fonts). Alternative pronte:
+  # "Fredoka", "Baloo 2 ExtraBold", "Rounded Mplus 1c ExtraBold", "Nunito"
+  font: "Instrument Sans"
+  font_size: 104
   # true = PAROLE IN MAIUSCOLO, false = come pronunciate
   uppercase: false
   # Colori in formato ASS &HBBGGRR& (BGR!)
@@ -54,13 +54,19 @@ subtitles:
   highlight_color: "&H00FFFF&"   # giallo (usato solo dallo stile karaoke)
   # Parole per riga (solo stile karaoke)
   words_per_line: 3
-  # Posizione verticale del testo (0 = alto, 1 = basso). 0.5 = centro.
-  vertical_position: 0.5
+  # Posizione verticale del testo (0 = alto, 1 = basso).
+  # 0.68 = sul petto, dentro il riquadro ma sotto il viso
+  vertical_position: 0.68
 
-clipcafe:
-  # Spezzoni di film pertinenti (https://clip.cafe, abbonamento PRO ~5$/mese).
-  # Si attiva da solo quando il secret CLIPCAFE_API_KEY è configurato.
+movies:
+  # Spezzoni di film pertinenti nelle clip. Due sorgenti possibili:
+  # - "clipcafe": https://clip.cafe (abbonamento PRO ~5$/mese, secret CLIPCAFE_API_KEY)
+  # - "youtube":  gratis — cerca la scena sui canali movie-clips di YouTube
+  #               (secret YOUTUBE_API_KEY, chiave gratuita di Google Cloud),
+  #               la scarica via Apify e trova il momento esatto con Whisper
+  # Usa la prima sorgente configurata nell'ordine indicato qui:
   enabled: true
+  sources: ["clipcafe", "youtube"]
   # Durata massima dello spezzone sovraimpresso
   max_seconds: 5
 
