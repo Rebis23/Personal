@@ -1,9 +1,15 @@
-"""Generazione sottotitoli ASS stile Reels: gruppi di poche parole, in maiuscolo,
-con evidenziazione karaoke della parola pronunciata."""
+"""Generazione sottotitoli ASS stile Reels.
+
+Due stili:
+  - "word"    → una parola alla volta, grande, bianca, centrata sul video
+                (stile Modern Wisdom / Chris Williamson)
+  - "karaoke" → gruppi di poche parole con evidenziazione della parola
+                pronunciata (stile classico Reels)
+"""
 
 from pathlib import Path
 
-ASS_HEADER = """[Script Info]
+ASS_HEADER_KARAOKE = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 1080
 PlayResY: 1920
@@ -13,6 +19,23 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Reel,{font},{size},{highlight},{base},&H00000000,&H96000000,-1,0,0,0,100,100,0,0,1,5,2,2,60,60,{margin_v},1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+
+# Parola singola: bianco pieno, bordo nero morbido semi-trasparente e ombra
+# leggera, allineamento centrale (la posizione esatta arriva con \pos).
+ASS_HEADER_WORD = """[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Word,{font},{size},{base},{base},&H78000000,&H8C000000,-1,0,0,0,100,100,0,0,1,3,3,5,40,40,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -41,20 +64,80 @@ def build_ass(
     words: list[dict],
     out_path: Path,
     *,
-    font: str = "DejaVu Sans",
-    font_size: int = 64,
+    font: str = "Nunito",
+    font_size: int = 112,
     highlight_color: str = "&H00FFFF&",
     base_color: str = "&HFFFFFF&",
     words_per_line: int = 3,
-    vertical_position: float = 0.72,
+    vertical_position: float = 0.5,
+    style: str = "word",
+    uppercase: bool = False,
 ) -> Path:
-    """Scrive il file .ass. `words` ha tempi relativi all'inizio della clip.
+    """Scrive il file .ass. `words` ha tempi relativi all'inizio della clip."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    if style == "word":
+        content = _build_word(words, font, font_size, base_color,
+                              vertical_position, uppercase)
+    else:
+        content = _build_karaoke(words, font, font_size, highlight_color,
+                                 base_color, words_per_line, vertical_position,
+                                 uppercase)
+    out_path.write_text(content, encoding="utf-8")
+    return out_path
 
-    Il karaoke ASS parte dal colore Secondary (base) e "riempie" con il
-    Primary (evidenziazione) parola per parola tramite i tag \\k.
-    """
+
+# ------------------------------------------------------------------- WORD ---
+
+def _build_word(
+    words: list[dict],
+    font: str,
+    font_size: int,
+    base_color: str,
+    vertical_position: float,
+    uppercase: bool,
+) -> str:
+    header = ASS_HEADER_WORD.format(
+        font=font, size=font_size, base=_ass_color(base_color),
+    )
+    x, y = 540, int(vertical_position * 1920)
+
+    lines: list[str] = []
+    for i, w in enumerate(words):
+        start = w["start"]
+        # La parola resta a schermo fino alla successiva (niente sfarfallio),
+        # ma nei silenzi lunghi sparisce dopo un attimo
+        if i + 1 < len(words):
+            end = min(words[i + 1]["start"], w["end"] + 0.8)
+        else:
+            end = w["end"] + 0.4
+        if end - start < 0.12:
+            end = start + 0.12
+        text = _escape(w["word"].strip())
+        if uppercase:
+            text = text.upper()
+        lines.append(
+            f"Dialogue: 0,{_ass_time(start)},{_ass_time(end)},Word,,0,0,0,,"
+            f"{{\\pos({x},{y})}}{text}"
+        )
+    return header + "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------- KARAOKE ---
+
+def _build_karaoke(
+    words: list[dict],
+    font: str,
+    font_size: int,
+    highlight_color: str,
+    base_color: str,
+    words_per_line: int,
+    vertical_position: float,
+    uppercase: bool,
+) -> str:
+    """Il karaoke ASS parte dal colore Secondary (base) e "riempie" con il
+    Primary (evidenziazione) parola per parola tramite i tag \\k."""
     margin_v = int((1.0 - vertical_position) * 1920)
-    header = ASS_HEADER.format(
+    header = ASS_HEADER_KARAOKE.format(
         font=font,
         size=font_size,
         highlight=_ass_color(highlight_color),
@@ -77,13 +160,11 @@ def build_ass(
             if gap_cs > 2:
                 parts.append(f"{{\\k{gap_cs}}}")
             dur_cs = max(1, round((w["end"] - w["start"]) * 100))
-            parts.append(f"{{\\k{dur_cs}}}{_escape(w['word'].upper())} ")
+            word = w["word"].upper() if uppercase else w["word"]
+            parts.append(f"{{\\k{dur_cs}}}{_escape(word)} ")
             cursor = w["end"]
         text = "".join(parts).rstrip()
         lines.append(
             f"Dialogue: 0,{_ass_time(start)},{_ass_time(end)},Reel,,0,0,0,,{text}"
         )
-
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
-    return out_path
+    return header + "\n".join(lines) + "\n"

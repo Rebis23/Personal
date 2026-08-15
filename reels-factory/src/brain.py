@@ -14,6 +14,24 @@ class ClipPick(BaseModel):
     caption: str = Field(description="Caption Instagram in italiano: hook forte nella prima riga, 2-4 righe totali, niente hashtag qui")
     hashtags: list[str] = Field(description="5-8 hashtag pertinenti in italiano, senza #")
     rationale: str = Field(description="Perché questo momento funziona come Reel (1 frase)")
+    movie_query: str = Field(
+        default="",
+        description=(
+            "Se un momento ICONICO di un film famoso rafforza il concetto della clip: "
+            "query di ricerca IN INGLESE per trovarlo (battuta o descrizione della "
+            "scena, es. 'you can't handle the truth' o 'red pill blue pill choice'). "
+            "Solo film celebri che il pubblico riconosce al volo. Stringa vuota se "
+            "nessun film calza davvero: meglio niente che una citazione forzata."
+        ),
+    )
+    movie_insert_at_seconds: float = Field(
+        default=0.0,
+        description=(
+            "Momento (secondi assoluti del video, dentro la clip) in cui inserire lo "
+            "spezzone del film: il punto in cui il concetto citato viene pronunciato. "
+            "0 se movie_query è vuota."
+        ),
+    )
 
 
 class ClipSelection(BaseModel):
@@ -42,7 +60,13 @@ start_seconds e end_seconds con precisione.
 
 Per le caption: prima riga = hook che ferma lo scroll, poi 1-3 righe che aggiungono \
 valore o creano curiosità verso il video completo. Tono diretto, zero fuffa, \
-mai da guru. Scrivi in italiano."""
+mai da guru. Scrivi in italiano.
+
+Spezzoni di film (movie_query): se — e solo se — il concetto della clip richiama \
+un momento iconico di un film celebre (Matrix, Il Padrino, The Wolf of Wall Street, \
+A Few Good Men, Rocky...), indica la query inglese per trovarlo e il secondo esatto \
+in cui inserirlo. Lo spezzone dura 2-6 secondi e copre il video del parlato mentre \
+l'audio continua. Usalo al massimo in 1-2 clip su 3, mai forzato."""
 
 
 def select_clips(

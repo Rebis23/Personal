@@ -15,10 +15,11 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, drive, instagram, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, clipcafe, drive, instagram, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
+FONTS_DIR = ROOT / "assets" / "fonts"
 MAX_VIDEOS_PER_RUN = 1  # limita la durata di ogni esecuzione
 
 
@@ -153,11 +154,35 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             highlight_color=sub_cfg["highlight_color"], base_color=sub_cfg["base_color"],
             words_per_line=sub_cfg["words_per_line"],
             vertical_position=sub_cfg["vertical_position"],
+            style=sub_cfg.get("style", "word"),
+            uppercase=sub_cfg.get("uppercase", False),
         )
+
+        # Spezzone di film (facoltativo): se Claude l'ha proposto e Clip.cafe
+        # è configurato. Qualsiasi problema qui NON blocca la clip.
+        cutaway, cut_at, cut_dur = None, 0.0, 0.0
+        cc_cfg = cfg.get("clipcafe", {})
+        if (cc_cfg.get("enabled") and clipcafe.is_configured()
+                and pick.movie_query.strip()):
+            found = clipcafe.find_clip(
+                pick.movie_query,
+                max_seconds=cc_cfg.get("max_seconds", 6),
+            )
+            if found:
+                cutaway = clipcafe.download(found, vdir / f"{clip_id}-film.mp4")
+            if cutaway is not None:
+                cut_dur = min(found["duration"], cc_cfg.get("max_seconds", 6))
+                # Dentro la clip: mai nei primi 2s (l'hook è sacro), mai oltre la fine
+                rel = pick.movie_insert_at_seconds - start
+                clip_len = end - start
+                cut_at = min(max(rel, 2.0), max(2.0, clip_len - cut_dur - 1.0))
+
         out_mp4 = vdir / f"{clip_id}.mp4"
         video.render_clip(
             source, ass_file, out_mp4,
             start=start, end=end, vertical_mode=cfg["clips"]["vertical_mode"],
+            fonts_dir=FONTS_DIR if FONTS_DIR.is_dir() else None,
+            cutaway=cutaway, cutaway_at=cut_at, cutaway_duration=cut_dur,
         )
 
         r2_key = f"reels/{vid}/{clip_id}.mp4"

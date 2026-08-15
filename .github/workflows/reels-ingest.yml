@@ -83,6 +83,8 @@ jobs:
           # carica il file master del video
           GDRIVE_API_KEY: ${{ secrets.GDRIVE_API_KEY }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          # Spezzoni di film nelle clip (facoltativo, abbonamento clip.cafe PRO)
+          CLIPCAFE_API_KEY: ${{ secrets.CLIPCAFE_API_KEY }}
           # Opzionale: cookie YouTube (cookies.txt) per tentare prima il
           # download diretto gratuito
           YT_COOKIES: ${{ secrets.YT_COOKIES }}

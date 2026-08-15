@@ -29,20 +29,35 @@ clips:
   per_video: 3
   min_seconds: 20
   max_seconds: 75
-  # "blur"  = video originale centrato su sfondo sfocato (sicuro per ogni ripresa)
-  # "crop"  = ritaglio centrale 9:16 (meglio se il soggetto è sempre al centro)
-  vertical_mode: "blur"
+  # "square" = video ritagliato quadrato su sfondo nero, persona al centro
+  #            (stile Modern Wisdom — scelto da Lorenzo il 15/08)
+  # "blur"   = video originale centrato su sfondo sfocato
+  # "crop"   = ritaglio centrale 9:16 a pieno schermo
+  vertical_mode: "square"
 
 subtitles:
-  font: "DejaVu Sans"
-  font_size: 64
-  # Colori in formato ASS &HBBGGRR& (BGR!). Giallo evidenziato, bianco base.
-  highlight_color: "&H00FFFF&"   # giallo
+  # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)
+  # "karaoke" = gruppi di parole con evidenziazione progressiva
+  style: "word"
+  # Nunito Black: font tondo e pieno, incluso nel repo (assets/fonts)
+  font: "Nunito"
+  font_size: 112
+  # true = PAROLE IN MAIUSCOLO, false = come pronunciate
+  uppercase: false
+  # Colori in formato ASS &HBBGGRR& (BGR!)
   base_color: "&HFFFFFF&"        # bianco
-  # Parole per riga di sottotitolo
+  highlight_color: "&H00FFFF&"   # giallo (usato solo dallo stile karaoke)
+  # Parole per riga (solo stile karaoke)
   words_per_line: 3
-  # Posizione verticale (0 = alto, 1 = basso). 0.72 = terzo inferiore.
-  vertical_position: 0.72
+  # Posizione verticale del testo (0 = alto, 1 = basso). 0.5 = centro.
+  vertical_position: 0.5
+
+clipcafe:
+  # Spezzoni di film pertinenti (https://clip.cafe, abbonamento PRO ~5$/mese).
+  # Si attiva da solo quando il secret CLIPCAFE_API_KEY è configurato.
+  enabled: true
+  # Durata massima dello spezzone sovraimpresso
+  max_seconds: 5
 
 instagram:
   # Aggiunti in coda alla caption generata da Claude
