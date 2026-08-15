@@ -21,7 +21,7 @@ class ApifyError(RuntimeError):
 
 
 def _token() -> str:
-    token = os.environ.get("APIFY_TOKEN", "")
+    token = os.environ.get("APIFY_TOKEN", "").strip()
     if not token:
         raise ApifyError("Secret APIFY_TOKEN mancante")
     return token

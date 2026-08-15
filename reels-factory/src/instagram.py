@@ -13,7 +13,7 @@ import time
 
 import requests
 
-GRAPH_VERSION = os.environ.get("IG_GRAPH_API_VERSION", "v23.0")
+GRAPH_VERSION = os.environ.get("IG_GRAPH_API_VERSION", "v23.0").strip()
 BASE = f"https://graph.facebook.com/{GRAPH_VERSION}"
 
 
@@ -21,12 +21,14 @@ class InstagramError(RuntimeError):
     pass
 
 
+# .strip(): i segreti incollati nei GitHub Secrets possono avere un a-capo finale
+
 def _token() -> str:
-    return os.environ["IG_ACCESS_TOKEN"]
+    return os.environ["IG_ACCESS_TOKEN"].strip()
 
 
 def _user_id() -> str:
-    return os.environ["IG_USER_ID"]
+    return os.environ["IG_USER_ID"].strip()
 
 
 def _check(resp: requests.Response) -> dict:

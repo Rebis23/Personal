@@ -8,13 +8,22 @@ import boto3
 from botocore.config import Config
 
 
+def _env(name: str, default: str | None = None) -> str:
+    """Variabile d'ambiente ripulita: i segreti incollati nei GitHub Secrets
+    possono contenere spazi o un a-capo finale che rompono firme e header."""
+    val = os.environ.get(name, default)
+    if val is None:
+        raise KeyError(name)
+    return val.strip()
+
+
 def _client():
-    account_id = os.environ["R2_ACCOUNT_ID"]
+    account_id = _env("R2_ACCOUNT_ID")
     return boto3.client(
         "s3",
         endpoint_url=f"https://{account_id}.r2.cloudflarestorage.com",
-        aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
-        aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
+        aws_access_key_id=_env("R2_ACCESS_KEY_ID"),
+        aws_secret_access_key=_env("R2_SECRET_ACCESS_KEY"),
         config=Config(signature_version="s3v4"),
         region_name="auto",
     )
@@ -26,14 +35,14 @@ def upload_clip(local_path: Path, key: str) -> str:
     Se R2_PUBLIC_BASE_URL è impostato (bucket con dominio pubblico / r2.dev),
     usa quello. Altrimenti genera un URL firmato valido 48 ore.
     """
-    bucket = os.environ["R2_BUCKET"]
+    bucket = _env("R2_BUCKET")
     client = _client()
     client.upload_file(
         str(local_path), bucket, key,
         ExtraArgs={"ContentType": "video/mp4"},
     )
 
-    public_base = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
+    public_base = _env("R2_PUBLIC_BASE_URL", "").rstrip("/")
     if public_base:
         return f"{public_base}/{key}"
     return client.generate_presigned_url(
@@ -46,11 +55,11 @@ def upload_clip(local_path: Path, key: str) -> str:
 def refresh_url(key: str) -> str:
     """URL fresco per una clip già caricata (usato al momento della pubblicazione,
     perché un URL firmato generato giorni prima potrebbe essere scaduto)."""
-    public_base = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
+    public_base = _env("R2_PUBLIC_BASE_URL", "").rstrip("/")
     if public_base:
         return f"{public_base}/{key}"
     return _client().generate_presigned_url(
         "get_object",
-        Params={"Bucket": os.environ["R2_BUCKET"], "Key": key},
+        Params={"Bucket": _env("R2_BUCKET"), "Key": key},
         ExpiresIn=48 * 3600,
     )
