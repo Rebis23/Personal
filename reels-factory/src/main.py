@@ -12,6 +12,7 @@ anche in locale se hai ffmpeg, yt-dlp e le variabili d'ambiente configurate.
 import hashlib
 import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
@@ -55,8 +56,13 @@ def cmd_ingest() -> int:
         and yt.video_age_hours(v["published"]) <= max_age_h
     ]
     if not candidates:
-        print("✅ Nessun nuovo video da processare")
-        return 0
+        v = _archive_candidate(videos, cfg, st)
+        if v is None:
+            print("✅ Nessun nuovo video da processare")
+            return 0
+        print(f"📚 Nessun video nuovo: pesco dall'archivio → {v['title']}")
+        candidates = [v]
+        st["last_archive_at"] = state_mod.now_iso()
 
     processed_count = 0
     for v in candidates:
@@ -67,6 +73,45 @@ def cmd_ingest() -> int:
             processed_count += 1
         state_mod.save_state(st)
     return 0
+
+
+def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
+    """Quando non escono video nuovi, ripesca dai video passati del canale.
+
+    Vincoli: al massimo `max_videos` video d'archivio in tutto, uno solo ogni
+    `min_days_between` giorni, e solo se la coda si sta svuotando — così
+    l'archivio riempie i buchi senza inondare il profilo.
+    """
+    arc = cfg.get("archive", {})
+    if not arc.get("enabled"):
+        return None
+
+    if len(st.get("queue", [])) > arc.get("queue_below", 1):
+        return None
+
+    done = len(st.get("archive_done", []))
+    if done >= arc.get("max_videos", 5):
+        return None
+
+    last = st.get("last_archive_at")
+    if last:
+        try:
+            elapsed_h = (datetime.now(timezone.utc)
+                         - datetime.fromisoformat(last.replace("Z", "+00:00"))
+                         ).total_seconds() / 3600
+        except ValueError:
+            elapsed_h = 1e9
+        if elapsed_h < arc.get("min_days_between", 7) * 24:
+            rest = arc["min_days_between"] * 24 - elapsed_h
+            print(f"📚 Archivio: prossimo video tra {rest / 24:.1f} giorni")
+            return None
+
+    # Il più recente tra quelli mai processati (i vecchi vengono dopo i nuovi)
+    for v in videos:
+        if not state_mod.is_processed(st, v["video_id"]):
+            st.setdefault("archive_done", []).append(v["video_id"])
+            return v
+    return None
 
 
 def _mark(st: dict, v: dict, status: str, clips: list | None = None) -> None:
@@ -309,6 +354,9 @@ def cmd_publish() -> int:
     if _dry_run() or not cfg["instagram"].get("auto_publish", True):
         print("🧪 DRY RUN / auto_publish disattivato — non pubblico. Caption prevista:")
         print(clip["caption"])
+        # Verifica del collegamento a Instagram senza pubblicare nulla:
+        # serve a sapere in anticipo se l'account risponde
+        print(instagram.check_connection())
         return 0
 
     media_url = storage.refresh_url(clip["r2_key"])

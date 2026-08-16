@@ -92,9 +92,21 @@ movies:
   # Durata massima dello spezzone sovraimpresso
   max_seconds: 5
 
+archive:
+  # Quando non escono video nuovi e la coda si svuota, il sistema ripesca dai
+  # video passati del canale: così il profilo non resta mai fermo.
+  enabled: true
+  # Quanti video d'archivio recuperare in tutto
+  max_videos: 5
+  # Minimo di giorni tra un video d'archivio e il successivo
+  min_days_between: 7
+  # Si pesca dall'archivio solo se in coda restano al massimo N clip
+  queue_below: 1
+
 instagram:
-  # Aggiunti in coda alla caption generata da Claude
-  default_hashtags: "#mediaprofit #youtube #personalbrand #acquisizioneclienti #liberiprofessionisti"
+  # Profilo PERSONALE: niente hashtag di brand o promozionali. Gli hashtag
+  # tematici li sceglie Claude clip per clip, in base a ciò che si dice.
+  default_hashtags: ""
   # Firma opzionale aggiunta a ogni caption (lascia vuoto per disattivare)
   caption_footer: ""
   # true = pubblica davvero; false = fa tutto tranne la pubblicazione (test)

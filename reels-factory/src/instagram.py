@@ -38,6 +38,24 @@ def _check(resp: requests.Response) -> dict:
     return data
 
 
+def check_connection() -> str:
+    """Interroga l'account senza pubblicare: dice se l'API risponde davvero.
+    Usato nelle prove a vuoto per accorgersi in anticipo di token scaduti o
+    restrizioni sull'app Meta."""
+    try:
+        info = _check(requests.get(
+            f"{BASE}/{_user_id()}",
+            params={"fields": "username,followers_count,media_count",
+                    "access_token": _token()},
+            timeout=60,
+        ))
+        return (f"🔗 Instagram raggiungibile: @{info.get('username')} "
+                f"({info.get('followers_count')} follower, "
+                f"{info.get('media_count')} contenuti)")
+    except (InstagramError, requests.RequestException, KeyError) as e:
+        return f"⛔ Instagram NON raggiungibile: {e}"
+
+
 def publish_reel(video_url: str, caption: str, timeout_minutes: int = 15) -> dict:
     """Pubblica un Reel. Ritorna {ig_media_id, permalink}."""
     # 1. Container
