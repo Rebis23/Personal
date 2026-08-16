@@ -77,10 +77,11 @@ def get_duration(video_id: str) -> int | None:
         return None
 
 
-# YouTube blocca gli actor a ondate: lo stesso video fallisce e poi passa
-# pochi minuti dopo. Attese crescenti tra un tentativo e l'altro, alternando
-# anche la qualità richiesta (i flussi 720p a volte passano quando i 1080p no).
-RETRY_WAITS = (20, 60, 150, 300)
+# Insistere nella stessa sessione peggiora le cose: YouTube stringe le
+# maglie a chi ritenta subito. Meglio pochi tentativi e ben distanziati —
+# il vero "riprova" è affidato alle esecuzioni successive della giornata
+# (vedi i cron in .github/workflows/reels-ingest.yml).
+RETRY_WAITS = (90,)
 
 
 def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path | None:
@@ -89,8 +90,9 @@ def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path
     out = workdir / f"{video_id}.mp4"
     total = len(RETRY_WAITS) + 1
     for attempt in range(1, total + 1):
-        # Dal terzo tentativo si prova anche una qualità più bassa
-        q = quality if attempt <= 2 else ("720p" if attempt % 2 else quality)
+        # Al secondo tentativo si chiede una qualità più bassa: i flussi 720p
+        # a volte passano quando i 1080p sono bloccati
+        q = quality if attempt == 1 else "720p"
         try:
             row = _run_actor({
                 "videoUrls": [f"https://www.youtube.com/watch?v={video_id}"],

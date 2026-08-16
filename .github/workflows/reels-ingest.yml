@@ -118,6 +118,9 @@ jobs:
           # Opzionale: cookie YouTube (cookies.txt) per tentare prima il
           # download diretto gratuito
           YT_COOKIES: ${{ secrets.YT_COOKIES }}
+          # Opzionale ma risolutivo: proxy residenziale (http://utente:pass@host:porta).
+          # Con questo il download diretto funziona senza passare da Apify.
+          YT_PROXY: ${{ secrets.YT_PROXY }}
         run: python -m src.main ingest
 
       - name: Commit dello stato aggiornato

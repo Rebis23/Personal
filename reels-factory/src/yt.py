@@ -34,6 +34,18 @@ def _cookie_args() -> list[str]:
     return ["--cookies", str(_cookie_file)]
 
 
+def _proxy_args() -> list[str]:
+    """Secret YT_PROXY (es. http://utente:password@host:porta): fa uscire il
+    traffico da una connessione residenziale invece che dall'IP del runner.
+    È la via che rende il download diretto affidabile senza intermediari."""
+    proxy = os.environ.get("YT_PROXY", "").strip()
+    return ["--proxy", proxy] if proxy else []
+
+
+def _net_args() -> list[str]:
+    return _cookie_args() + _proxy_args()
+
+
 def fetch_recent_videos(channel_id: str) -> list[dict]:
     """Legge il feed RSS del canale. Ritorna [{video_id, title, published}] dal più recente."""
     url = RSS_URL.format(channel_id=channel_id)
@@ -68,7 +80,7 @@ def _run(cmd: list[str]) -> subprocess.CompletedProcess:
 
 def get_video_info(video_id: str) -> dict | None:
     """Metadati del video (durata inclusa) senza scaricarlo."""
-    proc = _run(["yt-dlp", *_cookie_args(), "--dump-json", "--no-download",
+    proc = _run(["yt-dlp", *_net_args(), "--dump-json", "--no-download",
                  f"https://www.youtube.com/watch?v={video_id}"])
     if proc.returncode != 0:
         print(f"  ⚠️ yt-dlp info fallito per {video_id}: {proc.stderr[-500:]}")
@@ -81,7 +93,7 @@ def download_video(video_id: str, workdir: Path) -> Path | None:
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / f"{video_id}.mp4"
     proc = _run([
-        "yt-dlp", *_cookie_args(),
+        "yt-dlp", *_net_args(),
         "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[height<=1080][ext=mp4]/bv*[height<=1080]+ba/b",
         "--merge-output-format", "mp4",
         "--retries", "5",
@@ -102,7 +114,7 @@ def download_auto_subs(video_id: str, workdir: Path, lang: str = "it") -> Path |
     workdir.mkdir(parents=True, exist_ok=True)
     base = workdir / f"{video_id}.subs"
     proc = _run([
-        "yt-dlp", *_cookie_args(),
+        "yt-dlp", *_net_args(),
         "--skip-download",
         "--write-auto-subs", "--write-subs",
         "--sub-langs", f"{lang},{lang}-orig",
