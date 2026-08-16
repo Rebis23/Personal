@@ -77,15 +77,24 @@ def get_duration(video_id: str) -> int | None:
         return None
 
 
+# YouTube blocca gli actor a ondate: lo stesso video fallisce e poi passa
+# pochi minuti dopo. Attese crescenti tra un tentativo e l'altro, alternando
+# anche la qualità richiesta (i flussi 720p a volte passano quando i 1080p no).
+RETRY_WAITS = (20, 60, 150, 300)
+
+
 def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path | None:
     """Scarica il video via Apify. Ritorna il percorso del file mp4 o None."""
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / f"{video_id}.mp4"
-    for attempt in (1, 2):
+    total = len(RETRY_WAITS) + 1
+    for attempt in range(1, total + 1):
+        # Dal terzo tentativo si prova anche una qualità più bassa
+        q = quality if attempt <= 2 else ("720p" if attempt % 2 else quality)
         try:
             row = _run_actor({
                 "videoUrls": [f"https://www.youtube.com/watch?v={video_id}"],
-                "quality": quality,
+                "quality": q,
                 "format": "mp4",
             })[0]
             url = row.get("downloadUrl")
@@ -96,16 +105,18 @@ def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path
             headers = {}
             if "api.apify.com" in url:
                 headers["Authorization"] = f"Bearer {_token()}"
-            with requests.get(url, headers=headers, stream=True, timeout=120) as r:
+            with requests.get(url, headers=headers, stream=True, timeout=180) as r:
                 r.raise_for_status()
                 with open(out, "wb") as f:
                     for chunk in r.iter_content(chunk_size=1 << 20):
                         f.write(chunk)
             size_mb = out.stat().st_size / 1e6
-            print(f"  ⬇️ Video scaricato via Apify ({size_mb:.0f} MB)")
+            print(f"  ⬇️ Video scaricato via Apify ({size_mb:.0f} MB, {q})")
             return out
         except (ApifyError, requests.RequestException) as e:
-            print(f"  ⚠️ Apify download fallito (tentativo {attempt}/2): {e}")
-            if attempt == 1:
-                time.sleep(30)
+            print(f"  ⚠️ Apify download fallito (tentativo {attempt}/{total}, {q}): {e}")
+            if attempt <= len(RETRY_WAITS):
+                wait = RETRY_WAITS[attempt - 1]
+                print(f"     ⏳ riprovo tra {wait}s...")
+                time.sleep(wait)
     return None
