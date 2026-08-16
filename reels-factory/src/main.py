@@ -278,11 +278,18 @@ def _build_caption(pick: brain.ClipPick, cfg: dict) -> str:
     parts = [pick.caption.strip()]
     if ig.get("caption_footer"):
         parts.append(ig["caption_footer"].strip())
-    tags = " ".join(f"#{t.lstrip('#')}" for t in pick.hashtags)
-    if ig.get("default_hashtags"):
-        tags = (tags + " " + ig["default_hashtags"].strip()).strip()
+
+    # Hashtag di Claude + quelli fissi, senza ripetizioni (Claude propone
+    # spesso gli stessi che abbiamo già in coda) e mantenendo l'ordine
+    raw = list(pick.hashtags) + (ig.get("default_hashtags") or "").split()
+    seen, tags = set(), []
+    for t in raw:
+        tag = t.strip().lstrip("#")
+        if tag and tag.lower() not in seen:
+            seen.add(tag.lower())
+            tags.append(f"#{tag}")
     if tags:
-        parts.append(tags)
+        parts.append(" ".join(tags))
     return "\n\n".join(p for p in parts if p)[:2150]
 
 
