@@ -7,8 +7,13 @@ name: "Reels Factory · Ingest"
 
 on:
   schedule:
-    # Una volta al giorno alle 16:00 UTC = 18:00 ora italiana (estate) / 17:00 (inverno)
+    # Controllo principale: 16:00 UTC = 18:00 ora italiana (estate) / 17:00 (inverno)
     - cron: "0 16 * * *"
+    # Reti di sicurezza: se il download fallisce (YouTube blocca gli actor a
+    # ondate) il video viene ripreso in automatico, senza aspettare 24 ore.
+    # Se non c'è nulla da fare, il run finisce in 30 secondi.
+    - cron: "0 20 * * *"
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 concurrency:
