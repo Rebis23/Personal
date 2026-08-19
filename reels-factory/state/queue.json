@@ -12,18 +12,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "tCyZ18Ubms4-3",
-      "video_id": "tCyZ18Ubms4",
-      "video_title": "Rendi Conscio il Tuo Inconscio | Il Grande Disegno #2",
-      "hook": "Non devi capire per agire: devi agire per capire",
-      "r2_key": "reels/tCyZ18Ubms4/tCyZ18Ubms4-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/tCyZ18Ubms4/tCyZ18Ubms4-3.mp4",
-      "caption": "Diamo per scontato che non sapere sia un problema da risolvere. Non lo è.\nNon devi capire prima di agire: devi agire per capire. La velocità risolve il 99% dei problemi, perché nel tempo in cui il problema si presenta tu sei già oltre.\nPensarci sopra non ti darà mai dati nuovi.\n\n#velocita #decisioni #mindset #business #azione #crescitapersonale",
-      "created_at": "2026-08-16T11:20:54Z"
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -40,6 +29,14 @@
       "ig_media_id": "18116561654512657",
       "permalink": "https://www.instagram.com/reel/DcLWIBwkeHj/",
       "published_at": "2026-08-18T09:59:37Z"
+    },
+    {
+      "clip_id": "tCyZ18Ubms4-3",
+      "video_id": "tCyZ18Ubms4",
+      "hook": "Non devi capire per agire: devi agire per capire",
+      "ig_media_id": "18333419830261070",
+      "permalink": "https://www.instagram.com/reel/DcN69z-Cb4q/",
+      "published_at": "2026-08-19T09:59:59Z"
     }
   ],
   "archive_done": [
