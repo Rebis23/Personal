@@ -49,6 +49,7 @@ def cmd_ingest() -> int:
     videos = yt.fetch_recent_videos(channel_id)
     print(f"   {len(videos)} video nel feed")
 
+    archive_pick = None
     max_age_h = cfg["youtube"]["max_age_days"] * 24
     candidates = [
         v for v in videos
@@ -62,15 +63,21 @@ def cmd_ingest() -> int:
             return 0
         print(f"📚 Nessun video nuovo: pesco dall'archivio → {v['title']}")
         candidates = [v]
-        st["last_archive_at"] = state_mod.now_iso()
+        archive_pick = v["video_id"]
 
     processed_count = 0
     for v in candidates:
         if processed_count >= MAX_VIDEOS_PER_RUN:
             print("⏭️ Limite video per esecuzione raggiunto, il resto alla prossima")
             break
-        if _process_video(v, cfg, st):
+        ok = _process_video(v, cfg, st)
+        if ok:
             processed_count += 1
+            # Il video d'archivio si considera speso solo ora: se il download
+            # era fallito, alla prossima esecuzione si riprova
+            if archive_pick == v["video_id"]:
+                st.setdefault("archive_done", []).append(archive_pick)
+                st["last_archive_at"] = state_mod.now_iso()
         state_mod.save_state(st)
     return 0
 
@@ -106,10 +113,12 @@ def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
             print(f"📚 Archivio: prossimo video tra {rest / 24:.1f} giorni")
             return None
 
-    # Il più recente tra quelli mai processati (i vecchi vengono dopo i nuovi)
+    # Il più recente tra quelli mai processati (i vecchi vengono dopo i nuovi).
+    # NON viene segnato qui: si registra solo a lavoro riuscito, altrimenti un
+    # download fallito brucerebbe il video e farebbe partire l'attesa di giorni
+    done_ids = set(st.get("archive_done", []))
     for v in videos:
-        if not state_mod.is_processed(st, v["video_id"]):
-            st.setdefault("archive_done", []).append(v["video_id"])
+        if not state_mod.is_processed(st, v["video_id"]) and v["video_id"] not in done_ids:
             return v
     return None
 

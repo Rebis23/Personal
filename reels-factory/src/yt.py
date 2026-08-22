@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+import time
 import tempfile
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -47,11 +48,26 @@ def _net_args() -> list[str]:
 
 
 def fetch_recent_videos(channel_id: str) -> list[dict]:
-    """Legge il feed RSS del canale. Ritorna [{video_id, title, published}] dal più recente."""
+    """Legge il feed RSS del canale. Ritorna [{video_id, title, published}] dal più recente.
+
+    Il feed ogni tanto risponde 404 o va in timeout per qualche secondo: si
+    riprova un paio di volte invece di far fallire l'intera esecuzione.
+    """
     url = RSS_URL.format(channel_id=channel_id)
     req = Request(url, headers={"User-Agent": "Mozilla/5.0 (reels-factory)"})
-    with urlopen(req, timeout=30) as resp:
-        xml_data = resp.read()
+    xml_data = None
+    for attempt in (1, 2, 3):
+        try:
+            with urlopen(req, timeout=30) as resp:
+                xml_data = resp.read()
+            break
+        except Exception as e:  # noqa: BLE001 — qualsiasi intoppo di rete
+            print(f"  ⚠️ Feed del canale non raggiungibile (tentativo {attempt}/3): {e}")
+            if attempt < 3:
+                time.sleep(15)
+    if xml_data is None:
+        print("  ⏭️ Feed non raggiungibile: riprovo alla prossima esecuzione")
+        return []
     root = ET.fromstring(xml_data)
     videos = []
     for entry in root.findall("atom:entry", NS):
