@@ -25,16 +25,6 @@
   ],
   "queue": [
     {
-      "clip_id": "eFVPQDJXKk4-1",
-      "video_id": "eFVPQDJXKk4",
-      "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
-      "hook": "Non è disciplina: lavorare tanto non mi costa nessuna fatica",
-      "r2_key": "reels/eFVPQDJXKk4/eFVPQDJXKk4-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/eFVPQDJXKk4/eFVPQDJXKk4-1.mp4",
-      "caption": "Non è disciplina. È identità.\nTutti mi chiedono come faccio a lavorare così tanto senza crollare: la verità è che non faccio fatica, perché è chi sono.\nLa voglia è una cosa, lo sforzo un'altra: chi confonde le due si ferma al primo mese.\n\n#crescitapersonale #identita #disciplina #abitudini #mentalita #produttivita #lavorosustesso",
-      "created_at": "2026-08-23T00:38:27Z"
-    },
-    {
       "clip_id": "eFVPQDJXKk4-2",
       "video_id": "eFVPQDJXKk4",
       "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
@@ -79,6 +69,14 @@
       "ig_media_id": "18333419830261070",
       "permalink": "https://www.instagram.com/reel/DcN69z-Cb4q/",
       "published_at": "2026-08-19T09:59:59Z"
+    },
+    {
+      "clip_id": "eFVPQDJXKk4-1",
+      "video_id": "eFVPQDJXKk4",
+      "hook": "Non è disciplina: lavorare tanto non mi costa nessuna fatica",
+      "ig_media_id": "18368679157208812",
+      "permalink": "https://www.instagram.com/reel/DcYNbN1ir3I/",
+      "published_at": "2026-08-23T09:53:24Z"
     }
   ],
   "archive_done": []
