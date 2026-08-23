@@ -10,9 +10,51 @@
         "tCyZ18Ubms4-2",
         "tCyZ18Ubms4-3"
       ]
+    },
+    {
+      "video_id": "eFVPQDJXKk4",
+      "title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
+      "status": "done",
+      "processed_at": "2026-08-23T00:53:01Z",
+      "clips": [
+        "eFVPQDJXKk4-1",
+        "eFVPQDJXKk4-2",
+        "eFVPQDJXKk4-3"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "eFVPQDJXKk4-1",
+      "video_id": "eFVPQDJXKk4",
+      "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
+      "hook": "Non è disciplina: lavorare tanto non mi costa nessuna fatica",
+      "r2_key": "reels/eFVPQDJXKk4/eFVPQDJXKk4-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/eFVPQDJXKk4/eFVPQDJXKk4-1.mp4",
+      "caption": "Non è disciplina. È identità.\nTutti mi chiedono come faccio a lavorare così tanto senza crollare: la verità è che non faccio fatica, perché è chi sono.\nLa voglia è una cosa, lo sforzo un'altra: chi confonde le due si ferma al primo mese.\n\n#crescitapersonale #identita #disciplina #abitudini #mentalita #produttivita #lavorosustesso",
+      "created_at": "2026-08-23T00:38:27Z"
+    },
+    {
+      "clip_id": "eFVPQDJXKk4-2",
+      "video_id": "eFVPQDJXKk4",
+      "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
+      "hook": "Non hai fallito. Ti manca solo una competenza",
+      "r2_key": "reels/eFVPQDJXKk4/eFVPQDJXKk4-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/eFVPQDJXKk4/eFVPQDJXKk4-2.mp4",
+      "caption": "Ogni volta che non hai raggiunto un obiettivo, non è stato un fallimento: era una lacuna.\nE le lacune si riempiono. Nel 2026 l'informazione è ovunque, ci sono i corsi gratuiti di Harvard.\n\"Non so farlo\" non è più una scusa.\n\n#crescitapersonale #competenze #fallimento #apprendimento #obiettivi #mentalita #miglioramentocontinuo",
+      "created_at": "2026-08-23T00:46:51Z"
+    },
+    {
+      "clip_id": "eFVPQDJXKk4-3",
+      "video_id": "eFVPQDJXKk4",
+      "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
+      "hook": "Lo sforzo non paga le bollette",
+      "r2_key": "reels/eFVPQDJXKk4/eFVPQDJXKk4-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/eFVPQDJXKk4/eFVPQDJXKk4-3.mp4",
+      "caption": "Lo sforzo non paga le bollette.\nA scuola ti dicono bravo perché ti sei impegnato: fuori non funziona così. Lo sforzo conta solo se è indirizzato.\nNon contano le aspettative, non conta quando volevi arrivarci. Conta solo quanto migliori.\n\n#crescitapersonale #risultati #aspettative #mentalita #miglioramentocontinuo #obiettivi #realta",
+      "created_at": "2026-08-23T00:53:01Z"
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
