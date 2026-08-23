@@ -9,6 +9,8 @@ Un solo actor non basta. Il 18 agosto memo23 ha iniziato a fallire in modo
 sistematico (YouTube stringe le maglie a ondate, actor per actor) e la
 fabbrica si e fermata per cinque giorni. Ora si prova una fila di actor
 diversi: quando uno viene bloccato, gli altri di solito passano ancora.
+Il 23/08 memo23 e fallito di nuovo e streamers ha scaricato al primo
+colpo: da li l'ordine attuale.
 """
 
 import os
@@ -24,29 +26,25 @@ META_ACTOR = "memo23~youtube-video-downloader"
 
 # Fila degli actor per il download vero, in ordine di preferenza. Ognuno ha
 # il suo schema di input: la funzione riceve (url, qualita) e ritorna il JSON.
-PROVIDERS = [
-    (
-        "memo23~youtube-video-downloader",
-        lambda url, q: {"videoUrls": [url], "quality": q, "format": "mp4"},
-    ),
-    (
-        "streamers~youtube-video-downloader",
-        lambda url, q: {
-            "videos": [{"url": url}],
-            "preferredQuality": q,
-            "preferredFormat": "mp4",
-            "storeInKVStore": True,
-        },
-    ),
-    (
-        "epctex~youtube-video-downloader",
-        lambda url, q: {
-            "startUrls": [url],
-            "quality": q.rstrip("p"),
-            "storageType": "apify",
-        },
-    ),
-]
+STREAMERS = (
+    "streamers~youtube-video-downloader",
+    lambda url, q: {
+        "videos": [{"url": url}],
+        "preferredQuality": q,
+        "preferredFormat": "mp4",
+        "storeInKVStore": True,
+    },
+)
+MEMO23 = (
+    "memo23~youtube-video-downloader",
+    lambda url, q: {"videoUrls": [url], "quality": q, "format": "mp4"},
+)
+EPCTEX = (
+    "epctex~youtube-video-downloader",
+    lambda url, q: {"startUrls": [url], "quality": q.rstrip("p"), "storageType": "apify"},
+)
+
+PROVIDERS = [STREAMERS, MEMO23, EPCTEX]
 
 
 class ApifyError(RuntimeError):
@@ -193,17 +191,28 @@ def _fetch(url: str, out: Path) -> Path:
 PAUSE_BETWEEN_PROVIDERS = 45
 
 
+def _attempts(quality: str) -> list[tuple]:
+    """Coppie (actor, qualita) da provare, in ordine.
+
+    Il primo actor ha due chance: la qualita richiesta e poi 720p, che e la
+    combinazione gia vista funzionare. Solo dopo si cambia fornitore.
+    """
+    plan = [(STREAMERS, quality)]
+    if quality != "720p":
+        plan.append((STREAMERS, "720p"))
+    plan += [(p, quality) for p in PROVIDERS[1:]]
+    return plan
+
+
 def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path | None:
     """Scarica il video provando gli actor in fila. Ritorna il percorso o None."""
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / f"{video_id}.mp4"
     url = f"https://www.youtube.com/watch?v={video_id}"
-    total = len(PROVIDERS)
+    plan = _attempts(quality)
+    total = len(plan)
 
-    for attempt, (actor, build_input) in enumerate(PROVIDERS, start=1):
-        # Dal secondo actor si chiede una qualita piu bassa: i flussi 720p a
-        # volte passano quando i 1080p sono bloccati
-        q = quality if attempt == 1 else "720p"
+    for attempt, ((actor, build_input), q) in enumerate(plan, start=1):
         try:
             run = _run_actor(actor, build_input(url, q))
             try:
