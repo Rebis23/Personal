@@ -43,8 +43,21 @@ def _proxy_args() -> list[str]:
     return ["--proxy", proxy] if proxy else []
 
 
+# YouTube applica un controllo anti-bot legato al "client" che chiede il
+# video. I client tv e web_safari passano il controllo molto piu spesso di
+# quello predefinito e non richiedono alcun account: e il tentativo gratuito
+# prima di ricorrere ad Apify. Sugli IP dei datacenter puo comunque non
+# bastare, ma non costa nulla provarci.
+CLIENT_ARGS = ["--extractor-args", "youtube:player_client=tv,web_safari,default"]
+
+
 def _net_args() -> list[str]:
-    return _cookie_args() + _proxy_args()
+    args = _cookie_args() + _proxy_args()
+    # I cookie autenticano diversamente dal client tv: accostarli invalida la
+    # sessione, quindi si scelgono i client alternativi solo senza cookie
+    if not os.environ.get("YT_COOKIES", "").strip():
+        args += CLIENT_ARGS
+    return args
 
 
 def fetch_recent_videos(channel_id: str) -> list[dict]:

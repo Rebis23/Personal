@@ -1,9 +1,14 @@
-"""Download dei video tramite Apify (actor memo23/youtube-video-downloader).
+"""Download dei video tramite Apify.
 
 YouTube blocca i download dagli IP dei datacenter (GitHub Actions incluso):
-l'actor fa il download sulla sua infrastruttura con proxy residenziali e ci
-restituisce un link al file, scaricabile senza blocchi. Costo: pochi centesimi
-a video, coperti dai 5 $/mese di crediti del piano gratuito Apify.
+gli actor Apify fanno il download sulla loro infrastruttura con proxy
+residenziali e ci restituiscono un link al file, scaricabile senza blocchi.
+Costo: pochi centesimi a video, coperti dai crediti mensili del piano Apify.
+
+Un solo actor non basta. Il 18 agosto memo23 ha iniziato a fallire in modo
+sistematico (YouTube stringe le maglie a ondate, actor per actor) e la
+fabbrica si e fermata per cinque giorni. Ora si prova una fila di actor
+diversi: quando uno viene bloccato, gli altri di solito passano ancora.
 """
 
 import os
@@ -12,8 +17,36 @@ from pathlib import Path
 
 import requests
 
-ACTOR = "memo23~youtube-video-downloader"
 BASE = "https://api.apify.com/v2"
+
+# Actor per i metadati (durata): leggero, non scarica il file
+META_ACTOR = "memo23~youtube-video-downloader"
+
+# Fila degli actor per il download vero, in ordine di preferenza. Ognuno ha
+# il suo schema di input: la funzione riceve (url, qualita) e ritorna il JSON.
+PROVIDERS = [
+    (
+        "memo23~youtube-video-downloader",
+        lambda url, q: {"videoUrls": [url], "quality": q, "format": "mp4"},
+    ),
+    (
+        "streamers~youtube-video-downloader",
+        lambda url, q: {
+            "videos": [{"url": url}],
+            "preferredQuality": q,
+            "preferredFormat": "mp4",
+            "storeInKVStore": True,
+        },
+    ),
+    (
+        "epctex~youtube-video-downloader",
+        lambda url, q: {
+            "startUrls": [url],
+            "quality": q.rstrip("p"),
+            "storageType": "apify",
+        },
+    ),
+]
 
 
 class ApifyError(RuntimeError):
@@ -27,10 +60,10 @@ def _token() -> str:
     return token
 
 
-def _run_actor(actor_input: dict, timeout_minutes: int = 20) -> list[dict]:
-    """Avvia l'actor, attende la fine e ritorna le righe del dataset."""
+def _run_actor(actor: str, actor_input: dict, timeout_minutes: int = 20) -> dict:
+    """Avvia l'actor, attende la fine, ritorna {items, run_id, kv_store_id}."""
     resp = requests.post(
-        f"{BASE}/acts/{ACTOR}/runs",
+        f"{BASE}/acts/{actor}/runs",
         params={"token": _token()},
         json=actor_input,
         timeout=60,
@@ -38,7 +71,8 @@ def _run_actor(actor_input: dict, timeout_minutes: int = 20) -> list[dict]:
     resp.raise_for_status()
     run = resp.json()["data"]
     run_id, dataset_id = run["id"], run["defaultDatasetId"]
-    print(f"  ☁️ Apify run {run_id} avviato...")
+    kv_store_id = run.get("defaultKeyValueStoreId", "")
+    print(f"  ☁️ Apify run {run_id} avviato ({actor})...")
 
     deadline = time.time() + timeout_minutes * 60
     while True:
@@ -48,77 +82,142 @@ def _run_actor(actor_input: dict, timeout_minutes: int = 20) -> list[dict]:
         if status == "SUCCEEDED":
             break
         if status in ("FAILED", "ABORTED", "TIMED-OUT"):
-            raise ApifyError(f"Apify run {run_id} terminato con stato {status}")
+            raise ApifyError(f"run {run_id} terminato con stato {status}")
         if time.time() > deadline:
-            raise ApifyError(f"Apify run {run_id}: timeout dopo {timeout_minutes} min")
+            raise ApifyError(f"run {run_id}: timeout dopo {timeout_minutes} min")
         time.sleep(10)
 
     items = requests.get(
         f"{BASE}/datasets/{dataset_id}/items", params={"token": _token()}, timeout=60
     ).json()
-    if not items:
-        raise ApifyError("Apify: dataset vuoto")
-    row = items[0]
-    if row.get("error"):
-        raise ApifyError(f"Apify: {row['error']}")
-    return items
+    if items and isinstance(items[0], dict) and items[0].get("error"):
+        raise ApifyError(str(items[0]["error"]))
+    return {"items": items, "run_id": run_id, "kv_store_id": kv_store_id}
+
+
+VIDEO_EXTS = (".mp4", ".m4v", ".webm", ".mkv", ".mov")
+
+
+def _walk(node, key=""):
+    """Scorre dizionari e liste annidati restituendo coppie (chiave, stringa)."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            yield from _walk(v, k)
+    elif isinstance(node, list):
+        for v in node:
+            yield from _walk(v, key)
+    elif isinstance(node, str):
+        yield key, node
+
+
+def _pick_download_url(items: list) -> str:
+    """Trova il link al file scaricato, qualunque nome gli dia l'actor.
+
+    Ogni actor ha il suo schema (downloadUrl, output.url, videoUrl...): invece
+    di inseguirli uno per uno si cerca il candidato migliore per punteggio.
+    """
+    best, best_score = "", 0
+    for key, value in _walk(items):
+        if not value.startswith("http"):
+            continue
+        low_url, low_key = value.lower(), key.lower()
+        # L'input viene spesso ripetuto nell'output: non e il file scaricato
+        if "youtube.com" in low_url or "youtu.be" in low_url:
+            continue
+        score = 0
+        if "download" in low_key:
+            score += 3
+        if low_key in ("url", "link", "fileurl", "videourl", "mediaurl", "location"):
+            score += 2
+        if any(low_url.split("?")[0].endswith(e) for e in VIDEO_EXTS):
+            score += 3
+        if "key-value-stores" in low_url or "/records/" in low_url:
+            score += 2
+        if score > best_score:
+            best, best_score = value, score
+    if best_score < 2:
+        raise ApifyError("nessun link al file nella risposta")
+    return best
+
+
+def _kv_store_url(kv_store_id: str) -> str:
+    """Ultima spiaggia: pesca il file direttamente dallo store del run."""
+    if not kv_store_id:
+        raise ApifyError("nessun key-value store da ispezionare")
+    keys = requests.get(
+        f"{BASE}/key-value-stores/{kv_store_id}/keys",
+        params={"token": _token(), "limit": 100},
+        timeout=60,
+    ).json().get("data", {}).get("items", [])
+    for item in keys:
+        name = item.get("key", "")
+        if name.lower().endswith(VIDEO_EXTS):
+            return f"{BASE}/key-value-stores/{kv_store_id}/records/{name}"
+    raise ApifyError("nessun file video nel key-value store")
 
 
 def get_duration(video_id: str) -> int | None:
     """Durata del video in secondi (solo metadati, costa una frazione di centesimo)."""
     try:
-        row = _run_actor({
+        rows = _run_actor(META_ACTOR, {
             "videoUrls": [f"https://www.youtube.com/watch?v={video_id}"],
             "metadataOnly": True,
-        }, timeout_minutes=5)[0]
-        return int(row.get("durationSec") or 0) or None
-    except (ApifyError, requests.RequestException, ValueError) as e:
+        }, timeout_minutes=5)["items"]
+        return int(rows[0].get("durationSec") or 0) or None
+    except (ApifyError, requests.RequestException, ValueError, IndexError, KeyError) as e:
         print(f"  ⚠️ Apify metadati falliti: {e}")
         return None
 
 
-# Insistere nella stessa sessione peggiora le cose: YouTube stringe le
-# maglie a chi ritenta subito. Meglio pochi tentativi e ben distanziati —
-# il vero "riprova" è affidato alle esecuzioni successive della giornata
-# (vedi i cron in .github/workflows/reels-ingest.yml).
-RETRY_WAITS = (90,)
+def _fetch(url: str, out: Path) -> Path:
+    # I file stanno nel key-value store privato dell'account: senza
+    # autenticazione rispondono 403
+    headers = {}
+    if "api.apify.com" in url:
+        headers["Authorization"] = f"Bearer {_token()}"
+    with requests.get(url, headers=headers, stream=True, timeout=300) as r:
+        r.raise_for_status()
+        with open(out, "wb") as f:
+            for chunk in r.iter_content(chunk_size=1 << 20):
+                f.write(chunk)
+    if out.stat().st_size < 100_000:
+        out.unlink(missing_ok=True)
+        raise ApifyError("file scaricato troppo piccolo: non e un video")
+    return out
+
+
+# Insistere con lo STESSO actor peggiora le cose: YouTube stringe le maglie a
+# chi ritenta subito. Si cambia actor invece di ripetere, con una pausa in
+# mezzo; il vero "riprova" resta affidato alle esecuzioni successive della
+# giornata (vedi i cron in .github/workflows/reels-ingest.yml).
+PAUSE_BETWEEN_PROVIDERS = 45
 
 
 def download_video(video_id: str, workdir: Path, quality: str = "1080p") -> Path | None:
-    """Scarica il video via Apify. Ritorna il percorso del file mp4 o None."""
+    """Scarica il video provando gli actor in fila. Ritorna il percorso o None."""
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / f"{video_id}.mp4"
-    total = len(RETRY_WAITS) + 1
-    for attempt in range(1, total + 1):
-        # Al secondo tentativo si chiede una qualità più bassa: i flussi 720p
-        # a volte passano quando i 1080p sono bloccati
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    total = len(PROVIDERS)
+
+    for attempt, (actor, build_input) in enumerate(PROVIDERS, start=1):
+        # Dal secondo actor si chiede una qualita piu bassa: i flussi 720p a
+        # volte passano quando i 1080p sono bloccati
         q = quality if attempt == 1 else "720p"
         try:
-            row = _run_actor({
-                "videoUrls": [f"https://www.youtube.com/watch?v={video_id}"],
-                "quality": q,
-                "format": "mp4",
-            })[0]
-            url = row.get("downloadUrl")
-            if not url:
-                raise ApifyError("nessun downloadUrl nella risposta")
-            # Il file sta nel key-value store privato dell'account: senza
-            # autenticazione risponde 403
-            headers = {}
-            if "api.apify.com" in url:
-                headers["Authorization"] = f"Bearer {_token()}"
-            with requests.get(url, headers=headers, stream=True, timeout=180) as r:
-                r.raise_for_status()
-                with open(out, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=1 << 20):
-                        f.write(chunk)
+            run = _run_actor(actor, build_input(url, q))
+            try:
+                file_url = _pick_download_url(run["items"])
+            except ApifyError:
+                file_url = _kv_store_url(run["kv_store_id"])
+            _fetch(file_url, out)
             size_mb = out.stat().st_size / 1e6
-            print(f"  ⬇️ Video scaricato via Apify ({size_mb:.0f} MB, {q})")
+            print(f"  ⬇️ Video scaricato via Apify ({size_mb:.0f} MB, {q}, {actor})")
             return out
         except (ApifyError, requests.RequestException) as e:
-            print(f"  ⚠️ Apify download fallito (tentativo {attempt}/{total}, {q}): {e}")
-            if attempt <= len(RETRY_WAITS):
-                wait = RETRY_WAITS[attempt - 1]
-                print(f"     ⏳ riprovo tra {wait}s...")
-                time.sleep(wait)
+            short = actor.split("~")[0]
+            print(f"  ⚠️ Apify fallito (actor {attempt}/{total}, {short}, {q}): {e}")
+            if attempt < total:
+                print(f"     ⏳ provo un altro actor tra {PAUSE_BETWEEN_PROVIDERS}s...")
+                time.sleep(PAUSE_BETWEEN_PROVIDERS)
     return None
