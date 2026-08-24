@@ -26,7 +26,10 @@ permissions:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    # Un video da 24 minuti ne ha richiesti 62 (24/08, recupero d'archivio):
+    # scaricare 184 MB, trascriverli e montare tre clip non e istantaneo.
+    # Con 75 il margine era di 13 minuti — un video piu lungo li mangiava.
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
 
