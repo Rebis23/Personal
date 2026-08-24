@@ -25,16 +25,6 @@
   ],
   "queue": [
     {
-      "clip_id": "eFVPQDJXKk4-2",
-      "video_id": "eFVPQDJXKk4",
-      "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
-      "hook": "Non hai fallito. Ti manca solo una competenza",
-      "r2_key": "reels/eFVPQDJXKk4/eFVPQDJXKk4-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/eFVPQDJXKk4/eFVPQDJXKk4-2.mp4",
-      "caption": "Ogni volta che non hai raggiunto un obiettivo, non è stato un fallimento: era una lacuna.\nE le lacune si riempiono. Nel 2026 l'informazione è ovunque, ci sono i corsi gratuiti di Harvard.\n\"Non so farlo\" non è più una scusa.\n\n#crescitapersonale #competenze #fallimento #apprendimento #obiettivi #mentalita #miglioramentocontinuo",
-      "created_at": "2026-08-23T00:46:51Z"
-    },
-    {
       "clip_id": "eFVPQDJXKk4-3",
       "video_id": "eFVPQDJXKk4",
       "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
@@ -77,6 +67,14 @@
       "ig_media_id": "18368679157208812",
       "permalink": "https://www.instagram.com/reel/DcYNbN1ir3I/",
       "published_at": "2026-08-23T09:53:24Z"
+    },
+    {
+      "clip_id": "eFVPQDJXKk4-2",
+      "video_id": "eFVPQDJXKk4",
+      "hook": "Non hai fallito. Ti manca solo una competenza",
+      "ig_media_id": "18462652531142638",
+      "permalink": "https://www.instagram.com/reel/Dca0RaqicVN/",
+      "published_at": "2026-08-24T10:11:17Z"
     }
   ],
   "archive_done": []
