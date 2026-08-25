@@ -101,10 +101,14 @@ archive:
   # Quando non escono video nuovi e la coda si svuota, il sistema ripesca dai
   # video passati del canale: così il profilo non resta mai fermo.
   enabled: true
-  # Quanti video d'archivio recuperare in tutto
-  max_videos: 5
-  # Minimo di giorni tra un video d'archivio e il successivo
-  min_days_between: 7
+  # Quanti video d'archivio recuperare in tutto. Alzato da 5 a 12 il 25/08:
+  # con una lavorazione ogni 3 giorni, 5 video coprivano solo due settimane e
+  # poi il profilo si sarebbe fermato. Nel feed del canale ce ne sono 15.
+  max_videos: 12
+  # Minimo di giorni tra una lavorazione d'archivio e la successiva.
+  # 3 giorni × 3 clip per video = una pubblicazione al giorno senza buchi
+  # (richiesta di Lorenzo del 25/08, sostituisce il "max un video a settimana")
+  min_days_between: 3
   # Si pesca dall'archivio solo se in coda restano al massimo N clip
   queue_below: 1
 
