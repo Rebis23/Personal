@@ -45,6 +45,11 @@ clips:
   # seconds: 0 = visibile per tutta la clip
   hook_card: true
   hook_card_seconds: 0
+  # Cold open: la frase piu tagliente della clip viene estratta e montata in
+  # apertura, poi stacco e la clip riparte dal suo inizio. Claude la sceglie
+  # solo quando regge da sola fuori contesto.
+  cold_open: true
+  cold_open_max_seconds: 6
 
 subtitles:
   # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)

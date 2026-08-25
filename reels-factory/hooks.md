@@ -10,15 +10,39 @@ codice.
 
 ---
 
-## Le tre regole non negoziabili
+## Le cinque regole non negoziabili
 
 1. **La clip deve APRIRE sull'hook.** Non due frasi prima. Il primo secondo di
-   parlato è già il gancio: se il momento forte arriva dopo, si taglia lì.
-2. **Massimo 12 parole, concrete.** "Il 95% delle tue scelte non le fai tu"
+   parlato è già il gancio: se il momento forte arriva dopo, si taglia lì —
+   oppure lo si estrae e lo si mette in apertura a freddo (vedi *Cold open*).
+2. **Frase intera, mai un frammento.** L'hook deve avere senso compiuto letto
+   da solo, senza il resto. Se comincia con *e*, *ma*, *quindi*, *perché*,
+   *che*, *allora* — non è un hook, è un pezzo di frase strappato a metà.
+3. **Massimo 12 parole, concrete.** "Il 95% delle tue scelte non le fai tu"
    funziona. "Parliamo di come funziona la mente inconscia" no.
-3. **Deve creare tensione**: una promessa, una minaccia, un numero, o qualcosa
-   che contraddice quello che il pubblico dà per scontato. Se dopo l'hook non
-   viene voglia di sapere come va a finire, non è un hook.
+4. **Deve creare SCONTRO.** Non basta essere interessante: serve un attrito.
+   Contraddire una convinzione diffusa, mettere due cose in opposizione, dire
+   la cosa scomoda che nessuno dice ad alta voce. Se nessuno può dissentire,
+   non è un hook — è una didascalia.
+5. **Deve corrispondere a ciò che si sente.** Il banner riprende le parole
+   davvero pronunciate, ripulite. Chi legge e poi ascolta deve riconoscere la
+   stessa frase: se il testo scritto promette una cosa e la voce ne dice
+   un'altra, il reel si chiude nei primi due secondi.
+
+---
+
+## Cold open — il momento forte per primo
+
+Se dentro la clip c'è una frase più tagliente di quella con cui la clip
+comincia, si estrae e si monta **prima** dell'inizio: si sente la frase forte,
+stacco secco, e riparte il discorso dal principio.
+
+Funziona quando la frase regge da sola fuori contesto. Non funziona quando ha
+bisogno di ciò che viene prima per capirsi — in quel caso niente cold open,
+meglio una clip pulita che un'apertura confusa.
+
+- ✅ "Lo sforzo non paga le bollette." → stacco → si riparte dal ragionamento
+- ❌ "E quindi capisci che è proprio quello il punto." → non significa nulla da sola
 
 ---
 
