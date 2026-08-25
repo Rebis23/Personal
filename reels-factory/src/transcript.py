@@ -63,9 +63,14 @@ def snap_to_words(words: list[dict], start: float, end: float) -> tuple[float, f
 
 def words_in_clip(words: list[dict], start: float, end: float) -> list[dict]:
     """Parole della clip, con tempi RELATIVI all'inizio della clip."""
+    # Contenimento STRETTO. I confini arrivano gia con un margine (-0.20s in
+    # testa, +0.40s in coda) che serve al video per non tranciare l'audio: se
+    # qui si allentasse ancora, dentro quel margine entrerebbero le prime
+    # parole della frase successiva e i sottotitoli mostrerebbero un pezzo di
+    # frase che non c'entra.
     out = []
     for w in words:
-        if w["start"] >= start - 0.05 and w["end"] <= end + 0.3:
+        if w["start"] >= start and w["end"] <= end:
             out.append({
                 "word": w["word"],
                 "start": max(0.0, w["start"] - start),
@@ -145,6 +150,23 @@ def _sentence_at(sents: list[dict], t: float) -> int:
     return len(sents) - 1
 
 
+
+def _pads(sents: list[dict], i0: int, i1: int,
+          head: float = 0.20, tail: float = 0.40) -> tuple[float, float]:
+    """Margini da lasciare attorno alla clip, senza invadere le frasi vicine.
+
+    Un margine fisso va bene quando tra una frase e l'altra c'e mezzo secondo
+    di respiro, ma nel parlato serrato le frasi si toccano: li un margine di
+    0.40s si porta dentro le prime parole della frase successiva. Si prende
+    quindi meta della pausa reale, mai piu del massimo voluto.
+    """
+    gap_before = sents[i0]["start"] - sents[i0 - 1]["end"] if i0 > 0 else 1.0
+    gap_after = (sents[i1 + 1]["start"] - sents[i1]["end"]
+                 if i1 + 1 < len(sents) else 1.0)
+    return (min(head, max(0.0, gap_before * 0.5)),
+            min(tail, max(0.05, gap_after * 0.5)))
+
+
 def snap_to_sentences(words: list[dict], start: float, end: float, *,
                       min_seconds: float, max_seconds: float) -> tuple[float, float]:
     """Porta i confini della clip su frasi intere, rispettando la durata.
@@ -184,7 +206,8 @@ def snap_to_sentences(words: list[dict], start: float, end: float, *,
             break
         i1 += 1
 
-    return max(0.0, sents[i0]["start"] - 0.20), sents[i1]["end"] + 0.40
+    head, tail = _pads(sents, i0, i1)
+    return max(0.0, sents[i0]["start"] - head), sents[i1]["end"] + tail
 
 
 def sentence_around(words: list[dict], t: float, *,
@@ -212,7 +235,8 @@ def sentence_around(words: list[dict], t: float, *,
     span = sents[b]["end"] - sents[a]["start"]
     if span < min_seconds or span > max_seconds:
         return None
-    return max(0.0, sents[a]["start"] - 0.15), sents[b]["end"] + 0.25
+    head, tail = _pads(sents, a, b, head=0.15, tail=0.25)
+    return max(0.0, sents[a]["start"] - head), sents[b]["end"] + tail
 
 
 def words_for_clip(words: list[dict], start: float, end: float,
