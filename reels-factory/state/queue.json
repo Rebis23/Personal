@@ -36,16 +36,6 @@
   ],
   "queue": [
     {
-      "clip_id": "eFVPQDJXKk4-3",
-      "video_id": "eFVPQDJXKk4",
-      "video_title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
-      "hook": "Lo sforzo non paga le bollette",
-      "r2_key": "reels/eFVPQDJXKk4/eFVPQDJXKk4-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/eFVPQDJXKk4/eFVPQDJXKk4-3.mp4",
-      "caption": "Lo sforzo non paga le bollette.\nA scuola ti dicono bravo perché ti sei impegnato: fuori non funziona così. Lo sforzo conta solo se è indirizzato.\nNon contano le aspettative, non conta quando volevi arrivarci. Conta solo quanto migliori.\n\n#crescitapersonale #risultati #aspettative #mentalita #miglioramentocontinuo #obiettivi #realta",
-      "created_at": "2026-08-23T00:53:01Z"
-    },
-    {
       "clip_id": "Enp0wWhaP8M-1",
       "video_id": "Enp0wWhaP8M",
       "video_title": "Perché la Realtà è Solo un'Illusione | Il Grande Disegno #1",
@@ -116,6 +106,14 @@
       "ig_media_id": "18462652531142638",
       "permalink": "https://www.instagram.com/reel/Dca0RaqicVN/",
       "published_at": "2026-08-24T10:11:17Z"
+    },
+    {
+      "clip_id": "eFVPQDJXKk4-3",
+      "video_id": "eFVPQDJXKk4",
+      "hook": "Lo sforzo non paga le bollette",
+      "ig_media_id": "18146160097493946",
+      "permalink": "https://www.instagram.com/reel/DcdX9MSEcuw/",
+      "published_at": "2026-08-25T10:01:44Z"
     }
   ],
   "archive_done": [
