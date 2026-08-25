@@ -14,9 +14,15 @@ class ClipPick(BaseModel):
     end_seconds: float = Field(description="Fine della clip, in secondi")
     hook: str = Field(description=(
         "Il gancio della clip: max 12 parole, compare come banner sopra la testa "
-        "per tutta la durata. Deve fermare lo scroll da solo — affermazione "
-        "contraria, numero secco, errore da evitare, verità scomoda. Mai un titolo "
-        "descrittivo, mai un indice di ciò che si dirà."
+        "per tutta la durata. DEVE essere una frase COMPLETA e CHIUSA, che si "
+        "capisce da sola senza il resto: soggetto e verbo, mai un frammento "
+        "preso a meta di un discorso, mai una frase che inizia con 'e', 'ma', "
+        "'quindi', 'perché', 'che'. Deve creare uno SCONTRO: contraddire una "
+        "convinzione diffusa, mettere due cose in opposizione, dire la cosa "
+        "scomoda che nessuno dice. Riprendi le parole che si sentono davvero "
+        "nella clip, ripulite: chi legge il banner e poi ascolta deve "
+        "riconoscere la stessa frase. Mai un titolo descrittivo, mai un indice "
+        "di cio che si dira."
     ))
     hook_pattern: str = Field(description=(
         "Quale schema della libreria hai usato per l'hook (es. 'affermazione "
@@ -50,6 +56,18 @@ class ClipPick(BaseModel):
             "Momento (secondi assoluti del video, dentro la clip) in cui inserire lo "
             "spezzone del film: il punto in cui il concetto citato viene pronunciato. "
             "0 se movie_query è vuota."
+        ),
+    )
+    punch_at_seconds: float = Field(
+        default=0.0,
+        description=(
+            "COLD OPEN. Secondo assoluto in cui, DENTRO questa clip, viene "
+            "pronunciata la frase piu tagliente — quella che da sola fa "
+            "fermare lo scroll. Verra estratta e messa in APERTURA del reel, "
+            "prima che la clip parta dal suo inizio. Deve trovarsi almeno 6 "
+            "secondi dopo start_seconds (se la frase forte e gia la prima "
+            "della clip non serve il cold open: metti 0). Metti 0 anche se "
+            "nessuna singola frase regge da sola fuori contesto."
         ),
     )
     emphasis_words: list[str] = Field(
@@ -88,6 +106,14 @@ libreria qui sopra. Se un momento è interessante ma l'hook è tiepido, cerca de
 lo stesso passaggio una frase più tagliente su cui far partire la clip.
 4. Ogni clip deve APRIRE sull'hook: se la frase forte arriva dopo dieci secondi di \
 premessa, sposta start_seconds in avanti e parti da lì.
+5. CONFINI PULITI: start_seconds deve cadere sull'inizio di una frase e \
+end_seconds sulla fine di una frase. Mai in mezzo a un periodo. Usa i marcatori \
+[mm:ss] e la punteggiatura della trascrizione per trovarli.
+6. COLD OPEN: se dentro la clip c'è una frase piu tagliente di quella iniziale, \
+indicala in punch_at_seconds. Verra estratta e montata PRIMA dell'inizio della \
+clip, come un'apertura a freddo: si sente la frase forte, stacco, e riparte il \
+discorso dal principio. Serve solo quando la frase regge da sola: se toglierla \
+dal contesto la rende incomprensibile, metti 0.
 
 Regole per la selezione:
 - Ogni clip deve reggersi DA SOLA: chi la guarda non ha visto il resto del video.

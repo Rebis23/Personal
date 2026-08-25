@@ -201,8 +201,28 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{n}"
         print(f"   ✂️ Clip {n}: [{pick.start_seconds:.0f}s → {pick.end_seconds:.0f}s] «{pick.hook}»")
-        start, end = transcript.snap_to_words(words, pick.start_seconds, pick.end_seconds)
-        clip_words = transcript.words_in_clip(words, start, end)
+        start, end = transcript.snap_to_sentences(
+            words, pick.start_seconds, pick.end_seconds,
+            min_seconds=clip_cfg["min_seconds"], max_seconds=clip_cfg["max_seconds"],
+        )
+
+        # Cold open: la frase piu tagliente estratta e montata in apertura.
+        # Deve stare dentro la clip e almeno 6s dopo il suo inizio, altrimenti
+        # si sentirebbe due volte di fila.
+        punch = None
+        if clip_cfg.get("cold_open", True) and pick.punch_at_seconds > 0:
+            t = pick.punch_at_seconds
+            if start + 6.0 <= t <= end:
+                punch = transcript.sentence_around(
+                    words, t,
+                    max_seconds=float(clip_cfg.get("cold_open_max_seconds", 6)),
+                )
+                if punch is not None:
+                    ptxt = " ".join(w["word"] for w in words
+                                    if punch[0] <= w["start"] <= punch[1])
+                    print(f"      ⚡ Cold open ({punch[1]-punch[0]:.1f}s): «{ptxt}»")
+        clip_words = transcript.words_for_clip(words, start, end, punch)
+        total_len = (end - start) + ((punch[1] - punch[0]) if punch else 0.0)
 
         # Spezzone di film (facoltativo): se Claude l'ha proposto e almeno una
         # sorgente è configurata. Qualsiasi problema qui NON blocca la clip.
@@ -227,9 +247,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                         break
         if cutaway is not None:
             # Dentro la clip: mai nei primi 2s (l'hook è sacro), mai oltre la fine
-            rel = pick.movie_insert_at_seconds - start
-            clip_len = end - start
-            cut_at = min(max(rel, 2.0), max(2.0, clip_len - cut_dur - 1.0))
+            offset = (punch[1] - punch[0]) if punch else 0.0
+            rel = pick.movie_insert_at_seconds - start + offset
+            cut_at = min(max(rel, offset + 2.0),
+                         max(offset + 2.0, total_len - cut_dur - 1.0))
 
         # Sound design: base musicale (scelta stabile per clip) + whoosh + pop
         # sulle parole enfatizzate da Claude
@@ -255,7 +276,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                 pop_times = remotion_render.emphasis_times(clip_words, emph)
 
         render_common = dict(
-            start=start, end=end, vertical_mode=cfg["clips"]["vertical_mode"],
+            start=start, end=end,
+            punch_start=punch[0] if punch else 0.0,
+            punch_end=punch[1] if punch else 0.0,
+            vertical_mode=cfg["clips"]["vertical_mode"],
             cutaway=cutaway, cutaway_at=cut_at, cutaway_duration=cut_dur,
             cutaway_src_offset=cut_src,
             corner_radius=cfg["clips"].get("corner_radius", 96),
@@ -278,7 +302,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                 )
                 remotion_render.render(
                     base_mp4, out_mp4,
-                    pages=pages, duration=end - start,
+                    pages=pages, duration=total_len,
                     font_size=sub_cfg["font_size"],
                     vertical_position=sub_cfg["vertical_position"],
                     uppercase=sub_cfg.get("uppercase", False),

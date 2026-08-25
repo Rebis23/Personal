@@ -7,10 +7,11 @@ from pathlib import Path
 SQUARE_Y = 420  # il quadrato 1080x1080 parte qui sulla tela 1080x1920
 
 
-def _vertical_filter(mode: str, duration: float, zoom: float) -> str:
+def _vertical_filter(mode: str, duration: float, zoom: float,
+                     src: str = "[0:v]") -> str:
     if mode == "crop":
         # Ritaglio centrale 9:16 a piena altezza
-        return "[0:v]crop=ih*9/16:ih,scale=1080:1920,setsar=1[vmain]"
+        return f"{src}crop=ih*9/16:ih,scale=1080:1920,setsar=1[vmain]"
     if mode == "square":
         # Stile Modern Wisdom: video ritagliato quadrato (persona al centro)
         # su tela nera 9:16, con un lento push-in per dare vita all'inquadratura
@@ -23,12 +24,12 @@ def _vertical_filter(mode: str, duration: float, zoom: float) -> str:
                 ":d=1:s=1080x1080:fps=30"
             )
         return (
-            f"[0:v]crop=ih:ih,scale=1080:1080,setsar=1{push},"
+            f"{src}crop=ih:ih,scale=1080:1080,setsar=1{push},"
             f"pad=1080:1920:0:{SQUARE_Y}:black[vmain]"
         )
     # Default "blur": video intero centrato su sfondo sfocato
     return (
-        "[0:v]split=2[bg][fg];"
+        f"{src}split=2[bg][fg];"
         "[bg]scale=1080:1920:force_original_aspect_ratio=increase,"
         "crop=1080:1920,gblur=sigma=24,eq=brightness=-0.08[bgb];"
         "[fg]scale=1080:-2[fgs];"
@@ -65,6 +66,8 @@ def render_clip(
     *,
     start: float,
     end: float,
+    punch_start: float = 0.0,
+    punch_end: float = 0.0,
     vertical_mode: str = "square",
     fonts_dir: Path | None = None,
     cutaway: Path | None = None,
@@ -91,6 +94,13 @@ def render_clip(
     la voce); `whoosh` è l'effetto riprodotto all'ingresso del cutaway.
     """
     duration = max(1.0, end - start)
+    # Cold open: il momento piu forte della clip viene mostrato per primo, poi
+    # parte la clip dall'inizio (richiesta di Lorenzo, 25/08). E lo stesso file
+    # aperto due volte con due punti di partenza: si concatena prima di tutto
+    # il resto, cosi la grafica e il sound design lavorano sull'insieme.
+    punch_duration = max(0.0, punch_end - punch_start)
+    has_punch = punch_duration >= 1.0
+    total = duration + (punch_duration if has_punch else 0.0)
 
     # Senza file .ass i sottotitoli non vengono impressi qui (li disegna
     # Remotion in un secondo passaggio)
@@ -100,10 +110,33 @@ def render_clip(
         if fonts_dir is not None:
             ass_arg += f":fontsdir={fonts_dir}"
 
-    inputs = ["-ss", f"{start:.3f}", "-t", f"{duration:.3f}", "-i", str(source)]
-    parts = [_vertical_filter(vertical_mode, duration, zoom)]
+    inputs: list[str] = []
+    parts: list[str] = []
+    if has_punch:
+        inputs += ["-ss", f"{punch_start:.3f}", "-t", f"{punch_duration:.3f}",
+                   "-i", str(source)]
+    inputs += ["-ss", f"{start:.3f}", "-t", f"{duration:.3f}", "-i", str(source)]
+    n_inputs = 2 if has_punch else 1
+
+    if has_punch:
+        parts.append(
+            "[0:v]fps=30,setsar=1,setpts=PTS-STARTPTS[cv0];"
+            "[1:v]fps=30,setsar=1,setpts=PTS-STARTPTS[cv1];"
+            "[cv0][cv1]concat=n=2:v=1:a=0[vsrc]"
+        )
+        parts.append(
+            "[0:a]aformat=sample_rates=44100:channel_layouts=stereo,"
+            "asetpts=PTS-STARTPTS[ca0];"
+            "[1:a]aformat=sample_rates=44100:channel_layouts=stereo,"
+            "asetpts=PTS-STARTPTS[ca1];"
+            "[ca0][ca1]concat=n=2:v=0:a=1[asrc]"
+        )
+        vsrc, asrc = "[vsrc]", "[asrc]"
+    else:
+        vsrc, asrc = "[0:v]", "[0:a]"
+
+    parts.append(_vertical_filter(vertical_mode, total, zoom, src=vsrc))
     last = "[vmain]"
-    n_inputs = 1
 
     if cutaway is not None and cutaway_duration > 0.25:
         # -ss prima dell'input: lo spezzone parte dal momento giusto della scena
@@ -136,23 +169,23 @@ def render_clip(
     parts.append(f"{last}{ass_arg}[vout]" if ass_arg else f"{last}null[vout]")
 
     # ------------------------------------------------------- sound design ---
-    audio_map = ["-map", "0:a?"]
+    audio_map = ["-map", "[asrc]"] if has_punch else ["-map", "0:a?"]
     mix_srcs: list[str] = []
     has_whoosh = (whoosh is not None and cutaway is not None
                   and cutaway_duration > 0.25)
-    pop_times = [t for t in (pop_times or []) if 0.3 < t < duration - 0.5][:4]
+    pop_times = [t for t in (pop_times or []) if 0.3 < t < total - 0.5][:4]
     has_pops = pop is not None and len(pop_times) > 0
     if music is not None or has_whoosh or has_pops:
-        parts.append("[0:a]aformat=sample_rates=44100:channel_layouts=stereo[voice]")
+        parts.append(f"{asrc}aformat=sample_rates=44100:channel_layouts=stereo[voice]")
 
     if music is not None:
         inputs += ["-stream_loop", "-1", "-i", str(music)]
         m_idx = n_inputs
         n_inputs += 1
-        fade_start = max(0.0, duration - 1.2)
+        fade_start = max(0.0, total - 1.2)
         parts.append(
             f"[{m_idx}:a]aformat=sample_rates=44100:channel_layouts=stereo,"
-            f"atrim=duration={duration:.3f},volume={music_gain_db:.1f}dB,"
+            f"atrim=duration={total:.3f},volume={music_gain_db:.1f}dB,"
             f"afade=t=out:st={fade_start:.3f}:d=1.2[mus]"
         )
         if ducking:
@@ -194,6 +227,10 @@ def render_clip(
         )
         mix_srcs.append("[wh]")
 
+    if len(mix_srcs) == 1:
+        # Una sola sorgente: niente da miscelare, ma [asrc] e gia stato
+        # consumato da [voice] — si mappa quella
+        audio_map = ["-map", mix_srcs[0]]
     if len(mix_srcs) > 1:
         parts.append(
             f"{''.join(mix_srcs)}amix=inputs={len(mix_srcs)}"

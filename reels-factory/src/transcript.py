@@ -72,3 +72,164 @@ def words_in_clip(words: list[dict], start: float, end: float) -> list[dict]:
                 "end": max(0.0, w["end"] - start),
             })
     return out
+
+
+# --------------------------------------------------------------- frasi ---
+# Il taglio alla PAROLA più vicina lasciava clip che iniziavano e finivano a
+# metà frase (segnalato da Lorenzo il 25/08). Qui la trascrizione viene divisa
+# in frasi vere e i confini della clip ci si agganciano sopra.
+
+_TERMINAL = (".", "!", "?", "…")
+_PAUSE_SPLIT = 0.75      # silenzio che vale quanto un punto
+_MAX_SENTENCE = 20.0     # oltre, Whisper ha semplicemente omesso la punteggiatura
+
+
+def _closes_sentence(word: str) -> bool:
+    """True se la parola chiude una frase. Esclude sigle e numeri ('n.', '3.')
+    dove il punto non e un punto fermo."""
+    text = word.strip()
+    if not text.endswith(_TERMINAL):
+        return False
+    stem = text.rstrip("".join(_TERMINAL) + "\"'»)")
+    return len(stem) > 1 and not stem.isdigit()
+
+
+def _split_long(group: list[dict]) -> list[list[dict]]:
+    """Spezza un blocco troppo lungo nella sua pausa interna piu ampia."""
+    span = group[-1]["end"] - group[0]["start"]
+    if span <= _MAX_SENTENCE or len(group) < 6:
+        return [group]
+    best_i, best_gap = None, 0.0
+    for i in range(2, len(group) - 2):
+        gap = group[i]["start"] - group[i - 1]["end"]
+        if gap > best_gap:
+            best_i, best_gap = i, gap
+    if best_i is None:
+        return [group]
+    return _split_long(group[:best_i]) + _split_long(group[best_i:])
+
+
+def sentences(words: list[dict]) -> list[dict]:
+    """Raggruppa le parole in frasi: [{start, end, text}].
+
+    Si chiude su punteggiatura forte oppure su una pausa lunga — nel parlato
+    Whisper la punteggiatura salta spesso, il silenzio no.
+    """
+    groups: list[list[dict]] = []
+    current: list[dict] = []
+    for i, w in enumerate(words):
+        current.append(w)
+        gap_next = (words[i + 1]["start"] - w["end"]) if i + 1 < len(words) else 99.0
+        if _closes_sentence(w["word"]) or gap_next >= _PAUSE_SPLIT:
+            groups.append(current)
+            current = []
+    if current:
+        groups.append(current)
+
+    out = []
+    for g in groups:
+        for piece in _split_long(g):
+            out.append({
+                "start": piece[0]["start"],
+                "end": piece[-1]["end"],
+                "text": " ".join(p["word"] for p in piece).strip(),
+            })
+    return out
+
+
+def _sentence_at(sents: list[dict], t: float) -> int:
+    """Indice della frase che contiene t, o della prima che inizia dopo."""
+    for i, s in enumerate(sents):
+        if s["end"] >= t:
+            return i
+    return len(sents) - 1
+
+
+def snap_to_sentences(words: list[dict], start: float, end: float, *,
+                      min_seconds: float, max_seconds: float) -> tuple[float, float]:
+    """Porta i confini della clip su frasi intere, rispettando la durata.
+
+    Claude stima i secondi leggendo i marcatori [mm:ss]: sono approssimativi e
+    cadono in mezzo alle frasi. Qui si corregge sul timing reale delle parole.
+    """
+    sents = sentences(words)
+    if not sents:
+        return snap_to_words(words, start, end)
+
+    i0 = _sentence_at(sents, start)
+    s0 = sents[i0]
+    # Se il taglio richiesto cade oltre il primo terzo della frase, quella frase
+    # e gia iniziata da un pezzo: meglio partire dalla successiva che riproporne
+    # una monca
+    span = max(0.001, s0["end"] - s0["start"])
+    if (start - s0["start"]) / span > 0.35 and i0 + 1 < len(sents):
+        i0 += 1
+
+    i1 = i0
+    for i in range(i0, len(sents)):
+        if sents[i]["end"] <= end + 2.0:
+            i1 = i
+        else:
+            break
+
+    def dur(a: int, b: int) -> float:
+        return sents[b]["end"] - sents[a]["start"]
+
+    # Troppo lunga: si tolgono frasi dal fondo. Troppo corta: se ne aggiungono,
+    # ma solo finche si resta sotto il massimo
+    while i1 > i0 and dur(i0, i1) > max_seconds:
+        i1 -= 1
+    while i1 + 1 < len(sents) and dur(i0, i1) < min_seconds:
+        if dur(i0, i1 + 1) > max_seconds:
+            break
+        i1 += 1
+
+    return max(0.0, sents[i0]["start"] - 0.20), sents[i1]["end"] + 0.40
+
+
+def sentence_around(words: list[dict], t: float, *,
+                    min_seconds: float = 1.5,
+                    max_seconds: float = 6.0) -> tuple[float, float] | None:
+    """La frase intera che contiene l'istante t — serve per il cold open.
+
+    Se e troppo corta si allunga con la frase successiva; se e troppo lunga
+    non va bene come apertura e si rinuncia.
+    """
+    sents = sentences(words)
+    if not sents:
+        return None
+    # Claude stima il secondo leggendo i marcatori [mm:ss]: puo sbagliare di
+    # un paio di secondi e finire nel silenzio tra due frasi. Si prende quella
+    # piu vicina, non la prima che comincia dopo.
+    def distance(s: dict) -> float:
+        if s["start"] <= t <= s["end"]:
+            return 0.0
+        return min(abs(t - s["start"]), abs(t - s["end"]))
+    i = min(range(len(sents)), key=lambda k: distance(sents[k]))
+    a, b = i, i
+    while b + 1 < len(sents) and (sents[b]["end"] - sents[a]["start"]) < min_seconds:
+        b += 1
+    span = sents[b]["end"] - sents[a]["start"]
+    if span < min_seconds or span > max_seconds:
+        return None
+    return max(0.0, sents[a]["start"] - 0.15), sents[b]["end"] + 0.25
+
+
+def words_for_clip(words: list[dict], start: float, end: float,
+                   punch: tuple[float, float] | None = None) -> list[dict]:
+    """Parole del montato finale, con tempi relativi al primo fotogramma.
+
+    Con il cold open il montato e [frase forte] + [clip]: le parole della
+    frase forte vengono prima, quelle della clip slittano in avanti della sua
+    durata. Senza cold open si comporta come words_in_clip.
+    """
+    if punch is None:
+        return words_in_clip(words, start, end)
+    p_start, p_end = punch
+    offset = p_end - p_start
+    out = words_in_clip(words, p_start, p_end)
+    for w in words_in_clip(words, start, end):
+        out.append({"word": w["word"],
+                    "start": w["start"] + offset,
+                    "end": w["end"] + offset})
+    return out
