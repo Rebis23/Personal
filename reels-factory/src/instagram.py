@@ -92,11 +92,28 @@ def publish_reel(video_url: str, caption: str, timeout_minutes: int = 15) -> dic
         time.sleep(15)
 
     # 3. Pubblicazione
-    published = _check(requests.post(
-        f"{BASE}/{_user_id()}/media_publish",
-        data={"creation_id": container_id, "access_token": _token()},
-        timeout=60,
-    ))
+    # Il 26/08 questa chiamata e tornata 400 con sottocodice 2207085 ("Generic
+    # Internal Error ... please try again later"): il video era gia stato
+    # elaborato, si e perso solo l'ultimo passo e la giornata e saltata.
+    # Sono errori del lato Meta, non nostri: si riprova qualche volta.
+    TRANSITORI = (2207085, 2207001, 2207032)
+    published = None
+    for tentativo in (1, 2, 3):
+        try:
+            published = _check(requests.post(
+                f"{BASE}/{_user_id()}/media_publish",
+                data={"creation_id": container_id, "access_token": _token()},
+                timeout=60,
+            ))
+            break
+        except InstagramError as e:
+            transitorio = any(str(c) in str(e) for c in TRANSITORI) or "500" in str(e)
+            if not transitorio or tentativo == 3:
+                raise
+            attesa = 30 * tentativo
+            print(f"  ⚠️ Instagram ha risposto con un errore interno "
+                  f"(tentativo {tentativo}/3), riprovo tra {attesa}s: {e}")
+            time.sleep(attesa)
     media_id = published["id"]
 
     permalink = ""
