@@ -9,14 +9,17 @@ import {
 } from 'remotion';
 import {z} from 'zod';
 import {useFonts} from './fonts';
-import {C, OMBRA, back, clamp01, ease} from './tokens';
 
-// role: come il playbook colora le parole —
-//   neutral = bianco caldo · key = giallo · red = rosso timbro (costi, negazioni)
+// Curve del playbook "Riflettendo Edit": e questa la parte che Lorenzo
+// voleva — il movimento, non un cambio di identita grafica.
+const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+const back = (t: number) =>
+  1 + 2.70158 * Math.pow(t - 1, 3) + 1.70158 * Math.pow(t - 1, 2);
+const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
+
 const wordSchema = z.object({
   text: z.string(),
-  role: z.enum(['neutral', 'key', 'red']).default('neutral'),
-  start: z.number().default(-1), // secondi assoluti: quando viene pronunciata
+  em: z.boolean().default(false),
 });
 
 const pageSchema = z.object({
@@ -29,7 +32,7 @@ export const reelSchema = z.object({
   video: z.string(),
   durationSeconds: z.number(),
   pages: z.array(pageSchema),
-  fontSize: z.number().default(150),
+  fontSize: z.number().default(128),
   verticalPosition: z.number().default(0.68),
   uppercase: z.boolean().default(false),
   hookText: z.string().default(''),
@@ -42,78 +45,17 @@ export const defaultReelProps: ReelProps = {
   video: 'input.mp4',
   durationSeconds: 5,
   pages: [
-    {
-      start: 0.4,
-      end: 1.8,
-      words: [
-        {text: 'lo', role: 'neutral', start: 0.4},
-        {text: 'sforzo', role: 'key', start: 0.7},
-        {text: 'non', role: 'red', start: 1.1},
-      ],
-    },
-    {
-      start: 1.8,
-      end: 4.5,
-      words: [
-        {text: 'paga', role: 'neutral', start: 1.8},
-        {text: 'le', role: 'neutral', start: 2.1},
-        {text: 'bollette', role: 'key', start: 2.3},
-      ],
-    },
+    {start: 0.4, end: 1.6, words: [{text: 'anteprima', em: false}, {text: 'caption', em: true}]},
+    {start: 1.8, end: 4.5, words: [{text: 'stile', em: false}, {text: 'premium', em: true}]},
   ],
-  fontSize: 150,
+  fontSize: 128,
   verticalPosition: 0.68,
   uppercase: false,
   hookText: '',
   hookSeconds: 0,
 };
 
-const COLORE = {
-  neutral: C.biancoCaldo,
-  key: C.giallo,
-  red: C.rossoTimbro,
-} as const;
-
 // ------------------------------------------------------------- CAPTION ---
-// Karaoke del playbook: ogni parola compare quando viene pronunciata, con il
-// pop a molla (scala 0.75 → back, alpha su ease, atterraggio da 14 px sopra).
-
-const Parola: React.FC<{
-  word: z.infer<typeof wordSchema>;
-  pageStart: number;
-  indice: number;
-  uppercase: boolean;
-}> = ({word, pageStart, indice, uppercase}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-
-  // Il blocco e visibile dal SUO inizio (regola del playbook), non parola per
-  // parola man mano che viene pronunciata: con quella lettura a schermo
-  // restava spesso una parolina sola. Le parole entrano comunque in
-  // sequenza, sfalsate di pochi centesimi, cosi il pop resta vivo.
-  const nasce = pageStart + indice * 0.05;
-  const t = clamp01((frame / fps - nasce) / 0.24); // 0.24s di ingresso
-  const scale = 0.75 + (1 - 0.75) * back(t);
-  const opacity = ease(clamp01(t * 1.6));
-  const dy = (1 - ease(t)) * -14; // atterra scendendo di 14 px
-
-  const text = uppercase ? word.text.toUpperCase() : word.text;
-  return (
-    <span
-      style={{
-        display: 'inline-block',
-        transform: `translateY(${dy}px) scale(${scale})`,
-        opacity,
-        color: COLORE[word.role],
-        // Le parole-chiave pesano di piu, come le scritte a mano del playbook
-        fontWeight: word.role === 'neutral' ? 600 : 700,
-        margin: '0 0.14em',
-      }}
-    >
-      {text}
-    </span>
-  );
-};
 
 const CaptionPage: React.FC<{
   page: z.infer<typeof pageSchema>;
@@ -121,13 +63,23 @@ const CaptionPage: React.FC<{
   verticalPosition: number;
   uppercase: boolean;
 }> = ({page, fontSize, verticalPosition, uppercase}) => {
-  // Caveat ha occhio piccolo: le parole lunghe rientrano comunque, ma il
-  // corpo si riduce se la riga rischia di sbordare
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const localFrame = frame - Math.round(page.start * fps);
+
+  // Le parole molto lunghe non devono uscire dal riquadro: il corpo si
+  // riduce in proporzione alla parola più lunga della pagina
   const longest = Math.max(...page.words.map((w) => w.text.length), 1);
-  const fitted = Math.min(fontSize, Math.floor(1120 / (0.46 * longest)));
+  const fitted = Math.min(fontSize, Math.floor(980 / (0.62 * longest)));
+
 
   return (
-    <AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+    <AbsoluteFill
+      style={{
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+      }}
+    >
       <div
         style={{
           position: 'absolute',
@@ -135,30 +87,61 @@ const CaptionPage: React.FC<{
           transform: 'translateY(-50%)',
           width: '92%',
           textAlign: 'center',
-          fontFamily: 'Caveat',
+          fontFamily: 'Instrument Sans',
+          fontWeight: 700,
           fontSize: fitted,
-          lineHeight: 1.02,
-          textShadow: OMBRA,
+          lineHeight: 1.08,
+          color: 'white',
+          // Ombra diffusa vera: alone morbido + contatto, niente bordo
+          textShadow:
+            '0 2px 8px rgba(0,0,0,0.55), 0 10px 36px rgba(0,0,0,0.55), 0 24px 80px rgba(0,0,0,0.35)',
         }}
       >
-        {page.words.map((w, i) => (
-          <Parola
-            key={i}
-            word={w}
-            pageStart={page.start}
-            indice={i}
-            uppercase={uppercase}
-          />
-        ))}
+        {page.words.map((w, i) => {
+          const text = uppercase ? w.text.toUpperCase() : w.text;
+          // Entrata sfalsata di 5 centesimi: scala 0.78 con overshoot,
+          // opacita su ease, atterraggio scendendo di 12 px
+          const t = clamp01((localFrame / fps - i * 0.05) / 0.24);
+          const anim = {
+            // inline-block e necessario per scalare la singola parola, ma
+            // fa collassare lo spazio fra una e l'altra: lo si rimette
+            // come margine
+            display: 'inline-block',
+            marginRight: i < page.words.length - 1 ? '0.26em' : 0,
+            transform: `translateY(${(1 - ease(t)) * -12}px) scale(${
+              0.78 + 0.22 * back(t)
+            })`,
+            opacity: ease(clamp01(t * 1.6)),
+          } as const;
+          return (
+            <span
+              key={i}
+              style={
+                w.em
+                  ? {
+                      ...anim,
+                      fontStyle: 'italic',
+                      fontSize: '1.07em',
+                      textShadow:
+                        '0 2px 8px rgba(0,0,0,0.6), 0 10px 44px rgba(0,0,0,0.65), 0 0 60px rgba(255,255,255,0.28)',
+                    }
+                  : anim
+              }
+            >
+              {text}
+              {i < page.words.length - 1 ? ' ' : ''}
+            </span>
+          );
+        })}
       </div>
     </AbsoluteFill>
   );
 };
 
 // --------------------------------------------------------- HOOK BANNER ---
-// Cartoncino di carta con l'inchiostro verde scuro, appena ruotato: il
-// "takeover carta" del playbook ridotto a banner sopra la testa, che e la
-// posizione approvata da Lorenzo. Entra con la molla mentre il video scorre.
+// Banner bianco con testo nero sopra la testa di chi parla (mai a schermo
+// pieno, mai su nero): entra con una molla mentre il video già scorre.
+// seconds = 0 → resta visibile per tutta la clip.
 
 const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) => {
   const frame = useCurrentFrame();
@@ -177,32 +160,33 @@ const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) 
   const entrance = spring({
     frame,
     fps,
-    config: {damping: 14, stiffness: 200, mass: 0.7},
-    durationInFrames: 20,
+    config: {damping: 15, stiffness: 190, mass: 0.7},
+    durationInFrames: 18,
   });
-  const scale = interpolate(entrance, [0, 1], [0.86, 1]);
-  const rot = interpolate(entrance, [0, 1], [-4.2, -1.4]); // si posa storto
-  const opacity = interpolate(frame, [0, 4], [0, 1], {extrapolateRight: 'clamp'});
+  const scale = interpolate(entrance, [0, 1], [0.88, 1]);
+  const opacity = interpolate(frame, [0, 4], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
 
   return (
     <AbsoluteFill style={{alignItems: 'center'}}>
       <div
         style={{
           position: 'absolute',
-          top: 175,
+          top: 190,
           opacity: opacity * fadeOut,
-          transform: `scale(${scale}) rotate(${rot}deg)`,
+          transform: `scale(${scale})`,
           maxWidth: '86%',
-          backgroundColor: C.carta,
-          color: C.inchiostro,
+          backgroundColor: 'white',
+          color: 'black',
           textAlign: 'center',
-          fontFamily: 'Caveat',
+          fontFamily: 'Instrument Sans',
           fontWeight: 700,
-          fontSize: 76,
-          lineHeight: 1.06,
-          padding: '30px 48px 22px',
-          borderRadius: 10,
-          boxShadow: '0 18px 50px rgba(0,0,0,0.55)',
+          fontSize: 58,
+          lineHeight: 1.22,
+          padding: '26px 44px',
+          borderRadius: 30,
+          boxShadow: '0 14px 44px rgba(0,0,0,0.5)',
         }}
       >
         {text}
@@ -222,7 +206,7 @@ export const Reel: React.FC<ReelProps> = (props) => {
   const activePage = props.pages.find((p) => t >= p.start && t < p.end);
 
   return (
-    <AbsoluteFill style={{backgroundColor: C.neroCaldo}}>
+    <AbsoluteFill style={{backgroundColor: 'black'}}>
       <style>{fontCss}</style>
       <OffthreadVideo src={staticFile(props.video)} />
       {activePage ? (

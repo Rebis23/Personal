@@ -278,10 +278,8 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             wf = AUDIO_DIR / "sfx-whoosh.wav"
             whoosh = wf if wf.is_file() else None
 
-        def _norm(w: str) -> str:
-            return "".join(c for c in w.lower() if c.isalnum())
-        emph = {_norm(w) for w in pick.emphasis_words}
-        rosse = {_norm(w) for w in pick.red_words} - emph
+        emph = {"".join(c for c in w.lower() if c.isalnum())
+                for w in pick.emphasis_words}
         pop_times: list[float] = []
         if audio_cfg.get("pop_on_emphasis", True) and emph:
             pf = AUDIO_DIR / "sfx-pop.wav"
@@ -311,7 +309,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                 base_mp4 = vdir / f"{clip_id}-base.mp4"
                 video.render_clip(source, None, base_mp4, **render_common)
                 pages = remotion_render.build_pages(
-                    clip_words, emph, red=rosse,
+                    clip_words, emph,
                     words_per_screen=sub_cfg["words_per_line"],
                 )
                 remotion_render.render(

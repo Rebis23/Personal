@@ -23,8 +23,7 @@ def is_available() -> bool:
 
 
 def build_pages(words: list[dict], emphasis: set[str],
-                words_per_screen: int = 3,
-                red: set[str] | None = None) -> list[dict]:
+                words_per_screen: int = 3) -> list[dict]:
     """Caption karaoke secondo il playbook "Riflettendo Edit".
 
     Regole (Sezione SHORTS del playbook, applicate alla lettera):
@@ -34,11 +33,8 @@ def build_pages(words: list[dict], emphasis: set[str],
       cosi non ci sono mai due caption insieme
     - ogni parola porta il suo istante: compare quando viene pronunciata
 
-    `emphasis` = parole-chiave (gialle), `red` = costi e negazioni (rosso
-    timbro). Tutto il resto e bianco caldo.
+    `emphasis` = parole da enfatizzare (corsivo e alone, come approvato).
     """
-    red = red or set()
-
     def norm(w: str) -> str:
         return "".join(c for c in w.lower() if c.isalnum())
 
@@ -93,16 +89,12 @@ def build_pages(words: list[dict], emphasis: set[str],
             end = max(start + 0.12, groups[i + 1][0]["start"] - ANTICIPO)
         else:
             end = g[-1]["end"] + 0.4
-        parole = []
-        for w in g:
-            n = norm(w["word"])
-            ruolo = "red" if n in red else ("key" if n in emphasis else "neutral")
-            parole.append({
-                # lstrip: Whisper a volte produce parole tipo "'attenzione"
-                "text": w["word"].strip().lstrip("'\u2019"),
-                "role": ruolo,
-                "start": round(w["start"], 3),
-            })
+        parole = [
+            # lstrip: Whisper a volte produce parole tipo "'attenzione"
+            {"text": w["word"].strip().lstrip("'\u2019"),
+             "em": norm(w["word"]) in emphasis}
+            for w in g
+        ]
         pages.append({"start": round(start, 3), "end": round(end, 3),
                       "words": parole})
     return pages
