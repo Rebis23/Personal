@@ -58,6 +58,33 @@ def build_pages(words: list[dict], emphasis: set[str],
     if cur:
         groups.append(cur)
 
+    # Una virgola puo lasciare una parola sola a schermo ("felice,"): le
+    # parole isolate si riuniscono al blocco vicino, purche non si superino
+    # le tre parole
+    fusi: list[list[dict]] = []
+    for g in groups:
+        if (len(g) == 1 and fusi
+                and len(fusi[-1]) + 1 <= words_per_screen
+                and g[0]["start"] - fusi[-1][-1]["end"] < PAUSA):
+            fusi[-1].extend(g)
+        else:
+            fusi.append(g)
+    # Chi non ha trovato posto nel blocco precedente prova con il successivo
+    uniti: list[list[dict]] = []
+    i = 0
+    while i < len(fusi):
+        g = fusi[i]
+        seguente = fusi[i + 1] if i + 1 < len(fusi) else None
+        if (len(g) == 1 and seguente
+                and len(seguente) + 1 <= words_per_screen
+                and seguente[0]["start"] - g[-1]["end"] < PAUSA):
+            uniti.append(g + seguente)
+            i += 2
+            continue
+        uniti.append(g)
+        i += 1
+    groups = uniti
+
     ANTICIPO = 0.04
     pages = []
     for i, g in enumerate(groups):
