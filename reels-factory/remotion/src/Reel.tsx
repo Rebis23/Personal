@@ -81,12 +81,17 @@ const COLORE = {
 const Parola: React.FC<{
   word: z.infer<typeof wordSchema>;
   pageStart: number;
+  indice: number;
   uppercase: boolean;
-}> = ({word, pageStart, uppercase}) => {
+}> = ({word, pageStart, indice, uppercase}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
-  const nasce = word.start >= 0 ? word.start : pageStart;
+  // Il blocco e visibile dal SUO inizio (regola del playbook), non parola per
+  // parola man mano che viene pronunciata: con quella lettura a schermo
+  // restava spesso una parolina sola. Le parole entrano comunque in
+  // sequenza, sfalsate di pochi centesimi, cosi il pop resta vivo.
+  const nasce = pageStart + indice * 0.05;
   const t = clamp01((frame / fps - nasce) / 0.24); // 0.24s di ingresso
   const scale = 0.75 + (1 - 0.75) * back(t);
   const opacity = ease(clamp01(t * 1.6));
@@ -137,7 +142,13 @@ const CaptionPage: React.FC<{
         }}
       >
         {page.words.map((w, i) => (
-          <Parola key={i} word={w} pageStart={page.start} uppercase={uppercase} />
+          <Parola
+            key={i}
+            word={w}
+            pageStart={page.start}
+            indice={i}
+            uppercase={uppercase}
+          />
         ))}
       </div>
     </AbsoluteFill>
