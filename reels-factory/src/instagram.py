@@ -56,6 +56,47 @@ def check_connection() -> str:
         return f"⛔ Instagram NON raggiungibile: {e}"
 
 
+def diagnose() -> str:
+    """Interroga Meta su token, permessi e quota per capire PERCHE la
+    pubblicazione e stata rifiutata. Il sottocodice 2207085 ("Generic Internal
+    Error") non dice niente da solo: puo essere un guasto passeggero oppure un
+    blocco vero e proprio, e senza questi tre dati non si distinguono.
+    Non pubblica e non modifica nulla: e solo lettura."""
+    righe = ["🩺 Diagnosi del collegamento Instagram:"]
+
+    try:
+        tok = _check(requests.get(
+            f"{BASE}/debug_token",
+            params={"input_token": _token(), "access_token": _token()},
+            timeout=60,
+        )).get("data", {})
+        scadenza = tok.get("expires_at")
+        righe.append(
+            f"   token: valido={tok.get('is_valid')} tipo={tok.get('type')} "
+            f"app={tok.get('application')} "
+            f"scadenza={'mai' if scadenza == 0 else scadenza}")
+        permessi = tok.get("scopes", [])
+        ha_publish = "instagram_content_publish" in permessi
+        righe.append(f"   permesso di pubblicare: {'SI' if ha_publish else 'NO — e questo il problema'}")
+    except (InstagramError, requests.RequestException, KeyError) as e:
+        righe.append(f"   token: impossibile verificarlo ({e})")
+
+    try:
+        limite = _check(requests.get(
+            f"{BASE}/{_user_id()}/content_publishing_limit",
+            params={"fields": "config,quota_usage", "access_token": _token()},
+            timeout=60,
+        )).get("data", [{}])[0]
+        usati = limite.get("quota_usage")
+        totale = limite.get("config", {}).get("quota_total")
+        righe.append(f"   quota 24h: {usati}/{totale} usati")
+    except (InstagramError, requests.RequestException, IndexError, KeyError) as e:
+        righe.append(f"   quota 24h: non leggibile ({e})")
+
+    righe.append("   " + check_connection())
+    return "\n".join(righe)
+
+
 def publish_reel(video_url: str, caption: str, timeout_minutes: int = 15) -> dict:
     """Pubblica un Reel. Ritorna {ig_media_id, permalink}."""
     # 1. Container
