@@ -9,10 +9,14 @@ import {
 } from 'remotion';
 import {z} from 'zod';
 import {useFonts} from './fonts';
+import {C, OMBRA, back, clamp01, ease} from './tokens';
 
+// role: come il playbook colora le parole —
+//   neutral = bianco caldo · key = giallo · red = rosso timbro (costi, negazioni)
 const wordSchema = z.object({
   text: z.string(),
-  em: z.boolean().default(false),
+  role: z.enum(['neutral', 'key', 'red']).default('neutral'),
+  start: z.number().default(-1), // secondi assoluti: quando viene pronunciata
 });
 
 const pageSchema = z.object({
@@ -25,7 +29,7 @@ export const reelSchema = z.object({
   video: z.string(),
   durationSeconds: z.number(),
   pages: z.array(pageSchema),
-  fontSize: z.number().default(128),
+  fontSize: z.number().default(150),
   verticalPosition: z.number().default(0.68),
   uppercase: z.boolean().default(false),
   hookText: z.string().default(''),
@@ -38,17 +42,73 @@ export const defaultReelProps: ReelProps = {
   video: 'input.mp4',
   durationSeconds: 5,
   pages: [
-    {start: 0.4, end: 1.6, words: [{text: 'anteprima', em: false}, {text: 'caption', em: true}]},
-    {start: 1.8, end: 4.5, words: [{text: 'stile', em: false}, {text: 'premium', em: true}]},
+    {
+      start: 0.4,
+      end: 1.8,
+      words: [
+        {text: 'lo', role: 'neutral', start: 0.4},
+        {text: 'sforzo', role: 'key', start: 0.7},
+        {text: 'non', role: 'red', start: 1.1},
+      ],
+    },
+    {
+      start: 1.8,
+      end: 4.5,
+      words: [
+        {text: 'paga', role: 'neutral', start: 1.8},
+        {text: 'le', role: 'neutral', start: 2.1},
+        {text: 'bollette', role: 'key', start: 2.3},
+      ],
+    },
   ],
-  fontSize: 128,
+  fontSize: 150,
   verticalPosition: 0.68,
   uppercase: false,
   hookText: '',
   hookSeconds: 0,
 };
 
+const COLORE = {
+  neutral: C.biancoCaldo,
+  key: C.giallo,
+  red: C.rossoTimbro,
+} as const;
+
 // ------------------------------------------------------------- CAPTION ---
+// Karaoke del playbook: ogni parola compare quando viene pronunciata, con il
+// pop a molla (scala 0.75 → back, alpha su ease, atterraggio da 14 px sopra).
+
+const Parola: React.FC<{
+  word: z.infer<typeof wordSchema>;
+  pageStart: number;
+  uppercase: boolean;
+}> = ({word, pageStart, uppercase}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+
+  const nasce = word.start >= 0 ? word.start : pageStart;
+  const t = clamp01((frame / fps - nasce) / 0.24); // 0.24s di ingresso
+  const scale = 0.75 + (1 - 0.75) * back(t);
+  const opacity = ease(clamp01(t * 1.6));
+  const dy = (1 - ease(t)) * -14; // atterra scendendo di 14 px
+
+  const text = uppercase ? word.text.toUpperCase() : word.text;
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        transform: `translateY(${dy}px) scale(${scale})`,
+        opacity,
+        color: COLORE[word.role],
+        // Le parole-chiave pesano di piu, come le scritte a mano del playbook
+        fontWeight: word.role === 'neutral' ? 600 : 700,
+        margin: '0 0.14em',
+      }}
+    >
+      {text}
+    </span>
+  );
+};
 
 const CaptionPage: React.FC<{
   page: z.infer<typeof pageSchema>;
@@ -56,82 +116,38 @@ const CaptionPage: React.FC<{
   verticalPosition: number;
   uppercase: boolean;
 }> = ({page, fontSize, verticalPosition, uppercase}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const localFrame = frame - Math.round(page.start * fps);
-
-  // Le parole molto lunghe non devono uscire dal riquadro: il corpo si
-  // riduce in proporzione alla parola più lunga della pagina
+  // Caveat ha occhio piccolo: le parole lunghe rientrano comunque, ma il
+  // corpo si riduce se la riga rischia di sbordare
   const longest = Math.max(...page.words.map((w) => w.text.length), 1);
-  const fitted = Math.min(fontSize, Math.floor(980 / (0.62 * longest)));
-
-  // Pop-in a molla: la pagina "entra" con una micro-spinta morbida
-  const pop = spring({
-    frame: localFrame,
-    fps,
-    config: {damping: 16, stiffness: 220, mass: 0.6},
-    durationInFrames: 14,
-  });
-  const scale = interpolate(pop, [0, 1], [0.9, 1]);
-  const opacity = interpolate(localFrame, [0, 3], [0, 1], {
-    extrapolateRight: 'clamp',
-  });
+  const fitted = Math.min(fontSize, Math.floor(1120 / (0.46 * longest)));
 
   return (
-    <AbsoluteFill
-      style={{
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-      }}
-    >
+    <AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center'}}>
       <div
         style={{
           position: 'absolute',
           top: verticalPosition * 1920,
-          transform: `translateY(-50%) scale(${scale})`,
-          opacity,
+          transform: 'translateY(-50%)',
           width: '92%',
           textAlign: 'center',
-          fontFamily: 'Instrument Sans',
-          fontWeight: 700,
+          fontFamily: 'Caveat',
           fontSize: fitted,
-          lineHeight: 1.08,
-          color: 'white',
-          // Ombra diffusa vera: alone morbido + contatto, niente bordo
-          textShadow:
-            '0 2px 8px rgba(0,0,0,0.55), 0 10px 36px rgba(0,0,0,0.55), 0 24px 80px rgba(0,0,0,0.35)',
+          lineHeight: 1.02,
+          textShadow: OMBRA,
         }}
       >
-        {page.words.map((w, i) => {
-          const text = uppercase ? w.text.toUpperCase() : w.text;
-          return (
-            <span
-              key={i}
-              style={
-                w.em
-                  ? {
-                      fontStyle: 'italic',
-                      fontSize: '1.07em',
-                      textShadow:
-                        '0 2px 8px rgba(0,0,0,0.6), 0 10px 44px rgba(0,0,0,0.65), 0 0 60px rgba(255,255,255,0.28)',
-                    }
-                  : undefined
-              }
-            >
-              {text}
-              {i < page.words.length - 1 ? ' ' : ''}
-            </span>
-          );
-        })}
+        {page.words.map((w, i) => (
+          <Parola key={i} word={w} pageStart={page.start} uppercase={uppercase} />
+        ))}
       </div>
     </AbsoluteFill>
   );
 };
 
 // --------------------------------------------------------- HOOK BANNER ---
-// Banner bianco con testo nero sopra la testa di chi parla (mai a schermo
-// pieno, mai su nero): entra con una molla mentre il video già scorre.
-// seconds = 0 → resta visibile per tutta la clip.
+// Cartoncino di carta con l'inchiostro verde scuro, appena ruotato: il
+// "takeover carta" del playbook ridotto a banner sopra la testa, che e la
+// posizione approvata da Lorenzo. Entra con la molla mentre il video scorre.
 
 const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) => {
   const frame = useCurrentFrame();
@@ -150,33 +166,32 @@ const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) 
   const entrance = spring({
     frame,
     fps,
-    config: {damping: 15, stiffness: 190, mass: 0.7},
-    durationInFrames: 18,
+    config: {damping: 14, stiffness: 200, mass: 0.7},
+    durationInFrames: 20,
   });
-  const scale = interpolate(entrance, [0, 1], [0.88, 1]);
-  const opacity = interpolate(frame, [0, 4], [0, 1], {
-    extrapolateRight: 'clamp',
-  });
+  const scale = interpolate(entrance, [0, 1], [0.86, 1]);
+  const rot = interpolate(entrance, [0, 1], [-4.2, -1.4]); // si posa storto
+  const opacity = interpolate(frame, [0, 4], [0, 1], {extrapolateRight: 'clamp'});
 
   return (
     <AbsoluteFill style={{alignItems: 'center'}}>
       <div
         style={{
           position: 'absolute',
-          top: 190,
+          top: 175,
           opacity: opacity * fadeOut,
-          transform: `scale(${scale})`,
+          transform: `scale(${scale}) rotate(${rot}deg)`,
           maxWidth: '86%',
-          backgroundColor: 'white',
-          color: 'black',
+          backgroundColor: C.carta,
+          color: C.inchiostro,
           textAlign: 'center',
-          fontFamily: 'Instrument Sans',
+          fontFamily: 'Caveat',
           fontWeight: 700,
-          fontSize: 58,
-          lineHeight: 1.22,
-          padding: '26px 44px',
-          borderRadius: 30,
-          boxShadow: '0 14px 44px rgba(0,0,0,0.5)',
+          fontSize: 76,
+          lineHeight: 1.06,
+          padding: '30px 48px 22px',
+          borderRadius: 10,
+          boxShadow: '0 18px 50px rgba(0,0,0,0.55)',
         }}
       >
         {text}
@@ -196,7 +211,7 @@ export const Reel: React.FC<ReelProps> = (props) => {
   const activePage = props.pages.find((p) => t >= p.start && t < p.end);
 
   return (
-    <AbsoluteFill style={{backgroundColor: 'black'}}>
+    <AbsoluteFill style={{backgroundColor: C.neroCaldo}}>
       <style>{fontCss}</style>
       <OffthreadVideo src={staticFile(props.video)} />
       {activePage ? (
