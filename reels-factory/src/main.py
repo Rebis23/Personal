@@ -82,6 +82,13 @@ def cmd_ingest() -> int:
     return 0
 
 
+def _batch_force() -> bool:
+    """BATCH_FORCE_ARCHIVE=1 ignora l'attesa fra un video d'archivio e l'altro
+    e la soglia sulla coda. Serve alle infornate lanciate a mano; le esecuzioni
+    programmate non lo impostano mai, quindi la cadenza normale resta intatta."""
+    return os.environ.get("BATCH_FORCE_ARCHIVE", "").strip() == "1"
+
+
 def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
     """Quando non escono video nuovi, ripesca dai video passati del canale.
 
@@ -93,7 +100,9 @@ def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
     if not arc.get("enabled"):
         return None
 
-    if len(st.get("queue", [])) > arc.get("queue_below", 1):
+    forza = _batch_force()
+
+    if not forza and len(st.get("queue", [])) > arc.get("queue_below", 1):
         return None
 
     done = len(st.get("archive_done", []))
@@ -101,7 +110,7 @@ def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
         return None
 
     last = st.get("last_archive_at")
-    if last:
+    if last and not forza:
         try:
             elapsed_h = (datetime.now(timezone.utc)
                          - datetime.fromisoformat(last.replace("Z", "+00:00"))
@@ -180,7 +189,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         _mark(st, v, "skipped_no_transcript")
         return True
 
-    clip_cfg = cfg["clips"]
+    clip_cfg = dict(cfg["clips"])
+    if os.environ.get("BATCH_CLIPS", "").strip().isdigit():
+        clip_cfg["per_video"] = int(os.environ["BATCH_CLIPS"])
+        print(f"   📦 Infornata: {clip_cfg['per_video']} clip da questo video")
     picks = brain.select_clips(
         transcript.to_timed_text(words),
         v["title"],
@@ -266,8 +278,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             wf = AUDIO_DIR / "sfx-whoosh.wav"
             whoosh = wf if wf.is_file() else None
 
-        emph = {"".join(c for c in w.lower() if c.isalnum())
-                for w in pick.emphasis_words}
+        def _norm(w: str) -> str:
+            return "".join(c for c in w.lower() if c.isalnum())
+        emph = {_norm(w) for w in pick.emphasis_words}
+        rosse = {_norm(w) for w in pick.red_words} - emph
         pop_times: list[float] = []
         if audio_cfg.get("pop_on_emphasis", True) and emph:
             pf = AUDIO_DIR / "sfx-pop.wav"
@@ -297,7 +311,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                 base_mp4 = vdir / f"{clip_id}-base.mp4"
                 video.render_clip(source, None, base_mp4, **render_common)
                 pages = remotion_render.build_pages(
-                    clip_words, emph,
+                    clip_words, emph, red=rosse,
                     words_per_screen=sub_cfg["words_per_line"],
                 )
                 remotion_render.render(

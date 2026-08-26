@@ -15,6 +15,16 @@ on:
     - cron: "0 20 * * *"
     - cron: "0 6 * * *"
   workflow_dispatch:
+    inputs:
+      clips_per_video:
+        description: "Quante clip estrarre da questo video (vuoto = come da config)"
+        required: false
+        default: ""
+      force_archive:
+        description: "1 = pesca dall'archivio ignorando attesa e soglia sulla coda"
+        required: false
+        default: ""
+
 
 concurrency:
   group: reels-factory-state
@@ -124,6 +134,8 @@ jobs:
           # Opzionale ma risolutivo: proxy residenziale (http://utente:pass@host:porta).
           # Con questo il download diretto funziona senza passare da Apify.
           YT_PROXY: ${{ secrets.YT_PROXY }}
+          BATCH_CLIPS: ${{ inputs.clips_per_video }}
+          BATCH_FORCE_ARCHIVE: ${{ inputs.force_archive }}
         run: python -m src.main ingest
 
       - name: Commit dello stato aggiornato

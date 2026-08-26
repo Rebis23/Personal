@@ -55,11 +55,13 @@ subtitles:
   # "word"    = una parola alla volta, grande, centrata (stile Modern Wisdom)
   # "karaoke" = gruppi di parole con evidenziazione progressiva
   style: "word"
-  # Font scelto da Lorenzo (file in assets/fonts). Alternative pronte:
-  # "Fredoka", "Baloo 2 ExtraBold", "Rounded Mplus 1c ExtraBold", "Nunito"
-  font: "Instrument Sans"
-  # Grande e importante (gruppi di 2-3 parole per schermata)
-  font_size: 128
+  # Font del playbook "Riflettendo Edit": Caveat, scritto a mano (file in
+  # assets/fonts). Usato solo dal renderer classico ASS; Remotion incorpora
+  # Caveat e Patrick Hand come data-URI.
+  font: "Caveat"
+  # Caveat ha l'occhio piccolo: a parita di leggibilita serve piu corpo di
+  # un grottesco (erano 128 con Instrument Sans)
+  font_size: 150
   # true = PAROLE IN MAIUSCOLO, false = come pronunciate
   uppercase: false
   # Colori in formato ASS &HBBGGRR& (BGR!)
@@ -69,7 +71,7 @@ subtitles:
   words_per_line: 3
   # Posizione verticale del testo (0 = alto, 1 = basso).
   # 0.68 = sul petto, dentro il riquadro ma sotto il viso
-  vertical_position: 0.68
+  vertical_position: 0.62
 
 audio:
   # Sound design: base musicale in sottofondo (file bed-*.mp3 in assets/audio,

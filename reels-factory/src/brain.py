@@ -70,6 +70,16 @@ class ClipPick(BaseModel):
             "nessuna singola frase regge da sola fuori contesto."
         ),
     )
+    red_words: list[str] = Field(
+        default_factory=list,
+        description=(
+            "0-3 parole ESATTE pronunciate nella clip che indicano un COSTO, "
+            "una NEGAZIONE o una perdita (es. 'mai', 'non', 'perdi', "
+            "'sbagliato', 'zero'). Verranno scritte in rosso timbro. Lascia "
+            "vuoto se nella clip non ce ne sono di davvero significative: il "
+            "rosso serve a marcare, non a decorare."
+        ),
+    )
     emphasis_words: list[str] = Field(
         default_factory=list,
         description=(
