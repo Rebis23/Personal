@@ -405,7 +405,14 @@ def cmd_publish() -> int:
         return 0
 
     media_url = storage.refresh_url(clip["r2_key"])
-    result = instagram.publish_reel(media_url, clip["caption"])
+    try:
+        result = instagram.publish_reel(media_url, clip["caption"])
+    except instagram.InstagramError:
+        # Il 26/08 la pubblicazione ha smesso di funzionare restituendo sempre
+        # lo stesso errore generico. Da solo non dice niente: stampiamo subito
+        # token, permessi e quota, cosi il log dice se e un blocco vero.
+        print(instagram.diagnose())
+        raise
 
     st["queue"].pop(0)
     st["published"].append({
