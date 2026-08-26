@@ -68,16 +68,21 @@ def fetch_recent_videos(channel_id: str) -> list[dict]:
     """
     url = RSS_URL.format(channel_id=channel_id)
     req = Request(url, headers={"User-Agent": "Mozilla/5.0 (reels-factory)"})
+    # Il 26/08 il feed ha risposto 404 per piu di un minuto e i tre tentativi
+    # distanziati 15s si sono esauriti tutti dentro l'intoppo: la lavorazione
+    # e stata saltata pur essendoci lavoro da fare. Attese piu larghe.
     xml_data = None
-    for attempt in (1, 2, 3):
+    attese = (20, 60, 120)
+    for attempt in range(1, len(attese) + 2):
         try:
             with urlopen(req, timeout=30) as resp:
                 xml_data = resp.read()
             break
         except Exception as e:  # noqa: BLE001 — qualsiasi intoppo di rete
-            print(f"  ⚠️ Feed del canale non raggiungibile (tentativo {attempt}/3): {e}")
-            if attempt < 3:
-                time.sleep(15)
+            print(f"  ⚠️ Feed del canale non raggiungibile "
+                  f"(tentativo {attempt}/{len(attese) + 1}): {e}")
+            if attempt <= len(attese):
+                time.sleep(attese[attempt - 1])
     if xml_data is None:
         print("  ⏭️ Feed non raggiungibile: riprovo alla prossima esecuzione")
         return []
