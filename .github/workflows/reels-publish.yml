@@ -8,6 +8,13 @@ on:
   schedule:
     # 09:30 UTC = 11:30 ora italiana (estate) / 10:30 (inverno)
     - cron: "30 9 * * *"
+    # Orari di riserva: GitHub consegna le esecuzioni programmate con ritardi
+    # anche di ore, o le salta del tutto (27/08: partita alle 19:55 invece che
+    # alle 09:30; 28/08: mai partita). Con un solo orario, un ritardo di GitHub
+    # fa saltare la giornata. Il codice pubblica UNA sola volta al giorno,
+    # quindi questi non aggiungono Reel: recuperano solo quelli persi.
+    - cron: "30 13 * * *"
+    - cron: "30 17 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
