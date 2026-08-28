@@ -21,6 +21,10 @@ on:
         description: "Dry run (non pubblica davvero)"
         type: boolean
         default: false
+      force:
+        description: "Pubblica anche se ne e gia uscito uno oggi"
+        type: boolean
+        default: false
 
 concurrency:
   group: reels-factory-state
@@ -54,6 +58,7 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
           R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
+          PUBLISH_FORCE: ${{ inputs.force }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
         run: python -m src.main publish
 
