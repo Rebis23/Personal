@@ -393,6 +393,16 @@ def cmd_publish() -> int:
         print("✅ Coda vuota: niente da pubblicare")
         return 0
 
+    # Una sola pubblicazione al giorno, anche se il workflow parte piu volte.
+    # Gli orari di riserva servono solo a coprire i ritardi di GitHub (il 27/08
+    # l'esecuzione delle 09:30 e arrivata alle 19:55, il 28/08 non e arrivata):
+    # non devono trasformarsi in tre Reel nello stesso giorno.
+    if st["published"]:
+        ultima = st["published"][-1].get("published_at", "")[:10]
+        if ultima == state_mod.now_iso()[:10]:
+            print(f"✅ Gia pubblicato oggi ({ultima}): non ne esce un secondo")
+            return 0
+
     clip = st["queue"][0]
     print(f"📤 Prossima clip in coda: {clip['clip_id']} — «{clip.get('hook', '')}»")
 
