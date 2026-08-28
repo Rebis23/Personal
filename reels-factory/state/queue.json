@@ -36,16 +36,6 @@
   ],
   "queue": [
     {
-      "clip_id": "Enp0wWhaP8M-1",
-      "video_id": "Enp0wWhaP8M",
-      "video_title": "Perché la Realtà è Solo un'Illusione | Il Grande Disegno #1",
-      "hook": "Stessa notte insonne: lui si sveglia felice, io distrutto",
-      "r2_key": "reels/Enp0wWhaP8M/Enp0wWhaP8M-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/Enp0wWhaP8M/Enp0wWhaP8M-1.mp4",
-      "caption": "Stessa notte, stesse ore di sonno, due giornate opposte.\nNon è successo niente di diverso: è cambiata solo l'interpretazione.\nE l'interpretazione decide le azioni che farai per le prossime 12 ore.\n\n#mentalita #abitudini #crescitapersonale #interpretazione #consapevolezza #psicologia",
-      "created_at": "2026-08-24T17:18:41Z"
-    },
-    {
       "clip_id": "Enp0wWhaP8M-2",
       "video_id": "Enp0wWhaP8M",
       "video_title": "Perché la Realtà è Solo un'Illusione | Il Grande Disegno #1",
@@ -114,6 +104,14 @@
       "ig_media_id": "18146160097493946",
       "permalink": "https://www.instagram.com/reel/DcdX9MSEcuw/",
       "published_at": "2026-08-25T10:01:44Z"
+    },
+    {
+      "clip_id": "Enp0wWhaP8M-1",
+      "video_id": "Enp0wWhaP8M",
+      "hook": "Stessa notte insonne: lui si sveglia felice, io distrutto",
+      "ig_media_id": "17943531858335858",
+      "permalink": "https://www.instagram.com/reel/Dclikiekeyf/",
+      "published_at": "2026-08-28T14:08:36Z"
     }
   ],
   "archive_done": [
