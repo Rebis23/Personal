@@ -32,6 +32,18 @@
         "Enp0wWhaP8M-2",
         "Enp0wWhaP8M-3"
       ]
+    },
+    {
+      "video_id": "H2Z1w2EMork",
+      "title": "Se sei così intelligente, perchè non ottieni risultati?",
+      "status": "done",
+      "processed_at": "2026-08-28T18:04:04Z",
+      "clips": [
+        "H2Z1w2EMork-1",
+        "H2Z1w2EMork-2",
+        "H2Z1w2EMork-3",
+        "H2Z1w2EMork-4"
+      ]
     }
   ],
   "queue": [
@@ -44,6 +56,46 @@
       "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/Enp0wWhaP8M/Enp0wWhaP8M-3.mp4",
       "caption": "Quello che vuoi davvero sta esattamente dove non hai il coraggio di guardare.\nSe vuoi una relazione ma non approcci nessuno, il problema non è il fisico: è il confronto che stai evitando.\nSi cresce solo affrontando la cosa che spaventa.\n\n#paura #crescitapersonale #zonadicomfort #coraggio #psicologia #jung #consapevolezza",
       "created_at": "2026-08-24T17:43:42Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-1",
+      "video_id": "H2Z1w2EMork",
+      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+      "hook": "La vita non ha una risposta giusta né un procedimento per arrivarci",
+      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-1.mp4",
+      "caption": "La scuola ti ha insegnato che esiste una risposta giusta e un procedimento per arrivarci.\nNella vita non esiste né l'una né l'altro: esiste solo la decisione che prendi tu, con i dati che hai.\nEcco perché tante persone intelligenti restano ferme.\n\n#crescitapersonale #decisioni #mentalita #scuola #intelligenza #incertezza #mindset",
+      "created_at": "2026-08-28T16:51:00Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-2",
+      "video_id": "H2Z1w2EMork",
+      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+      "hook": "L'intelligenza diventa paralisi quando vuoi valutare tutte le variabili",
+      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
+      "caption": "Paralisi da analisi: più pensi, più trovi variabili, più resti fermo.\nLe variabili non le saprai mai tutte. Lo stato base della vita è l'incertezza: se non lo accetti, la tua intelligenza lavora contro di te.\n\n#paralisidaanalisi #perfezionismo #decisioni #overthinking #incertezza #crescitapersonale #mentalita",
+      "created_at": "2026-08-28T16:59:52Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-3",
+      "video_id": "H2Z1w2EMork",
+      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+      "hook": "Il vantaggio iniziale è sempre dello stupido",
+      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
+      "caption": "Il vantaggio iniziale è sempre dello stupido.\nVede meno complessità, meno ostacoli, e quindi parte prima. Incontra i problemi e li risolve nel modo più semplice.\nTu invece stai ancora analizzando.\n\n#azione #semplicita #overthinking #crescitapersonale #mentalita #imprenditoria #decisioni",
+      "created_at": "2026-08-28T17:38:14Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-4",
+      "video_id": "H2Z1w2EMork",
+      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+      "hook": "Più velocemente agisci, meno problemi incontri",
+      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
+      "caption": "I problemi si creano quando sei fermo, non quando corri.\nNon controlli la fortuna, non controlli il tempismo, non controlli le circostanze. Controlli solo quello che fai.\nPer questo l'intelligenza va messa al servizio dell'azione, non al posto suo.\n\n#azione #produttivita #decisioni #imprenditoria #mentalita #crescitapersonale #abitudini",
+      "created_at": "2026-08-28T18:04:04Z"
     }
   ],
   "published": [
