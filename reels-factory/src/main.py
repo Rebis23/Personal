@@ -397,7 +397,8 @@ def cmd_publish() -> int:
     # Gli orari di riserva servono solo a coprire i ritardi di GitHub (il 27/08
     # l'esecuzione delle 09:30 e arrivata alle 19:55, il 28/08 non e arrivata):
     # non devono trasformarsi in tre Reel nello stesso giorno.
-    if st["published"]:
+    forzato = os.environ.get("PUBLISH_FORCE", "").strip().lower() in ("1", "true", "yes")
+    if st["published"] and not forzato:
         ultima = st["published"][-1].get("published_at", "")[:10]
         if ultima == state_mod.now_iso()[:10]:
             print(f"✅ Gia pubblicato oggi ({ultima}): non ne esce un secondo")
