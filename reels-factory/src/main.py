@@ -10,6 +10,7 @@ anche in locale se hai ffmpeg, yt-dlp e le variabili d'ambiente configurate.
 """
 
 import hashlib
+import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -425,17 +426,61 @@ def cmd_publish() -> int:
         print(instagram.diagnose())
         raise
 
-    st["queue"].pop(0)
-    st["published"].append({
+    registrazione = {
         "clip_id": clip["clip_id"],
         "video_id": clip["video_id"],
         "hook": clip.get("hook", ""),
         "ig_media_id": result["ig_media_id"],
         "permalink": result["permalink"],
         "published_at": state_mod.now_iso(),
-    })
+    }
+
+    # La ricevuta viene scritta PRIMA dello stato. Il 28/08 il Reel e uscito
+    # ma il salvataggio dello stato e stato rifiutato (nel frattempo la
+    # lavorazione aveva scritto sul repo): il sistema credeva la clip ancora
+    # in coda e l'avrebbe ripubblicata il giorno dopo. Con la ricevuta su
+    # disco il passo di commit puo riapplicare la modifica sullo stato
+    # aggiornato, quante volte serve.
+    RICEVUTA.write_text(json.dumps(registrazione, ensure_ascii=False, indent=2),
+                        encoding="utf-8")
+
+    _registra(st, registrazione)
     state_mod.save_state(st)
     print(f"✅ Pubblicato! {result['permalink'] or result['ig_media_id']}")
+    return 0
+
+
+# --------------------------------------------------- REGISTRA PUBBLICAZIONE ---
+
+RICEVUTA = Path(__file__).resolve().parent.parent / "state" / "ultima-pubblicazione.json"
+
+
+def _registra(st: dict, reg: dict) -> bool:
+    """Toglie la clip dalla coda e la mette tra le pubblicate. Idempotente:
+    richiamarla due volte sulla stessa ricevuta non cambia niente."""
+    gia = any(p["clip_id"] == reg["clip_id"] for p in st["published"])
+    prima = len(st["queue"])
+    st["queue"] = [c for c in st["queue"] if c["clip_id"] != reg["clip_id"]]
+    if not gia:
+        st["published"].append(reg)
+    return not gia or len(st["queue"]) != prima
+
+
+def cmd_registra() -> int:
+    """Riapplica l'ultima ricevuta di pubblicazione sullo stato corrente.
+    Serve al passo di commit: se il salvataggio viene rifiutato perche un'altra
+    esecuzione ha scritto nel frattempo, si riparte dallo stato aggiornato e si
+    riapplica solo questa modifica, invece di perdere il Reel gia pubblicato."""
+    if not RICEVUTA.exists():
+        print("Nessuna ricevuta da registrare")
+        return 0
+    reg = json.loads(RICEVUTA.read_text(encoding="utf-8"))
+    st = state_mod.load_state()
+    if _registra(st, reg):
+        state_mod.save_state(st)
+        print(f"📝 Registrata la pubblicazione di {reg['clip_id']}")
+    else:
+        print(f"📝 {reg['clip_id']} era gia registrata")
     return 0
 
 
@@ -454,7 +499,8 @@ def cmd_status() -> int:
 
 
 def main() -> int:
-    commands = {"ingest": cmd_ingest, "publish": cmd_publish, "status": cmd_status}
+    commands = {"ingest": cmd_ingest, "publish": cmd_publish,
+                "registra": cmd_registra, "status": cmd_status}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1

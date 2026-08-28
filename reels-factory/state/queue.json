@@ -48,16 +48,6 @@
   ],
   "queue": [
     {
-      "clip_id": "Enp0wWhaP8M-3",
-      "video_id": "Enp0wWhaP8M",
-      "video_title": "Perché la Realtà è Solo un'Illusione | Il Grande Disegno #1",
-      "hook": "Ciò che più cerchi si trova dove meno vuoi guardare",
-      "r2_key": "reels/Enp0wWhaP8M/Enp0wWhaP8M-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/Enp0wWhaP8M/Enp0wWhaP8M-3.mp4",
-      "caption": "Quello che vuoi davvero sta esattamente dove non hai il coraggio di guardare.\nSe vuoi una relazione ma non approcci nessuno, il problema non è il fisico: è il confronto che stai evitando.\nSi cresce solo affrontando la cosa che spaventa.\n\n#paura #crescitapersonale #zonadicomfort #coraggio #psicologia #jung #consapevolezza",
-      "created_at": "2026-08-24T17:43:42Z"
-    },
-    {
       "clip_id": "H2Z1w2EMork-1",
       "video_id": "H2Z1w2EMork",
       "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
@@ -162,6 +152,14 @@
       "ig_media_id": "18375007213237518",
       "permalink": "https://www.instagram.com/reel/DclwuZPCGgQ/",
       "published_at": "2026-08-28T16:12:12Z"
+    },
+    {
+      "clip_id": "Enp0wWhaP8M-3",
+      "video_id": "Enp0wWhaP8M",
+      "hook": "Ciò che più cerchi si trova dove meno vuoi guardare",
+      "ig_media_id": "18004908263994104",
+      "permalink": "https://www.instagram.com/reel/Dcl9uxmFRUh/",
+      "published_at": "2026-08-28T18:05:39Z"
     }
   ],
   "archive_done": [

@@ -1,0 +1,4 @@
+
+# Ricevuta dell ultima pubblicazione: serve solo dentro una singola
+# esecuzione per riapplicare lo stato se il salvataggio viene rifiutato.
+reels-factory/state/ultima-pubblicazione.json
