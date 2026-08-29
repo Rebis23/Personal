@@ -26,7 +26,13 @@ whisper:
 
 clips:
   # Quante clip estrarre da ogni video
-  per_video: 3
+  # Raddoppiate il 29/08 su richiesta di Lorenzo. Non sono 6 momenti presi
+  # in fila: Claude ne individua 12-15, li vota sui cinque assi e monta solo
+  # i migliori. Se un video non ne ha 6 che superano la soglia, ne escono meno.
+  per_video: 6
+  # Somma minima dei cinque assi (bersaglio, numero, ribaltamento, tu,
+  # tensione) perche una clip venga montata. Su 15.
+  punteggio_minimo: 7
   min_seconds: 20
   max_seconds: 75
   # "square" = video ritagliato quadrato su sfondo nero, persona al centro

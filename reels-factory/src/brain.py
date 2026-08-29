@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 
 import anthropic
 
+from . import prestazioni
+
 
 class ClipPick(BaseModel):
     start_seconds: float = Field(description="Inizio della clip, in secondi dal principio del video")
@@ -32,6 +34,21 @@ class ClipPick(BaseModel):
         "Quanto è forte questo hook da 1 a 10, giudicato con severità: 10 = "
         "impossibile non fermarsi, 5 = interessante ma tiepido. Sotto 7 la clip "
         "non vale la pena: scegline un'altra."
+    ))
+    bersaglio: str = Field(default="", description=(
+        "La cosa CONCRETA che l'hook attacca o nomina, e che chi guarda "
+        "riconosce subito: 'la laurea', 'la disciplina', 'i corsi di "
+        "motivazione'. Stringa vuota se l'hook non nomina niente di concreto — "
+        "e allora quasi sempre è un hook debole."
+    ))
+    punteggi: dict[str, int] = Field(default_factory=dict, description=(
+        "Voto da 0 a 3 su ognuno di questi cinque assi, con queste chiavi "
+        "esatte: bersaglio (nomina una cosa concreta che il pubblico "
+        "riconosce), numero (contiene una cifra o una quantità), "
+        "ribaltamento (nega una convinzione e la sostituisce, forma "
+        "'non è X, è Y'), tu (parla direttamente a chi guarda, lo accusa o "
+        "lo chiama in causa), tensione (lascia qualcosa in sospeso che "
+        "obbliga a restare). Somma massima 15."
     ))
     caption: str = Field(description="Caption Instagram in italiano: hook forte nella prima riga, 2-4 righe totali, niente hashtag qui")
     hashtags: list[str] = Field(description=(
@@ -96,14 +113,35 @@ Contesto brand:
 {hooks_library}
 === fine libreria ===
 
+=== COME SONO ANDATI I REEL PRECEDENTI (dati veri di questo profilo) ===
+{storico}
+=== fine storico ===
+
+I CINQUE ASSI. Un hook fa views quando porta a casa piu assi possibile:
+- BERSAGLIO: nomina una cosa concreta che il pubblico riconosce e la attacca
+  (la laurea, la disciplina, i corsi). Gli aforismi su concetti astratti — la
+  vita, la paura, il desiderio — sono i primi a morire.
+- NUMERO: una cifra dentro l'hook ("il 95%", "tre anni", "12.000 euro").
+- RIBALTAMENTO: nega una convinzione e la sostituisce. "Non è X, è Y".
+- TU: parla a chi guarda, lo chiama in causa, lo accusa. Non "si tende a...",
+  ma "tu lo fai".
+- TENSIONE: lascia un buco che si chiude solo continuando a guardare.
+Compila `punteggi` con un voto 0-3 per asse. Un hook che sta sotto 7 di somma
+non merita di essere montato, per quanto bello sia il contenuto attorno.
+
 METODO DI LAVORO — segui questo ordine:
-1. Leggi tutta la trascrizione e individua 8-10 momenti potenzialmente forti.
-2. Per ognuno chiediti: "se questa frase fosse scritta sopra la testa di chi \
-parla, uno smetterebbe di scrollare?". Scarta senza pietà quelli che non superano \
-la prova.
-3. Tieni SOLO i {n_clips} migliori. Ogni hook deve valere almeno 7/10 secondo la \
-libreria qui sopra. Se un momento è interessante ma l'hook è tiepido, cerca dentro \
-lo stesso passaggio una frase più tagliente su cui far partire la clip.
+1. Leggi tutta la trascrizione e individua 12-15 momenti potenzialmente forti.
+   Sii generoso in questa fase: si scarta dopo, non adesso.
+2. Per ognuno scrivi l'hook migliore che quel passaggio permette, e assegnagli
+   i cinque punteggi. Un momento vale quanto il miglior hook che ne puoi
+   ricavare, non quanto e interessante il ragionamento.
+3. TORNEO: metti in fila tutti i candidati per somma dei punteggi e tieni solo
+   i {n_clips} in cima. Guarda lo storico qui sopra: se uno dei tuoi candidati
+   somiglia a un hook che e andato MALE, scartalo anche se ti piace. Se somiglia
+   a uno andato bene, e un buon segno ma non basta: non ripetere lo stesso
+   hook due volte.
+4. Se un momento è interessante ma l'hook è tiepido, cerca dentro lo stesso
+   passaggio una frase più tagliente su cui far partire la clip.
 4. Ogni clip deve APRIRE sull'hook: se la frase forte arriva dopo dieci secondi di \
 premessa, sposta start_seconds in avanti e parti da lì.
 5. CONFINI PULITI: start_seconds deve cadere sull'inizio di una frase e \
@@ -177,6 +215,7 @@ def select_clips(
     system = SYSTEM_PROMPT.format(
         brand_context=brand_context.strip(),
         hooks_library=load_hooks_library(),
+        storico=prestazioni.leggi_scheda(),
         n_clips=clips_per_video,
         min_s=min_seconds,
         max_s=max_seconds,

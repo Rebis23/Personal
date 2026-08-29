@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, clipcafe, drive, instagram, moviesource, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, clipcafe, drive, instagram, moviesource, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -194,6 +194,18 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     if os.environ.get("BATCH_CLIPS", "").strip().isdigit():
         clip_cfg["per_video"] = int(os.environ["BATCH_CLIPS"])
         print(f"   📦 Infornata: {clip_cfg['per_video']} clip da questo video")
+    # Prima di scegliere, aggiorna la scheda dei risultati veri: Claude deve
+    # vedere quali hook hanno fatto views su QUESTO profilo e quali sono morti.
+    # Senza, sceglie al buio applicando regole generali.
+    try:
+        righe = prestazioni.raccogli(st["published"])
+        prestazioni.scrivi_scheda(righe)
+        print(f"   📊 Storico aggiornato: numeri veri di {len(righe)} Reel")
+    except Exception as e:                      # noqa: BLE001
+        # Instagram irraggiungibile non deve fermare la lavorazione: si
+        # sceglie con la scheda di ieri, o senza.
+        print(f"   ⚠️ Storico non aggiornato ({e}): uso quello precedente")
+
     picks = brain.select_clips(
         transcript.to_timed_text(words),
         v["title"],
@@ -203,17 +215,30 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         min_seconds=clip_cfg["min_seconds"],
         max_seconds=clip_cfg["max_seconds"],
     )
+    # Soglia dura sul punteggio. Il prompt la chiede, ma chiederla non basta:
+    # meglio pubblicare tre clip forti che sei di cui due tiepide. Se un video
+    # non ha momenti abbastanza buoni, e giusto che ne esca meno del massimo.
+    soglia = int(clip_cfg.get("punteggio_minimo", 7))
+    scartate = [p for p in picks if p.punteggi and sum(p.punteggi.values()) < soglia]
+    for p in scartate:
+        print(f"   🚫 Scartata ({sum(p.punteggi.values())}/15, sotto {soglia}): «{p.hook}»")
+    picks = [p for p in picks if not (p.punteggi and sum(p.punteggi.values()) < soglia)]
+
     if not picks:
         print("   ⚠️ Claude non ha trovato clip valide, salto")
         _mark(st, v, "no_clips_found")
         return True
-    print(f"   🧠 Claude ha scelto {len(picks)} clip")
+    print(f"   🧠 Tenute {len(picks)} clip su {len(picks) + len(scartate)} candidate")
 
     sub_cfg = cfg["subtitles"]
     queued = []
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{n}"
+        somma = sum(pick.punteggi.values()) if pick.punteggi else 0
+        assi = " ".join(f"{k}={v}" for k, v in (pick.punteggi or {}).items())
         print(f"   ✂️ Clip {n}: [{pick.start_seconds:.0f}s → {pick.end_seconds:.0f}s] «{pick.hook}»")
+        print(f"      punteggio {somma}/15 ({assi})"
+              + (f" · bersaglio: {pick.bersaglio}" if pick.bersaglio else " · nessun bersaglio"))
         start, end = transcript.snap_to_sentences(
             words, pick.start_seconds, pick.end_seconds,
             min_seconds=clip_cfg["min_seconds"], max_seconds=clip_cfg["max_seconds"],
