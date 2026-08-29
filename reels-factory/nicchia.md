@@ -1,8 +1,8 @@
 # La scuola: come sono costruiti i video brevi che sfondano
 
-> Estratto automaticamente da **16 video brevi italiani** di
-> 8 canali diversi, che hanno superato di almeno 3 volte la mediana
-> del proprio canale (scarto mediano: 5.7x).
+> Estratto automaticamente da **28 video brevi italiani** di
+> 14 canali diversi, che hanno superato di almeno 3 volte la mediana
+> del proprio canale (scarto mediano: 5.1x).
 > Filoni cercati: mentalita vincente, psicologia comportamento umano, abitudini disciplina risultati, crescita personale verita scomode, perche non ottieni risultati, come cambiare mentalita imprenditore, psicologia soldi e successo, smettere di procrastinare disciplina.
 >
 > Sono SCHEMI, non esempi da copiare. Il prompt di selezione legge questo
@@ -12,103 +12,78 @@
 
 ## 1. Schemi di aggancio
 
-### A. Cifra in apertura + contenitore + dominio astratto
-**Come si riconosce:** il titolo comincia con un numero in cifra, seguito da un sostantivo-contenitore generico (frasi, verità, regole, cose) e da un dominio astratto introdotto da "su/sul/sulla" o da un'apposizione. Zero verbi, zero soggetto.
-**Perché funziona:** promette un contenuto finito e contabile (so quanto dura e quanto ricevo), non richiede al pubblico di riconoscersi in un problema prima di cliccare, e il dominio astratto (forza, carattere, solitudine) è così ampio che nessuno si sente escluso.
-**Diffusione:** 6 video su 16 (37,5%), su 3 canali diversi (Il Motivatore Mascherato, EfficaceMente, Giorgia Dalla Valle). È lo schema statisticamente più forte del campione: i 4 scarti più alti in assoluto lo usano tutti.
-- "10 frasi sulla forza" — scarto **103,9**
-- "3 Cose da googlare se non riesci a lasciare andare una persona" — scarto **4,3**
+### A. Cifra in apertura + categoria di sapere
+**Come si riconosce:** il titolo comincia con un numero seguito da un contenitore di conoscenza (frasi, verità, regole, cose). Nessun verbo, nessuna spiegazione: solo la promessa di una lista finita.
+**Perché funziona:** il numero dichiara in anticipo la durata e la struttura del video (posso reggerlo fino alla fine), e "verità/regole" promette informazione riservata senza doverla anticipare.
+**Presenza:** 6 video su 28 (21%), 3 canali diversi (Il Motivatore Mascherato, EfficaceMente, Giorgia Dalla Valle). Scarto medio dei titoli con cifra: **45,3** contro una mediana generale di 5,1.
+- "10 frasi sulla forza" — scarto **103,9** (Il Motivatore Mascherato)
+- "📱Dipendenza da cellulare? Ecco 2 regole salvavita" — scarto **5,1** (EfficaceMente)
 
-### B. Problema secco + promessa immediata di rimedio
-**Come si riconosce:** prima metà = il problema nominato in 2-4 parole, spesso con punto interrogativo o con "se non riesci a…"; seconda metà = il rimedio annunciato ("Ecco 2 regole", "un semplice trucco", "Cambia mentalità").
-**Perché funziona:** il titolo fa da mini-video: pone e chiude la tensione, quindi non chiede fiducia preventiva. Il rimedio è sempre presentato come piccolo e a portata ("semplice", "2 regole", "3 cose").
-**Diffusione:** 4 video su 16 (25%), su 3 canali (Marco Taibi, EfficaceMente ×2, Giorgia Dalla Valle).
-- "Bro vuoi ottenere risultati? Cambia mentalità" — scarto **9,6**
-- "📱Dipendenza da cellulare? Ecco 2 regole salvavita" — scarto **5,1**
+*Nota:* la variante estrema "N + verità/regole su [sostantivo astratto singolo]" (forza, carattere, solitudine) vive **solo su Il Motivatore Mascherato**, dove occupa i primi 4 posti assoluti (103,9 / 73,5 / 44,5 / 40,6). È l'ipotesi più forte del dataset ma va trattata come ipotesi da testare, non come regola già dimostrata: il numero in apertura è schema di nicchia, il lessico "verità/frasi/regole non dette" è ancora abitudine di un creator solo.
+
+### B. Nome proprio famoso come cavallo di Troia
+**Come si riconosce:** il soggetto del titolo non è un concetto ma un marchio o una persona che il pubblico già riconosce (Starbucks, Apple, Blockbuster, Ferrari, la Juve). Il contenuto di crescita personale arriva dopo, dentro il video.
+**Perché funziona:** l'aggancio non chiede fiducia al canale, la prende in prestito da un nome già noto; e il feed lo distribuisce anche a chi non segue la nicchia.
+**Presenza:** 9 video su 28 (32%), 5 canali (Creatori di Destini, Corsi.it, Big Luca, Made IT Podcast, Ipnosi Naturale).
+- "Big Luca Buys Watermelons 🍉 with a Ferrari 🏎️" — scarto **21,1**
+- "Chiellini racconta l'arrivo del GOAT alla Juve 🐐" — scarto **7,9**
+- "Starbucks é una banca che vende caffé" — scarto **6,0**
 
 ### C. Ribaltamento di una cosa data per certa
-**Come si riconosce:** il titolo prende un'entità nota o una convinzione condivisa e la ridefinisce in un'altra categoria, o ne rovescia l'esito. Struttura tipica: "X è in realtà Y" oppure "X credeva di aver vinto… ma".
-**Perché funziona:** crea dissonanza in una riga sola. Il pubblico non deve capire il tema per sentire che qualcosa non torna.
-**Diffusione:** 5 video su 16 (31%), su 3 canali (Creatori di Destini ×3, Il Motivatore Mascherato, Antonio Quaglietta).
+**Come si riconosce:** il titolo prende un fatto che nessuno discuterebbe e lo nega, o lo riclassifica in una categoria sbagliata. Struttura tipica: *[cosa nota] è in realtà [cosa incompatibile]*, oppure *[cosa nota] ... ma [rovesciamento]*.
+**Perché funziona:** apre un buco di coerenza. Lo spettatore non può chiudere il video senza sapere come si risolve la contraddizione.
+**Presenza:** 4 video, 2 canali (Creatori di Destini, Big Luca).
 - "Starbucks é una banca che vende caffé" — scarto **6,0**
 - "Blockbuster se la rise... ma non per ultimo!" — scarto **4,0**
-
-### D. Nominare l'invisibile che agisce su di te
-**Come si riconosce:** il titolo indica una cosa che esiste ma non è dichiarata: "non dette", "occulta", "sa tutto", "in allerta". Il lessico è quello del nascosto che opera comunque.
-**Perché funziona:** implica un'asimmetria — c'è qualcosa che ti riguarda e che non ti è stato detto — senza dover fare accuse esplicite.
-**Diffusione:** 4 video su 16 (25%), su 4 canali (Il Motivatore Mascherato, Creatori di Destini, Simone Allocco, Lara Vecera).
-- "12 regole non dette" — scarto **40,6**
 - "La tassa dei poveri: l'imposta occulta che paghi sempre" — scarto **5,7**
 
-### E. Dominio emotivo universale nominato per intero, senza contesto
-**Come si riconosce:** il titolo contiene un solo grande sostantivo di stato interiore (forza, carattere, solitudine, coscienza, allerta) e nient'altro che lo restringa a un caso specifico.
-**Perché funziona:** massimizza il bacino di identificazione — non serve avere quel problema, basta conoscerlo.
-**Diffusione:** 5 video su 16, su 3 canali (Il Motivatore Mascherato ×3, Lara Vecera, Simone Allocco).
-- "8 verità sulla solitudine" — scarto **44,5**
+### D. Domanda diretta cortissima al "tu"
+**Come si riconosce:** 2-5 parole, punto interrogativo, seconda persona esplicita o implicita. Spesso la domanda occupa solo la prima metà del titolo e la seconda dà l'ordine ("Cambia mentalità", "Ecco 2 regole").
+**Perché funziona:** una domanda richiede una risposta mentale immediata: la risposta è già un microingaggio, e il video diventa la verifica.
+**Presenza:** 5 video (18%), 4 canali (Migliora Mente, Marco Taibi, EfficaceMente, Big Luca). Scarto medio 7,3 contro mediana 5,1.
+- "Ami questo gioco?" — scarto **14,8**
+- "Bro vuoi ottenere risultati? Cambia mentalità" — scarto **9,6**
+
+### E. Frammento confessionale in prima persona
+**Come si riconosce:** nessun soggetto pubblico, nessuna promessa: solo uno stato o un atto personale, spesso senza verbo coniugato o in passato prossimo. "vivere in allerta", "mi sono sacrificata per la famiglia".
+**Perché funziona:** non vende niente, quindi non attiva la difesa da pubblicità; e lo spettatore che si riconosce nella frase resta perché sta guardando sé stesso.
+**Presenza:** 4 video, 2 canali (Lara Vecera, Segreti della Psiche).
 - "vivere in allerta" — scarto **6,2**
+- "mi sono sacrificata per la famiglia" — scarto **5,4**
+- "Una cosa che mi ha reso molto triste" — scarto **3,9**
 
-### F. Marchio famoso usato come parabola — *ipotesi, non regola*
-**Come si riconosce:** nome di azienda nota in apertura (Starbucks, Apple, Blockbuster) usato per veicolare una lezione di mentalità/soldi.
-**Presente solo su Creatori di Destini** (3 video su 4 del canale): da trattare come abitudine di quel creator, non come schema di nicchia. Nota di cautela sui numeri: gli scarti sono 6,0 / 4,4 / 4,0 — funziona, ma è lo schema con il **tetto più basso** del campione, mai sopra 6.
+### F. Il sintomo nominato prima di qualsiasi soluzione
+**Come si riconosce:** il titolo nomina una condizione che il pubblico vive ma non ha ancora messo in parole (solitudine, allerta costante, dipendenza dal telefono, non riuscire a lasciare andare qualcuno). La soluzione è assente o ridotta a una clausola finale.
+**Perché funziona:** il riconoscimento ("questo sono io") precede e supera il desiderio di miglioramento; è l'aggancio più trasversale del dataset.
+**Presenza:** 5 video, 5 canali diversi.
+- "8 verità sulla solitudine" — scarto **44,5** (Il Motivatore Mascherato)
+- "3 Cose da googlare se non riesci a lasciare andare una persona" — scarto **4,3** (Giorgia Dalla Valle)
+- "vivere in allerta" — scarto **6,2** (Lara Vecera)
 
-### G. Confessione in prima persona, minuscola e senza punteggiatura — *ipotesi, non regola*
-**Presente solo su Lara Vecera** ("mi sono sacrificata per la famiglia" 5,4; "vivere in allerta" 6,2). Due video, un solo canale: interessante perché entrambi i suoi video in classifica lo usano, ma non verificabile come schema trasversale.
+### G. Micro-promessa operativa con marcatore di facilità
+**Come si riconosce:** la soluzione è dichiarata piccola e maneggevole: "un semplice trucco", "2 regole", "3 cose da googlare". Mai "il metodo", mai "la guida completa".
+**Perché funziona:** abbassa il costo percepito dell'attenzione a pochi secondi.
+**Presenza:** 3 video, 2 canali (EfficaceMente ×2, Giorgia Dalla Valle).
+- "Un semplice trucco per dormire più EfficaceMente" — scarto **5,7**
+- "📱Dipendenza da cellulare? Ecco 2 regole salvavita" — scarto **5,1**
+
+### H. Titolo in inglese su canale italiano
+**Come si riconosce:** titolo interamente in inglese, spesso brevissimo.
+**Perché funziona (ipotesi ragionevole):** allarga il bacino di distribuzione oltre l'audience nazionale; non è un aggancio semantico ma di reach.
+**Presenza:** 5 video, 3 canali (Big Luca ×3, Antonio Quaglietta, Made IT Podcast). Scarto medio 7,5 contro mediana 5,1.
+- "Big Luca Buys Watermelons 🍉 with a Ferrari 🏎️" — scarto **21,1**
+- "Why Breakups Spike After Summer #Shorts" — scarto **4,3**
 
 ---
 
 ## 2. Cosa hanno in comune i primi dieci
 
-I dieci con scarto più alto (da 103,9 a 5,4) contro i sei restanti (da 5,1 a 4,0):
+I dieci con scarto più alto (da 103,9 a 6,0) condividono cinque costanti, tutte misurabili contro i restanti 18:
 
-1. **Sono più corti.** Media 5,4 parole nei primi dieci contro 8,0 negli ultimi sei. I quattro scarti massimi sono tutti titoli di **esattamente 4 parole**.
-2. **Il tema è astratto e permanente, non situazionale.** Forza, carattere, solitudine, regole, mentalità, allerta, sacrificio: 7 su 10. Nella coda compaiono invece situazioni circoscritte (dipendenza da cellulare, una persona da lasciare andare, un evento aziendale).
-3. **La cifra iniziale è il marcatore del vertice.** 4 dei primi 5 aprono con un numero in cifra; nessun altro titolo del campione apre con una cifra.
-4. **Nei primi quattro non c'è nessun "tu".** Sono liste impersonali. La seconda persona entra dal 5° posto in giù (scarto 9,6 e sotto): il rivolgersi direttamente al pubblico è presente nei forti, ma **non nei fortissimi**.
-5. **Nessun nome proprio nei primi sei.** Marchi e nomi (Starbucks, Apple, Blockbuster, EfficaceMente, googlare) compaiono solo da scarto 6,0 in giù: 4 su 5 stanno nella metà bassa.
-6. **Nessuna domanda nei primi quattro.** Le uniche interrogative del campione stanno a scarto 9,6 e 5,1.
-7. **Nessuno spiega tutto.** Nei primi dieci il titolo annuncia una categoria ("verità sulla solitudine") ma non ne consegna nemmeno un pezzo; nella coda il titolo tende a contenere già la tesi ("Starbucks è una banca", "Blockbuster se la rise ma non per ultimo").
-8. **Il verbo è raro.** 5 dei primi 10 sono sintagmi nominali senza verbo coniugato; nella coda tutti tranne uno hanno almeno un verbo.
-
----
-
-## 3. Lunghezza e forma del titolo
-
-Conteggio parole al netto di hashtag ed emoji, su 16 titoli:
-
-- **Media 5,75 parole; mediana 6,5.** Range da 3 ("vivere in allerta") a 11 ("3 Cose da googlare se non riesci a lasciare andare una persona").
-- **Fascia 3-5 parole:** 6 titoli, scarto medio **≈39**. **Fascia 6-8 parole:** 7 titoli, scarto medio **≈5,7**. **Fascia 9-11 parole:** 3 titoli, scarto medio **≈4,8**. La correlazione lunghezza→scarto è netta e monotona: **più corto, più moltiplica**.
-- **Affermazioni vs domande:** 13 affermazioni (81%), 2 domande esplicite (12,5%), 1 domanda in inglese (6%). Nessuna domanda supera lo scarto 9,6.
-- **Numeri:** 6 titoli su 16 (37,5%) contengono una cifra; scarto medio di questo gruppo **≈45,4** contro **≈5,6** dei titoli senza numero. È il singolo predittore più forte del campione. Numeri usati: 10, 10, 8, 12, 2, 3 — sempre in cifra, mai in lettere.
-- **Nomi propri / marchi:** 5 titoli (31%), scarto medio **≈4,9**, cioè sotto la mediana del campione (5,55).
-- **Seconda persona** (tu, tua, paghi, vuoi, non riesci, "Bro"): 6 titoli (37,5%), scarto medio ≈5,7 escluso il caso Marco Taibi.
-- **Prima persona:** 1 titolo (6%).
-- **Hashtag:** 5 titoli (31%), di cui 4 dello stesso canale con 2-3 hashtag tematici in coda (#motivazione, #benesserementale, #crescitapersonale, #autostima, #vitaspirituale): tutti e quattro stanno nei primi quattro posti per scarto. Correlazione forte ma **concentrata su un solo canale**, quindi non separabile dal formato del canale stesso.
-- **Punteggiatura:** i titoli con due segni forti (due punti, puntini, punto fermo interno) stanno tutti sotto scarto 6.
-- **Inglese:** 1 titolo su 16, scarto 4,3 — il più basso quartile. Il campione non premia l'inglese.
-
----
-
-## 4. Parole e costruzioni che ricorrono
-
-- **"verità"** — 2 occorrenze, scarto 73,5 e 44,5. Contenitore che promette rivelazione senza specificarla.
-- **"regole"** — 3 occorrenze su 2 canali ("12 regole non dette", "2 regole salvavita", implicito in "3 Cose da googlare"). Il lessico normativo funziona meglio di quello del consiglio.
-- **Preposizione di argomento "su/sul/sulla"** — 3 occorrenze, tutte nei primi tre posti. Formula: `[numero] [contenitore] su [astratto]`.
-- **Negazione come amo** — "non dette", "Non mentire", "non per ultimo", "se non riesci a": 4 titoli su 3 canali. La negazione crea il vuoto informativo.
-- **Deittici del rimedio: "Ecco", "un semplice trucco"** — segnalano che la soluzione è già lì e costa poco.
-- **Lessico del nascosto/gratuito: "occulta", "non dette", "salvavita", "sa tutto"** — alza la posta senza aggiungere parole.
-- **Sintagma nominale puro senza verbo** — 6 titoli su 16, con scarto medio molto sopra la media del campione.
-- **Aggettivo di riduzione dello sforzo: "semplice", "2", "3"** — quando c'è una richiesta al pubblico, è sempre minimizzata numericamente.
-- **Marcatore di prossimità linguistica ("Bro")** — 1 sola occorrenza ma con scarto 9,6, il più alto fuori dal canale dominante.
-
----
-
-## 5. Cosa NON fanno mai
-
-- **Non citano autorità, studi o nomi di esperti.** Zero "secondo la scienza", zero neuroscienze, zero psicologi o autori citati in 16 titoli. Nel campione l'autorevolezza non è mai il gancio.
-- **Non promettono tempi.** Nessun "in 7 giorni", "in 30 secondi", "in un mese". La promessa è di contenuto (quante cose), mai di velocità.
-- **Non usano superlativi da clickbait generico** ("incredibile", "shock", "pazzesco", "nessuno te lo dice"). L'unica leva di curiosità è strutturale: "non dette", "occulta". Meno enfasi, più asimmetria informativa.
-- **Non superano le 11 parole**, e sopra le 8 parole lo scarto non arriva mai a 5,7.
-- **Non mettono il nome proprio o il marchio nei titoli che esplodono.** Tutti e 5 i titoli con nome proprio stanno sotto scarto 6,0: il marchio dà un aggancio, ma restringe il pubblico a chi è già
+1. **Sono più corti.** Media di **4,9 parole** contro **6,9** degli altri 18. Nessuno dei primi dieci supera le 7 parole; i due titoli più lunghi del dataset (12 e 13 parole) stanno a 4,3 e 3,4 di scarto.
+2. **Una sola idea per titolo.** Nei primi dieci non c'è nessun titolo che contenga due informazioni separate. Sotto, invece, compaiono titoli a due blocchi ("Account IG Bannato? Il Papi non si ferma | Stasera scade la promo!", 3,4).
+3. **Punteggiatura minima.** Nei primi dieci si trovano solo il punto interrogativo e i puntini di sospensione. I due punti, il trattino e la barra verticale **non compaiono mai** sopra scarto 6,0: tutti e quattro i titoli che li usano stanno tra 3,4 e 5,7.
+4. **Nessuna vendita, nessuna call to action.** Nei primi dieci non c'è un solo riferimento a promo, corsi
 
 ---
 
@@ -120,15 +95,19 @@ Conteggio parole al netto di hashtag ed emoji, su 16 titoli:
 | 73.5x | 114,000 | Il Motivatore Maschera | 10 verità sul carattere #benesserementale #motivazione |
 | 44.5x | 69,000 | Il Motivatore Maschera | 8 verità sulla solitudine #vitaspirituale #benesserementale #mot |
 | 40.6x | 63,000 | Il Motivatore Maschera | 12 regole non dette #autostima #motivazione #crescitapersonale |
+| 21.1x | 38,000 | Big Luca | Big Luca Buys Watermelons 🍉 with a Ferrari 🏎️ |
+| 14.8x | 20,000 | Migliora Mente | Ami questo gioco? |
 | 9.6x | 7,700 | Marco Taibi | Bro vuoi ottenere risultati? Cambia mentalità |
+| 7.9x | 11,000 | Corsi.it | Chiellini racconta l'arrivo del GOAT alla Juve 🐐 |
 | 6.2x | 3,800 | Lara Vecera | vivere in allerta |
 | 6.0x | 5,500 | Creatori di Destini | Starbucks é una banca che vende caffé |
 | 5.7x | 28,000 | EfficaceMente (con And | Un semplice trucco per dormire più EfficaceMente |
 | 5.7x | 5,300 | Creatori di Destini | La tassa dei poveri: l'imposta occulta che paghi sempre |
 | 5.4x | 3,300 | Lara Vecera | mi sono sacrificata per la famiglia |
 | 5.1x | 25,000 | EfficaceMente (con And | 📱Dipendenza da cellulare? Ecco 2 regole salvavita |
+| 5.1x | 3,800 | Ipnosi Naturale - Caru | L'Atto di Volontà - TCT Corrado Malanga #libertàinteriore |
+| 4.9x | 8,900 | Big Luca | AMAMI flavor 🍧 was a huge hit 😅 |
 | 4.4x | 4,100 | Creatori di Destini | APPLE e quel minuto che ha cambiato il mondo |
 | 4.3x | 3,000 | Simone Allocco | La tua coscienza sa tutto. Non mentire ad essa. |
 | 4.3x | 5,200 | Antonio Quaglietta | Why Breakups Spike After Summer #Shorts |
 | 4.3x | 10,000 | Giorgia Dalla Valle | 3 Cose da googlare se non riesci a lasciare andare una persona |
-| 4.0x | 3,700 | Creatori di Destini | Blockbuster se la rise... ma non per ultimo! |
