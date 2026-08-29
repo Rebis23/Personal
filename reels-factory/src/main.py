@@ -548,11 +548,12 @@ def cmd_registra() -> int:
 
 def cmd_nicchia() -> int:
     """Va a vedere come sono costruiti i video brevi che sfondano nella
-    nicchia, e ne scrive gli schemi. Nessun intervento umano, nessuno
-    scraping: solo la YouTube Data API con la chiave che abbiamo gia.
+    nicchia, e ne scrive gli schemi. Nessun intervento umano, nessuna chiave
+    da procurarsi, nessun servizio a pagamento: solo gli elenchi pubblici di
+    YouTube, letti con yt-dlp.
 
     Perche gli Shorts e non i Reel: stesso formato, stesso pubblico, stesse
-    regole di aggancio — ma raggiungibili con una API ufficiale e gratuita,
+    regole di aggancio — ma leggibili senza chiedere niente a nessuno,
     mentre per i Reel ogni strada passa da uno scraper a pagamento."""
     cfg = load_config()
     ric = cfg.get("nicchia", {})
@@ -565,15 +566,28 @@ def cmd_nicchia() -> int:
     try:
         video = scuola.outlier(
             query,
-            per_query=int(ric.get("per_ricerca", 25)),
+            model=cfg["claude"]["model"],
+            per_ricerca=int(ric.get("per_ricerca", 25)),
             scarto_minimo=float(ric.get("scarto_minimo", 3.0)),
+            canali_max=int(ric.get("canali_max", 20)),
+            shorts_per_canale=int(ric.get("shorts_per_canale", 30)),
+            mediana_minima=int(ric.get("mediana_minima", 500)),
+            views_minime=int(ric.get("views_minime", 5000)),
+            per_canale_max=int(ric.get("per_canale_max", 4)),
+            # Il canale di casa si esclude: la scuola serve a imparare cosa
+            # fanno gli ALTRI, non a rispecchiare quello che facciamo gia.
+            escludi={cfg["youtube"]["channel_id"]},
         )
     except scuola.ScuolaError as e:
         print(f"⛔ {e}")
         return 1
 
+    # La vendemmia di oggi si somma a quelle passate: la nicchia italiana e
+    # piccola e un giro solo non basta a distinguere uno schema da un caso.
+    video = scuola.accumula(video, per_canale_max=int(ric.get("per_canale_max", 4)))
+
     if len(video) < 10:
-        print(f"   ⚠️ Solo {len(video)} video sopra soglia: troppo pochi per "
+        print(f"   ⚠️ Solo {len(video)} video nello storico: troppo pochi per "
               "estrarre schemi affidabili. Lascio la scheda precedente.")
         return 0
 
