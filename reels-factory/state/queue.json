@@ -48,16 +48,6 @@
   ],
   "queue": [
     {
-      "clip_id": "H2Z1w2EMork-1",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "La vita non ha una risposta giusta né un procedimento per arrivarci",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-1.mp4",
-      "caption": "La scuola ti ha insegnato che esiste una risposta giusta e un procedimento per arrivarci.\nNella vita non esiste né l'una né l'altro: esiste solo la decisione che prendi tu, con i dati che hai.\nEcco perché tante persone intelligenti restano ferme.\n\n#crescitapersonale #decisioni #mentalita #scuola #intelligenza #incertezza #mindset",
-      "created_at": "2026-08-28T16:51:00Z"
-    },
-    {
       "clip_id": "H2Z1w2EMork-2",
       "video_id": "H2Z1w2EMork",
       "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
@@ -160,6 +150,14 @@
       "ig_media_id": "18004908263994104",
       "permalink": "https://www.instagram.com/reel/Dcl9uxmFRUh/",
       "published_at": "2026-08-28T18:05:39Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-1",
+      "video_id": "H2Z1w2EMork",
+      "hook": "La vita non ha una risposta giusta né un procedimento per arrivarci",
+      "ig_media_id": "17918924259221632",
+      "permalink": "https://www.instagram.com/reel/DcmuKTYkvIJ/",
+      "published_at": "2026-08-29T01:08:53Z"
     }
   ],
   "archive_done": [
