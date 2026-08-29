@@ -384,6 +384,20 @@ def _build_caption(pick: brain.ClipPick, cfg: dict) -> str:
     return "\n\n".join(p for p in parts if p)[:2150]
 
 
+
+def _ora_italiana() -> int:
+    """L'ora corrente a Roma. Con zoneinfo l'ora legale è gestita da sola;
+    se i dati dei fusi non ci fossero sul runner, si ripiega su UTC+2, che
+    d'estate è l'offset giusto e d'inverno sbaglia di un'ora — abbastanza per
+    un controllo che serve solo a distinguere il giorno dalla notte."""
+    from datetime import timedelta
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Europe/Rome")).hour
+    except Exception:
+        return (datetime.now(timezone.utc) + timedelta(hours=2)).hour
+
+
 # ---------------------------------------------------------------- PUBLISH ---
 
 def cmd_publish() -> int:
@@ -403,6 +417,17 @@ def cmd_publish() -> int:
         ultima = st["published"][-1].get("published_at", "")[:10]
         if ultima == state_mod.now_iso()[:10]:
             print(f"✅ Gia pubblicato oggi ({ultima}): non ne esce un secondo")
+            return 0
+
+    # Fuori dall'orario buono non si pubblica: meglio saltare un turno che
+    # bruciare una clip alle 3 di notte (successo il 29/08, con l'esecuzione
+    # delle 19:30 consegnata da GitHub sette ore e mezza dopo).
+    finestra = cfg["instagram"].get("ore_pubblicazione")
+    if finestra and not forzato:
+        ora_it = _ora_italiana()
+        if not (finestra[0] <= ora_it < finestra[1]):
+            print(f"🌙 Sono le {ora_it}:xx in Italia, fuori dalla finestra "
+                  f"{finestra[0]}-{finestra[1]}: non pubblico, ci pensa il turno dopo")
             return 0
 
     clip = st["queue"][0]
