@@ -120,7 +120,12 @@ Contesto brand:
 {hooks_library}
 === fine libreria ===
 
-=== COME SONO FATTI I REEL CHE SFONDANO IN QUESTA NICCHIA ===
+=== COME SONO COSTRUITI GLI AGGANCI CHE SFONDANO IN QUESTA NICCHIA ===
+Questi schemi vengono misurati ogni settimana su video brevi italiani veri
+che hanno battuto di almeno tre volte la mediana del proprio canale. Sono
+ricavati dai loro TITOLI, che nel formato breve sono l'aggancio: quindi
+applicali all'HOOK della clip — la prima frase, quella che decide se
+qualcuno resta — non alla didascalia.
 {nicchia}
 === fine ===
 
