@@ -1,19 +1,23 @@
 # Reels Factory — NICCHIA
-# Va a vedere su Instagram quali Reel del settore hanno fatto numeri veri e ne
-# estrae gli schemi ricorrenti. Il risultato (nicchia.md, suoni.md) viene letto
-# dal prompt di selezione a ogni lavorazione: e la scuola del sistema.
+# Va a vedere quali video brevi italiani del settore hanno fatto numeri veri e
+# ne estrae gli schemi ricorrenti. Il risultato (nicchia.md) viene letto dal
+# prompt di selezione a ogni lavorazione: e la scuola del sistema.
 #
-# Gira qui e non sul Mac perche il token Apify vive gia nei segreti del
-# repository. Una volta a settimana basta: gli schemi di costruzione dei Reel
-# non cambiano di giorno in giorno, e ogni esecuzione costa crediti Apify.
+# Non serve nessuna chiave e non si paga niente: legge gli elenchi pubblici di
+# YouTube — la ricerca e la scheda "Shorts" di un canale — con yt-dlp. Sono le
+# uniche due porte che rispondono da un runner: l'estrazione del singolo video
+# da qui viene rifiutata, gli elenchi no. E dagli elenchi arrivano titoli e
+# views, che sono esattamente cio che serve.
+#
+# Una volta a settimana basta: gli schemi di costruzione non cambiano di giorno
+# in giorno, e ogni giro aggiunge la sua vendemmia allo storico invece di
+# ricominciare da capo.
 
 name: "Reels Factory · Nicchia"
 
 on:
   schedule:
-    # ogni lunedi alle 06:40 UTC. Ora si puo: la quota YouTube e sua e non
-    # toglie niente allo scarico dei video, quindi non c'e piu ragione di
-    # tenere la ricerca al minimo.
+    # ogni lunedi alle 06:40 UTC
     - cron: "40 6 * * 1"
   workflow_dispatch:
 
@@ -24,7 +28,9 @@ concurrency:
 jobs:
   nicchia:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Quaranta canali con due secondi di pausa fra una lettura e l'altra: si
+    # sta abbondantemente dentro, ma senza fretta e senza raffiche.
+    timeout-minutes: 45
     permissions:
       contents: write
     steps:
@@ -42,10 +48,8 @@ jobs:
       - name: Cerca cosa sfonda nella nicchia
         working-directory: reels-factory
         env:
-          # Chiave YouTube Data API: ufficiale, gratuita, 10.000 unita al
-          # giorno. Niente Apify, niente scraping, niente crediti condivisi
-          # con lo scarico dei video.
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          # L'unico segreto necessario: serve a distillare gli schemi, non a
+          # leggere YouTube. La lettura non costa niente e non chiede permessi.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m src.main nicchia
 
@@ -53,11 +57,20 @@ jobs:
         run: |
           git config user.name "reels-factory-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add reels-factory/nicchia.md
+          # Lo storico va commesso insieme alla scheda: e la memoria della
+          # scuola, e senza di lui ogni lunedi ripartirebbe da sedici video.
+          git add reels-factory/nicchia.md reels-factory/state/scuola.json
           if git diff --cached --quiet; then
             echo "Schede invariate"
             exit 0
           fi
           git commit -m "Scuola della nicchia aggiornata [skip ci]"
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push
+          # Il push puo perdere la corsa contro il workflow di pubblicazione,
+          # che scrive nella stessa cartella state/. Si riprova rifondendo.
+          for tentativo in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0
+            echo "Tentativo $tentativo non riuscito, riprovo"
+            sleep $((tentativo * 5))
+          done
+          echo "::error::Non sono riuscito a pubblicare le schede aggiornate"
+          exit 1

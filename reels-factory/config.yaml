@@ -152,18 +152,44 @@ claude:
 
 nicchia:
   # I filoni su cui cercare i video brevi forti. Non sono hashtag: sono
-  # domande, come le farebbe una persona. La ricerca gira sulla YouTube Data
-  # API (chiave YOUTUBE_API_KEY), che e ufficiale, gratuita e non fa scraping.
+  # domande, come le farebbe una persona. Servono a SCOPRIRE i canali della
+  # nicchia: da li si va a vedere la loro scheda Shorts. Cosi la nicchia si
+  # ridefinisce da sola ogni settimana invece di restare una lista fissa.
   ricerche:
     - "mentalita vincente"
     - "psicologia comportamento umano"
     - "abitudini disciplina risultati"
     - "crescita personale verita scomode"
     - "perche non ottieni risultati"
-  # Quanti video per ricerca. Ogni ricerca costa 100 unita di quota su 10.000
-  # al giorno: cinque ricerche sono 500 unita, il 5% del budget giornaliero.
+    - "come cambiare mentalita imprenditore"
+    - "psicologia soldi e successo"
+    - "smettere di procrastinare disciplina"
+  # Quanti risultati leggere per ogni filone. Servono solo a raccogliere nomi
+  # di canali, quindi non serve esagerare.
   per_ricerca: 25
-  # Quante volte un video deve aver superato la media del SUO canale per
+  # Quanti canali spogliare al massimo. Ognuno costa una chiamata piu due
+  # secondi di pausa: quaranta canali sono circa dieci minuti.
+  canali_max: 40
+  # Quanti Shorts leggere per canale. E su questi che si calcola la mediana,
+  # cioe il "normale" di quel creator: misurato, con trenta si trovavano un
+  # terzo degli outlier che si trovano con sessanta.
+  shorts_per_canale: 60
+  # Quante volte un video deve aver superato la mediana del SUO canale per
   # entrare nell'analisi. E il filtro che separa "costruito bene" da
   # "pubblicato da un canale grosso".
   scarto_minimo: 3.0
+  # Sotto questa mediana il canale si salta: su venticinque views a video, il
+  # video da trecento e "dodici volte la mediana" e non ha insegnato niente a
+  # nessuno. Il rapporto misurerebbe il caso, non la costruzione.
+  mediana_minima: 500
+  # E la controprova assoluta: un moltiplicatore alto su numeri piccoli resta
+  # un numero piccolo. Qui vogliamo video che hanno raggiunto davvero qualcuno.
+  # Tremila e tarato sulla nicchia italiana, che e piccola: a cinquemila il
+  # campione scendeva a quattordici video, troppo pochi per vedere uno schema.
+  views_minime: 3000
+  # Quanti outlier al massimo puo mettere un singolo canale. Serve, e non e
+  # teoria: al primo giro dieci dei primi tredici erano dello stesso creator,
+  # che intitola tutto "10 frasi sulla forza", e la scuola ne aveva ricavato
+  # che il pubblico italiano vuole le liste numerate. Non e una legge della
+  # nicchia: e l'abitudine di un signore.
+  per_canale_max: 4
