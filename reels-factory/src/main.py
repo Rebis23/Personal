@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -297,12 +297,18 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         if audio_cfg.get("music", True):
             # La base non si tira piu a sorte: Claude dice che carattere ha la
             # clip (tensione, riflessivo, spinta, racconto) e si prende la
-            # traccia di quel carattere. I file si chiamano bed-<mood>-*.mp3;
-            # quelli vecchi senza mood restano validi come fondo generico.
+            # traccia di quel carattere.
+            #
+            # Il ripiego cerca "bed-*-*.mp3", con due trattini, e non e un
+            # dettaglio: prende solo le basi costruite da musica.py, di cui
+            # conosciamo autore e licenza. Le tre vecchie (bed-futuristica,
+            # bed-hiphop, bed-piano) hanno un solo trattino e restano fuori,
+            # perche di quelle non sappiamo da dove vengano — e roba che
+            # finisce su un profilo pubblico.
             mood = (getattr(pick, "mood", "") or "").strip().lower()
             beds = sorted(AUDIO_DIR.glob(f"bed-{mood}-*.mp3")) if mood else []
             if not beds:
-                beds = sorted(AUDIO_DIR.glob("bed-*.mp3"))
+                beds = sorted(AUDIO_DIR.glob("bed-*-*.mp3"))
                 if mood:
                     print(f"   🎵 Nessuna traccia per '{mood}': uso il fondo generico")
             if beds:
@@ -381,7 +387,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         media_url = storage.upload_clip(out_mp4, r2_key)
         print(f"   ☁️ Caricata su R2: {r2_key}")
 
-        caption = _build_caption(pick, cfg)
+        caption = _build_caption(pick, cfg, con_musica=music is not None)
         st["queue"].append({
             "clip_id": clip_id,
             "video_id": vid,
@@ -399,7 +405,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     return True
 
 
-def _build_caption(pick: brain.ClipPick, cfg: dict) -> str:
+def _build_caption(pick: brain.ClipPick, cfg: dict, *, con_musica: bool = False) -> str:
     ig = cfg["instagram"]
     parts = [pick.caption.strip()]
     if ig.get("caption_footer"):
@@ -416,6 +422,11 @@ def _build_caption(pick: brain.ClipPick, cfg: dict) -> str:
             tags.append(f"#{tag}")
     if tags:
         parts.append(" ".join(tags))
+    # La licenza della musica chiede la citazione dell'autore. Va in fondo,
+    # dopo gli hashtag, dove non toglie niente al messaggio — e ci va solo se
+    # una base c'e davvero.
+    if con_musica:
+        parts.append(musica.credito())
     return "\n\n".join(p for p in parts if p)[:2150]
 
 
@@ -614,9 +625,24 @@ def cmd_status() -> int:
     return 0
 
 
+def cmd_musica() -> int:
+    """Ricostruisce la libreria musicale in assets/audio.
+
+    Si lancia a mano e di rado: i file finiscono nel repository, quindi ogni
+    montaggio se li trova gia li senza scaricare niente. Serve quando si
+    vuole cambiare aria — altre basi per gli stessi quattro caratteri."""
+    fatti = musica.costruisci()
+    if not fatti:
+        print("⛔ Nessuna base scaricata")
+        return 1
+    print(f"   🎵 {fatti} basi pronte in assets/audio")
+    return 0
+
+
 def main() -> int:
     commands = {"ingest": cmd_ingest, "publish": cmd_publish,
-                "registra": cmd_registra, "nicchia": cmd_nicchia, "status": cmd_status}
+                "registra": cmd_registra, "nicchia": cmd_nicchia,
+                "musica": cmd_musica, "status": cmd_status}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1
