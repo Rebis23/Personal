@@ -36,7 +36,18 @@ class ScuolaError(RuntimeError):
 def _chiave() -> str:
     k = os.environ.get("YOUTUBE_API_KEY", "").strip()
     if not k:
-        raise ScuolaError("Secret YOUTUBE_API_KEY mancante")
+        raise ScuolaError(
+            "Secret YOUTUBE_API_KEY mancante. E l'unica cosa che il sistema "
+            "non puo procurarsi da solo, perche va creata dentro un account "
+            "Google. Si fa in tre minuti ed e gratis:\n"
+            "  1. console.cloud.google.com -> nuovo progetto (nome qualsiasi)\n"
+            "  2. API e servizi -> Libreria -> 'YouTube Data API v3' -> Abilita\n"
+            "  3. API e servizi -> Credenziali -> Crea credenziali -> Chiave API\n"
+            "  4. github.com/Rebis23/Personal -> Settings -> Secrets and "
+            "variables -> Actions -> New repository secret\n"
+            "     nome: YOUTUBE_API_KEY   valore: la chiave\n"
+            "Nessuna carta di credito: la quota gratuita e 10.000 unita al "
+            "giorno e questa ricerca ne usa 500 a settimana.")
     return k
 
 
