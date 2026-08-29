@@ -64,20 +64,34 @@ def raccogli(hashtag: list[str], *, per_hashtag: int = 40, minimo_views: int = 2
     }, timeout_minutes=15)["items"]
 
     if grezzi:
-        # La prima esecuzione dice che forma hanno davvero i dati: se domani
-        # qualcosa non torna, il registro ha gia le chiavi sotto gli occhi.
-        print(f"   🔍 {len(grezzi)} post grezzi. Chiavi del primo: "
-              f"{sorted(grezzi[0].keys())[:18]}")
+        # Che forma hanno davvero i dati: le chiavi complete di un post, e
+        # quanti espongono le views. Instagram non le pubblica nei risultati
+        # per hashtag, quindi va saputo invece che scoperto a valle.
+        chiavi = sorted(grezzi[0].keys())
+        print(f"   🔍 {len(grezzi)} post grezzi. Chiavi: {chiavi}")
+        con_views = sum(1 for g in grezzi if _campo(g, "views"))
+        tipi = {}
+        for g in grezzi:
+            tipi[str(_campo(g, "tipo"))] = tipi.get(str(_campo(g, "tipo")), 0) + 1
+        print(f"   🔍 con views: {con_views}/{len(grezzi)} · tipi: {tipi}")
+
+    # Instagram non espone le views nei risultati per hashtag. Quando mancano
+    # si misura con i like, che ci sono sempre: la soglia diventa un centesimo
+    # di quella sulle views, che e circa il rapporto like/views tipico dei
+    # Reel che girano.
+    a_views = any(_campo(g, "views") for g in grezzi)
+    soglia = minimo_views if a_views else max(200, minimo_views // 100)
+    print(f"   📏 Misuro con {'le views' if a_views else 'i like'}, soglia {soglia}")
 
     reel = []
     for item in grezzi:
         if not _e_reel(item):
             continue
-        views = _campo(item, "views") or 0
-        if views < minimo_views:
+        metrica = (_campo(item, "views") if a_views else _campo(item, "like")) or 0
+        if metrica < soglia:
             continue
         reel.append({
-            "views": views,
+            "views": _campo(item, "views") or 0,
             "like": _campo(item, "like") or 0,
             "commenti": _campo(item, "commenti") or 0,
             "durata": _campo(item, "durata"),
@@ -86,7 +100,7 @@ def raccogli(hashtag: list[str], *, per_hashtag: int = 40, minimo_views: int = 2
             "suono": _campo(item, "suono"),
             "caption": (str(_campo(item, "caption") or ""))[:600],
         })
-    reel.sort(key=lambda r: r["views"], reverse=True)
+    reel.sort(key=lambda r: r["views"] or r["like"], reverse=True)
     return reel
 
 
