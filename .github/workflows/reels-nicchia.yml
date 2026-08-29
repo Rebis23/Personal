@@ -1,0 +1,56 @@
+# Reels Factory — NICCHIA
+# Va a vedere su Instagram quali Reel del settore hanno fatto numeri veri e ne
+# estrae gli schemi ricorrenti. Il risultato (nicchia.md, suoni.md) viene letto
+# dal prompt di selezione a ogni lavorazione: e la scuola del sistema.
+#
+# Gira qui e non sul Mac perche il token Apify vive gia nei segreti del
+# repository. Una volta a settimana basta: gli schemi di costruzione dei Reel
+# non cambiano di giorno in giorno, e ogni esecuzione costa crediti Apify.
+
+name: "Reels Factory · Nicchia"
+
+on:
+  schedule:
+    # lunedi alle 06:40 UTC
+    - cron: "40 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: reels-factory-nicchia
+  cancel-in-progress: false
+
+jobs:
+  nicchia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa dipendenze Python
+        working-directory: reels-factory
+        run: pip install anthropic requests pyyaml pydantic
+
+      - name: Cerca cosa sfonda nella nicchia
+        working-directory: reels-factory
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m src.main nicchia
+
+      - name: Commit delle schede aggiornate
+        run: |
+          git config user.name "reels-factory-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reels-factory/nicchia.md reels-factory/suoni.md
+          if git diff --cached --quiet; then
+            echo "Schede invariate"
+            exit 0
+          fi
+          git commit -m "Scuola della nicchia aggiornata [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
