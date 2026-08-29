@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, ricerca_nicchia, clipcafe, drive, instagram, moviesource, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -547,46 +547,42 @@ def cmd_registra() -> int:
 # ---------------------------------------------------------------- NICCHIA ---
 
 def cmd_nicchia() -> int:
-    """Va a vedere cosa sfonda su Instagram nella nicchia e ne estrae gli
-    schemi. Si lancia una volta a settimana: costa qualche centesimo di Apify
-    e una chiamata a Claude, e il risultato serve a tutte le lavorazioni
-    successive."""
+    """Va a vedere come sono costruiti i video brevi che sfondano nella
+    nicchia, e ne scrive gli schemi. Nessun intervento umano, nessuno
+    scraping: solo la YouTube Data API con la chiave che abbiamo gia.
+
+    Perche gli Shorts e non i Reel: stesso formato, stesso pubblico, stesse
+    regole di aggancio — ma raggiungibili con una API ufficiale e gratuita,
+    mentre per i Reel ogni strada passa da uno scraper a pagamento."""
     cfg = load_config()
     ric = cfg.get("nicchia", {})
-    hashtag = ric.get("hashtag") or []
-    if not hashtag:
-        print("⚠️ Nessun hashtag configurato in config.yaml (chiave nicchia.hashtag)")
+    query = ric.get("ricerche") or []
+    if not query:
+        print("⚠️ Nessuna ricerca configurata (chiave nicchia.ricerche)")
         return 1
 
-    print(f"🔍 Cerco i Reel forti su {len(hashtag)} hashtag: {', '.join(hashtag)}")
-    reel = ricerca_nicchia.raccogli(
-        hashtag,
-        per_hashtag=int(ric.get("per_hashtag", 40)),
-        minimo_views=int(ric.get("minimo_views", 20000)),
-    )
-    print(f"   📈 {len(reel)} Reel sopra le {ric.get('minimo_views', 20000)} views")
-    if len(reel) < 8:
-        print("   ⚠️ Troppo pochi per estrarre schemi affidabili: non riscrivo le "
-              "schede, meglio quelle di prima che una fondata su quattro casi")
-        return 0    # avviso, non guasto: non deve far fallire il workflow
+    print(f"🎓 Cerco i video brevi forti su {len(query)} filoni")
+    try:
+        video = scuola.outlier(
+            query,
+            per_query=int(ric.get("per_ricerca", 25)),
+            scarto_minimo=float(ric.get("scarto_minimo", 3.0)),
+        )
+    except scuola.ScuolaError as e:
+        print(f"⛔ {e}")
+        return 1
 
-    for r in reel[:8]:
-        print(f"      {r['views']:>9} views · {str(r['caption'])[:60]}")
+    if len(video) < 10:
+        print(f"   ⚠️ Solo {len(video)} video sopra soglia: troppo pochi per "
+              "estrarre schemi affidabili. Lascio la scheda precedente.")
+        return 0
 
-    ricerca_nicchia.scrivi_suoni(reel)
-    print("   🎵 suoni.md aggiornato")
+    for v in video[:8]:
+        print(f"      {v['scarto']:>5}x  {v['views']:>9,} views  {v['titolo'][:58]}")
 
-    schemi = ricerca_nicchia.distilla(reel, model=cfg["claude"]["model"])
-    intestazione = (
-        "# La scuola: come sono fatti i Reel che sfondano in questa nicchia\n\n"
-        f"> Estratto da {len(reel)} Reel italiani sopra le "
-        f"{ric.get('minimo_views', 20000)} views, presi dagli hashtag: "
-        f"{', '.join(hashtag)}.\n"
-        "> Sono SCHEMI, non esempi: il prompt di selezione li legge a ogni "
-        "lavorazione.\n\n---\n\n"
-    )
-    ricerca_nicchia.SCHEDA_NICCHIA.write_text(intestazione + schemi, encoding="utf-8")
-    print("   🎓 nicchia.md aggiornato")
+    schemi = scuola.distilla(video, model=cfg["claude"]["model"])
+    scuola.scrivi_scheda(video, schemi, query)
+    print(f"   🎓 nicchia.md riscritto su {len(video)} video")
     return 0
 
 

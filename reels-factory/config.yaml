@@ -151,18 +151,19 @@ claude:
     un dato concreto, una storia di cliente, o la demolizione di un mito.
 
 nicchia:
-  # Gli hashtag da cui pescare i Reel forti del settore. Non servono a
-  # pubblicare: servono a capire come sono costruiti quelli che sfondano.
-  hashtag:
-    - crescitapersonale
-    - psicologia
-    - mentalita
-    - miglioramentopersonale
-    - disciplina
-  # Quanti post scaricare per hashtag
-  # Abbassato da 40 a 15 il 29/08: la prima ricerca (5 hashtag x 40 post) ha
-  # esaurito il credito Apify, che e lo STESSO che serve a scaricare i video.
-  # La fabbrica viene prima della scuola.
-  per_hashtag: 15
-  # Sotto questa soglia un Reel non insegna niente: e nella media
-  minimo_views: 20000
+  # I filoni su cui cercare i video brevi forti. Non sono hashtag: sono
+  # domande, come le farebbe una persona. La ricerca gira sulla YouTube Data
+  # API (chiave YOUTUBE_API_KEY), che e ufficiale, gratuita e non fa scraping.
+  ricerche:
+    - "mentalita vincente"
+    - "psicologia comportamento umano"
+    - "abitudini disciplina risultati"
+    - "crescita personale verita scomode"
+    - "perche non ottieni risultati"
+  # Quanti video per ricerca. Ogni ricerca costa 100 unita di quota su 10.000
+  # al giorno: cinque ricerche sono 500 unita, il 5% del budget giornaliero.
+  per_ricerca: 25
+  # Quante volte un video deve aver superato la media del SUO canale per
+  # entrare nell'analisi. E il filtro che separa "costruito bene" da
+  # "pubblicato da un canale grosso".
+  scarto_minimo: 3.0
