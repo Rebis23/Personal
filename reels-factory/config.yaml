@@ -160,6 +160,9 @@ nicchia:
     - miglioramentopersonale
     - disciplina
   # Quanti post scaricare per hashtag
-  per_hashtag: 40
+  # Abbassato da 40 a 15 il 29/08: la prima ricerca (5 hashtag x 40 post) ha
+  # esaurito il credito Apify, che e lo STESSO che serve a scaricare i video.
+  # La fabbrica viene prima della scuola.
+  per_hashtag: 15
   # Sotto questa soglia un Reel non insegna niente: e nella media
   minimo_views: 20000

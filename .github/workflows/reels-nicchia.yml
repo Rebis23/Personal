@@ -11,8 +11,10 @@ name: "Reels Factory · Nicchia"
 
 on:
   schedule:
-    # lunedi alle 06:40 UTC
-    - cron: "40 6 * * 1"
+    # il primo del mese alle 06:40 UTC. Non settimanale: ogni esecuzione
+    # consuma la stessa riserva Apify da cui dipende lo scarico dei video, e
+    # gli schemi di costruzione dei Reel non cambiano ogni sette giorni.
+    - cron: "40 6 1 * *"
   workflow_dispatch:
 
 concurrency:

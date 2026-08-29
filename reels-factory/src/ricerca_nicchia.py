@@ -22,6 +22,10 @@ import anthropic
 
 from . import apify
 
+class ApifyEsaurito(RuntimeError):
+    """Credito Apify finito: riguarda anche lo scarico dei video."""
+
+
 RADICE = Path(__file__).resolve().parent.parent
 SCHEDA_NICCHIA = RADICE / "nicchia.md"
 SCHEDA_SUONI = RADICE / "suoni.md"
@@ -52,16 +56,36 @@ def _campo(item: dict, nome: str):
 
 
 def _e_reel(item: dict) -> bool:
+    """Lo scraper degli hashtag non manda un campo 'tipo': va dedotto.
+    Prima si guarda il tipo se c'e, poi qualunque traccia di video."""
     tipo = str(_campo(item, "tipo") or "").lower()
-    return "clip" in tipo or "reel" in tipo or "video" in tipo
+    if tipo:
+        return "clip" in tipo or "reel" in tipo or "video" in tipo
+    return any(item.get(k) for k in
+               ("videoUrl", "videoDuration", "videoViewCount", "videoPlayCount",
+                "isVideo", "productType"))
 
 
 def raccogli(hashtag: list[str], *, per_hashtag: int = 40, minimo_views: int = 20000) -> list[dict]:
     """I Reel della nicchia che hanno superato la soglia, dal piu visto."""
-    grezzi = apify._run_actor(ACTOR, {
-        "hashtags": hashtag,
-        "resultsLimit": per_hashtag,
-    }, timeout_minutes=15)["items"]
+    try:
+        grezzi = apify._run_actor(ACTOR, {
+            "hashtags": hashtag,
+            "resultsLimit": per_hashtag,
+        }, timeout_minutes=15)["items"]
+    except Exception as e:                      # noqa: BLE001
+        # Il 29/08 questa chiamata ha risposto 403 tre minuti dopo un'altra
+        # riuscita: crediti Apify finiti. E la stessa riserva da cui attinge
+        # lo scarico dei video, cioe il cuore della fabbrica: meglio dirlo
+        # forte che lasciare un errore HTTP crudo nel registro.
+        if "403" in str(e):
+            raise ApifyEsaurito(
+                "Apify ha risposto 403: quasi sempre significa credito esaurito. "
+                "ATTENZIONE: e la stessa riserva usata per scaricare i video dei "
+                "Reel — controllare il piano su console.apify.com prima che si "
+                "fermi anche la pubblicazione."
+            ) from e
+        raise
 
     if grezzi:
         # Che forma hanno davvero i dati: le chiavi complete di un post, e
