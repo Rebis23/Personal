@@ -168,7 +168,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         source = apify.download_video(vid, vdir, quality=cfg["apify"]["video_quality"])
     if source is None and drive.is_configured():
         used = st.get("used_drive_files", [])
-        f = drive.find_new_file(used)
+        f = drive.find_new_file(used, video_id=vid, titolo=v["title"])
         if f is not None:
             print(f"  📁 Uso il file da Google Drive: {f['name']}")
             source = drive.download_file(f["id"], vdir / f"{vid}.mp4")
