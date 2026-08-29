@@ -295,11 +295,21 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         audio_cfg = cfg.get("audio", {})
         music = whoosh = pop = None
         if audio_cfg.get("music", True):
-            beds = sorted(AUDIO_DIR.glob("bed-*.mp3"))
+            # La base non si tira piu a sorte: Claude dice che carattere ha la
+            # clip (tensione, riflessivo, spinta, racconto) e si prende la
+            # traccia di quel carattere. I file si chiamano bed-<mood>-*.mp3;
+            # quelli vecchi senza mood restano validi come fondo generico.
+            mood = (getattr(pick, "mood", "") or "").strip().lower()
+            beds = sorted(AUDIO_DIR.glob(f"bed-{mood}-*.mp3")) if mood else []
+            if not beds:
+                beds = sorted(AUDIO_DIR.glob("bed-*.mp3"))
+                if mood:
+                    print(f"   🎵 Nessuna traccia per '{mood}': uso il fondo generico")
             if beds:
                 music = beds[int(hashlib.md5(clip_id.encode()).hexdigest(), 16)
                              % len(beds)]
-                print(f"   🎵 Base musicale: {music.name}")
+                print(f"   🎵 Base musicale: {music.name}"
+                      + (f" (carattere: {mood})" if mood else ""))
         if audio_cfg.get("whoosh_on_cutaway", True):
             wf = AUDIO_DIR / "sfx-whoosh.wav"
             whoosh = wf if wf.is_file() else None
