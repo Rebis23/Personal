@@ -568,7 +568,7 @@ def cmd_nicchia() -> int:
     if len(reel) < 8:
         print("   ⚠️ Troppo pochi per estrarre schemi affidabili: non riscrivo le "
               "schede, meglio quelle di prima che una fondata su quattro casi")
-        return 1
+        return 0    # avviso, non guasto: non deve far fallire il workflow
 
     for r in reel[:8]:
         print(f"      {r['views']:>9} views · {str(r['caption'])[:60]}")
