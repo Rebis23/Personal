@@ -87,6 +87,13 @@ class ClipPick(BaseModel):
             "nessuna singola frase regge da sola fuori contesto."
         ),
     )
+    mood: str = Field(default="", description=(
+        "Il carattere sonoro che la clip chiede, UNA di queste parole: "
+        "'tensione' (accusa, scomodo, ritmo serrato), 'riflessivo' (lento, "
+        "intimo, una verita che si posa), 'spinta' (energia, chiamata "
+        "all'azione), 'racconto' (aneddoto, storia). Determina la base "
+        "musicale sotto la voce."
+    ))
     emphasis_words: list[str] = Field(
         default_factory=list,
         description=(
@@ -113,9 +120,16 @@ Contesto brand:
 {hooks_library}
 === fine libreria ===
 
-=== COME SONO ANDATI I REEL PRECEDENTI (dati veri di questo profilo) ===
+=== COME SONO FATTI I REEL CHE SFONDANO IN QUESTA NICCHIA ===
+{nicchia}
+=== fine ===
+
+=== CONTROLLO SECONDARIO: cosa e gia uscito su questo profilo ===
+Serve a NON ripetersi e a non riproporre un taglio gia morto. Non e il
+modello da imitare: dieci Reel di un profilo solo non insegnano cosa
+funziona, dicono solo cosa e gia stato provato qui.
 {storico}
-=== fine storico ===
+=== fine ===
 
 I CINQUE ASSI. Un hook fa views quando porta a casa piu assi possibile:
 - BERSAGLIO: nomina una cosa concreta che il pubblico riconosce e la attacca
@@ -188,6 +202,7 @@ l'audio continua. Usalo al massimo in 1-2 clip su 3, mai forzato."""
 
 
 HOOKS_FILE = Path(__file__).resolve().parent.parent / "hooks.md"
+NICCHIA_FILE = Path(__file__).resolve().parent.parent / "nicchia.md"
 
 
 def load_hooks_library() -> str:
@@ -196,6 +211,19 @@ def load_hooks_library() -> str:
         return HOOKS_FILE.read_text(encoding="utf-8").strip()
     except OSError:
         return "(libreria non disponibile: giudica gli hook con il tuo criterio)"
+
+
+def load_nicchia() -> str:
+    """Gli schemi dei Reel che sfondano nella nicchia. E la fonte primaria:
+    dieci Reel di un profilo solo sono un campione troppo piccolo per
+    insegnare qualcosa, migliaia di outlier del settore no."""
+    try:
+        testo = NICCHIA_FILE.read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+    # Finche il file e solo la struttura vuota, non vale la pena occupare
+    # spazio nel prompt con dei titoli senza contenuto.
+    return "" if "STATO: DA COMPILARE" in testo else testo
 
 
 def select_clips(
@@ -215,6 +243,7 @@ def select_clips(
     system = SYSTEM_PROMPT.format(
         brand_context=brand_context.strip(),
         hooks_library=load_hooks_library(),
+        nicchia=load_nicchia() or '(scuola non ancora compilata: usa i criteri generali)',
         storico=prestazioni.leggi_scheda(),
         n_clips=clips_per_video,
         min_s=min_seconds,
