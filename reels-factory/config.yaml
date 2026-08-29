@@ -149,3 +149,17 @@ claude:
     stanchezza da contenuti quotidiani, qualità dei lead, autorità di settore.
     Le clip migliori sono: momenti con un'affermazione forte o contrarian,
     un dato concreto, una storia di cliente, o la demolizione di un mito.
+
+nicchia:
+  # Gli hashtag da cui pescare i Reel forti del settore. Non servono a
+  # pubblicare: servono a capire come sono costruiti quelli che sfondano.
+  hashtag:
+    - crescitapersonale
+    - psicologia
+    - mentalita
+    - miglioramentopersonale
+    - disciplina
+  # Quanti post scaricare per hashtag
+  per_hashtag: 40
+  # Sotto questa soglia un Reel non insegna niente: e nella media
+  minimo_views: 20000

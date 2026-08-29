@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, clipcafe, drive, instagram, moviesource, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import apify, brain, ricerca_nicchia, clipcafe, drive, instagram, moviesource, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -544,6 +544,52 @@ def cmd_registra() -> int:
     return 0
 
 
+# ---------------------------------------------------------------- NICCHIA ---
+
+def cmd_nicchia() -> int:
+    """Va a vedere cosa sfonda su Instagram nella nicchia e ne estrae gli
+    schemi. Si lancia una volta a settimana: costa qualche centesimo di Apify
+    e una chiamata a Claude, e il risultato serve a tutte le lavorazioni
+    successive."""
+    cfg = load_config()
+    ric = cfg.get("nicchia", {})
+    hashtag = ric.get("hashtag") or []
+    if not hashtag:
+        print("⚠️ Nessun hashtag configurato in config.yaml (chiave nicchia.hashtag)")
+        return 1
+
+    print(f"🔍 Cerco i Reel forti su {len(hashtag)} hashtag: {', '.join(hashtag)}")
+    reel = ricerca_nicchia.raccogli(
+        hashtag,
+        per_hashtag=int(ric.get("per_hashtag", 40)),
+        minimo_views=int(ric.get("minimo_views", 20000)),
+    )
+    print(f"   📈 {len(reel)} Reel sopra le {ric.get('minimo_views', 20000)} views")
+    if len(reel) < 8:
+        print("   ⚠️ Troppo pochi per estrarre schemi affidabili: non riscrivo le "
+              "schede, meglio quelle di prima che una fondata su quattro casi")
+        return 1
+
+    for r in reel[:8]:
+        print(f"      {r['views']:>9} views · {str(r['caption'])[:60]}")
+
+    ricerca_nicchia.scrivi_suoni(reel)
+    print("   🎵 suoni.md aggiornato")
+
+    schemi = ricerca_nicchia.distilla(reel, model=cfg["claude"]["model"])
+    intestazione = (
+        "# La scuola: come sono fatti i Reel che sfondano in questa nicchia\n\n"
+        f"> Estratto da {len(reel)} Reel italiani sopra le "
+        f"{ric.get('minimo_views', 20000)} views, presi dagli hashtag: "
+        f"{', '.join(hashtag)}.\n"
+        "> Sono SCHEMI, non esempi: il prompt di selezione li legge a ogni "
+        "lavorazione.\n\n---\n\n"
+    )
+    ricerca_nicchia.SCHEDA_NICCHIA.write_text(intestazione + schemi, encoding="utf-8")
+    print("   🎓 nicchia.md aggiornato")
+    return 0
+
+
 # ----------------------------------------------------------------- STATUS ---
 
 def cmd_status() -> int:
@@ -560,7 +606,7 @@ def cmd_status() -> int:
 
 def main() -> int:
     commands = {"ingest": cmd_ingest, "publish": cmd_publish,
-                "registra": cmd_registra, "status": cmd_status}
+                "registra": cmd_registra, "nicchia": cmd_nicchia, "status": cmd_status}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1
