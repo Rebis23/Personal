@@ -57,7 +57,8 @@ def _get(risorsa: str, **params) -> dict:
     if r.status_code == 403:
         raise ScuolaError(
             "YouTube Data API ha risposto 403: quasi sempre e la quota "
-            "giornaliera esaurita (10.000 unita, e ogni ricerca ne costa 100). "
+            "esaurita. Le ricerche hanno un tetto a parte di 100 al giorno; "
+            "tutto il resto pesca da 10.000 unita giornaliere. "
             f"Dettaglio: {r.text[:200]}")
     r.raise_for_status()
     return r.json()
@@ -111,20 +112,38 @@ def dettagli(video_ids: list[str]) -> list[dict]:
     return fuori
 
 
-def _media_canale(canale_ids: list[str]) -> dict[str, float]:
-    """Views medie per video di ogni canale: il metro su cui misurare lo
-    scarto. Un video vale se batte il SUO canale, non gli altri."""
-    medie = {}
-    unici = list(dict.fromkeys(canale_ids))
-    for i in range(0, len(unici), 50):
-        d = _get("channels", part="statistics", id=",".join(unici[i:i + 50]))
-        for c in d.get("items", []):
-            s = c["statistics"]
-            video = int(s.get("videoCount", 0) or 0)
-            views = int(s.get("viewCount", 0) or 0)
-            if video > 0:
-                medie[c["id"]] = views / video
-    return medie
+def _mediana_canale(canale_ids: list[str], *, ultimi: int = 40) -> dict[str, float]:
+    """Il metro su cui misurare lo scarto: la MEDIANA delle views degli ultimi
+    video di ogni canale.
+
+    Non la media di sempre: quella e falsata da due cose. Il video che e
+    esploso una volta la gonfia, e i video di dieci anni fa non dicono niente
+    su come va oggi il canale. La mediana degli ultimi quaranta e il "normale"
+    vero di quel creator adesso.
+
+    Costa poco: una unita per prendere la playlist dei caricamenti, una ogni
+    cinquanta video per sfogliarla, una ogni cinquanta per le statistiche."""
+    mediane = {}
+    for cid in dict.fromkeys(canale_ids):
+        try:
+            c = _get("channels", part="contentDetails", id=cid)
+            items = c.get("items", [])
+            if not items:
+                continue
+            playlist = items[0]["contentDetails"]["relatedPlaylists"]["uploads"]
+            pl = _get("playlistItems", part="contentDetails",
+                      playlistId=playlist, maxResults=min(ultimi, 50))
+            ids = [i["contentDetails"]["videoId"] for i in pl.get("items", [])]
+            if len(ids) < 5:
+                continue
+            v = _get("videos", part="statistics", id=",".join(ids[:50]), maxResults=50)
+            views = [int(x["statistics"].get("viewCount", 0)) for x in v.get("items", [])]
+            views = [x for x in views if x > 0]
+            if len(views) >= 5:
+                mediane[cid] = statistics.median(views)
+        except Exception:                       # noqa: BLE001
+            continue                            # un canale che non risponde non ferma il resto
+    return mediane
 
 
 def outlier(query_list: list[str], *, per_query: int = 25,
@@ -142,11 +161,11 @@ def outlier(query_list: list[str], *, per_query: int = 25,
 
     video = dettagli(ids)
     print(f"   🎬 {len(video)} sono davvero formato breve (5-180s)")
-    medie = _media_canale([v["canale_id"] for v in video])
+    medie = _mediana_canale([v["canale_id"] for v in video])
 
     for v in video:
-        media = medie.get(v["canale_id"], 0)
-        v["scarto"] = round(v["views"] / media, 1) if media > 0 else 0.0
+        normale = medie.get(v["canale_id"], 0)
+        v["scarto"] = round(v["views"] / normale, 1) if normale > 0 else 0.0
 
     forti = [v for v in video if v["scarto"] >= scarto_minimo]
     forti.sort(key=lambda v: v["scarto"], reverse=True)
