@@ -33,7 +33,9 @@ jobs:
 
       - name: Installa dipendenze Python
         working-directory: reels-factory
-        run: pip install anthropic requests pyyaml pydantic
+        # main.py importa tutti i moduli in cima, compreso storage (boto3):
+        # servono le dipendenze complete, non solo quelle di questo comando.
+        run: pip install -r requirements.txt
 
       - name: Cerca cosa sfonda nella nicchia
         working-directory: reels-factory
