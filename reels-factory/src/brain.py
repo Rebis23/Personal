@@ -288,8 +288,41 @@ def select_clips(
             c.end_seconds = c.start_seconds + max_seconds
         usable.append(c)
 
-    # A parità di clip disponibili si preferiscono gli hook più forti, ma non
-    # si scarta mai tutto: meglio un hook da 6 che una coda vuota
+    # LA PROVA A FREDDO. Prima del torneo, ogni hook viene letto da chi non ha
+    # visto il video. E qui che cadono gli aforismi: "Il vantaggio iniziale e
+    # sempre dello stupido" per chi ha letto la trascrizione e una conclusione
+    # brillante, per chi scorre Instagram e una frase che non vuol dire niente.
+    # Lorenzo l'ha detto con parole sue il 29/08: l'hook e fuori contesto.
+    esiti = prova_a_freddo([c.hook for c in usable], model=model)
+    if esiti:
+        bocciati = [(i, c.hook, esiti[i][1], c.start_seconds, c.end_seconds)
+                    for i, c in enumerate(usable)
+                    if i in esiti and not esiti[i][0]]
+        for _, hook, motivo, _, _ in bocciati:
+            print(f"   ❄️ hook bocciato «{hook[:52]}» — {motivo}")
+
+        # Il momento puo essere ottimo e l'hook no: si riscrive solo la frase
+        # di apertura, la clip resta dov'e.
+        nuovi = riscrivi_hooks(bocciati, timed_transcript, model=model)
+        for i, hook in nuovi.items():
+            print(f"   ✍️ riscritto → «{hook[:60]}»")
+            usable[i].hook = hook
+
+        # Il rifacimento va ricontrollato con lo stesso metro, altrimenti la
+        # seconda stesura passa solo perche e la seconda.
+        if nuovi:
+            ricontrollo = prova_a_freddo([usable[i].hook for i in sorted(nuovi)],
+                                         model=model)
+            for pos, i in enumerate(sorted(nuovi)):
+                if ricontrollo and not ricontrollo.get(pos, (True, ""))[0]:
+                    nuovi.pop(i, None)
+                    print(f"   ❄️ anche la riscrittura cade: «{usable[i].hook[:48]}»")
+
+        salvati = set(nuovi)
+        usable = [c for i, c in enumerate(usable)
+                  if i in salvati or i not in esiti or esiti[i][0]]
+
+    # A parità di clip disponibili si preferiscono gli hook più forti
     strong = [c for c in usable if c.hook_strength >= 7]
     picked = (strong if len(strong) >= clips_per_video else usable)[:clips_per_video]
     for c in picked:
@@ -297,3 +330,123 @@ def select_clips(
     if len(strong) < len(usable):
         print(f"      ({len(usable) - len(strong)} clip con hook debole scartate o retrocesse)")
     return sorted(picked, key=lambda c: c.start_seconds)
+
+
+# --------------------------------------------------------- LA PROVA A FREDDO ---
+
+LETTORE_FREDDO = """Sei una persona che sta scorrendo Instagram. Non sai niente \
+del video da cui viene questa frase, non conosci chi parla, non hai visto \
+nient'altro. Ti arriva questa frase come primissima cosa, sopra il video.
+
+Per ognuna rispondi con una riga sola, in questo formato esatto:
+<numero>|<REGGE o CADE>|<motivo in massimo otto parole>
+
+CADE se vale anche una sola di queste:
+- Non si capisce senza sapere cosa e stato detto prima. Nomina un "questo", un \
+"lo", un confronto o una conclusione di cui manca il termine di paragone.
+- E un aforisma su un concetto astratto — la vita, l'ansia, il desiderio, \
+l'intelligenza, il tempo — del tipo che si legge sotto una foto di un tramonto. \
+Suona saggio e non attacca niente di concreto.
+- E un proverbio o una massima: vera per tutti, quindi per nessuno.
+- Non ti fa venire voglia di sapere come va a finire.
+
+REGGE se nomina una cosa concreta che riconosci, o ti chiama in causa, o \
+contraddice qualcosa che dai per scontato, e si capisce da sola.
+
+Sii severo: se esiti, e CADE. Nessun preambolo, solo le righe."""
+
+
+def prova_a_freddo(hooks: list[str], *, model: str) -> dict[int, tuple[bool, str]]:
+    """Fa leggere gli hook a qualcuno che non ha visto il video.
+
+    Serve perche l'autovalutazione non basta. Il modello che sceglie la clip
+    ha appena letto tutta la trascrizione: per lui "Il vantaggio iniziale e
+    sempre dello stupido" ha un senso pieno, e si da tre punti su tre. Chi
+    scorre Instagram quella premessa non ce l'ha, e legge un non sequitur.
+
+    L'unico modo onesto di misurare "regge da solo" e chiederlo a qualcuno
+    che davvero non sa niente: stessa domanda, contesto azzerato."""
+    if not hooks:
+        return {}
+    elenco = "\n".join(f"{i}. {h}" for i, h in enumerate(hooks))
+    try:
+        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
+        r = client.messages.create(
+            model=model, max_tokens=4000, system=LETTORE_FREDDO,
+            messages=[{"role": "user", "content": elenco}],
+        )
+        testo = "".join(b.text for b in r.content
+                        if getattr(b, "type", "") == "text")
+    except Exception as e:                      # noqa: BLE001
+        print(f"   ⚠️ prova a freddo non riuscita ({e}): tengo tutti gli hook")
+        return {}
+    esiti: dict[int, tuple[bool, str]] = {}
+    for riga in testo.splitlines():
+        pezzi = [p.strip() for p in riga.split("|")]
+        if len(pezzi) < 2 or not pezzi[0].rstrip(".").isdigit():
+            continue
+        esiti[int(pezzi[0].rstrip("."))] = (
+            pezzi[1].upper().startswith("REGGE"),
+            pezzi[2] if len(pezzi) > 2 else "",
+        )
+    return esiti
+
+
+RISCRITTURA = """Sei l'editor video. Alcune clip hanno un momento buono ma un \
+hook che non regge: chi scorre Instagram non ha visto il video, e quella frase \
+gli arriva come un aforisma o come una conclusione senza premessa.
+
+Per ognuna ti do: il minuto della clip, l'hook bocciato, il motivo, e la \
+trascrizione del video. Riscrivi SOLO l'hook, pescando dentro quel pezzo di \
+trascrizione.
+
+Il nuovo hook deve:
+- reggersi da solo, senza sapere niente di cio che viene prima;
+- nominare una cosa concreta e riconoscibile (una laurea, un preventivo, un \
+cliente, delle bollette, un numero) invece di un concetto astratto;
+- parlare a chi guarda — "tu", "hai", "stai" — o contraddire una cosa che da \
+per scontata;
+- restare fedele a cio che viene detto davvero nella clip. Non promettere \
+qualcosa che il video non mantiene: se il passaggio non permette un hook \
+concreto, scrivi SALTA e basta.
+
+Una riga per clip, formato esatto:
+<numero>|<nuovo hook oppure SALTA>
+
+Niente virgolette, niente spiegazioni."""
+
+
+def riscrivi_hooks(falliti: list[tuple[int, str, str, float, float]],
+                   timed_transcript: str, *, model: str) -> dict[int, str]:
+    """Seconda possibilita per le clip il cui momento e buono e l'hook no.
+
+    Lorenzo, il 29/08: «il reel che hai fatto spacca ma l'hook e sbagliato e
+    fuori contesto». Sono due cose separate, e finora venivano buttate
+    insieme: bastava che l'hook cadesse e spariva anche il momento. Qui il
+    taglio resta dov'e ed è solo la frase di apertura a essere rifatta."""
+    if not falliti:
+        return {}
+    righe = [f"{i}| minuto {inizio:.0f}-{fine:.0f}s | bocciato: «{hook}» | perche: {motivo}"
+             for i, hook, motivo, inizio, fine in falliti]
+    try:
+        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
+        r = client.messages.create(
+            model=model, max_tokens=4000, system=RISCRITTURA,
+            messages=[{"role": "user", "content":
+                       "CLIP DA RISCRIVERE:\n" + "\n".join(righe)
+                       + f"\n\nTRASCRIZIONE:\n{timed_transcript}"}],
+        )
+        testo = "".join(b.text for b in r.content
+                        if getattr(b, "type", "") == "text")
+    except Exception as e:                      # noqa: BLE001
+        print(f"   ⚠️ riscrittura non riuscita ({e})")
+        return {}
+    nuovi: dict[int, str] = {}
+    for riga in testo.splitlines():
+        pezzi = [x.strip() for x in riga.split("|")]
+        if len(pezzi) < 2 or not pezzi[0].rstrip(".").isdigit():
+            continue
+        hook = pezzi[1].strip('"«»')
+        if hook and hook.upper() != "SALTA":
+            nuovi[int(pezzi[0].rstrip("."))] = hook
+    return nuovi

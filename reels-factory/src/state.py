@@ -40,5 +40,12 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+# Uno stato che significa "sta nell'elenco ma va rifatto". Serve quando le
+# clip erano tecnicamente a posto e sbagliate nella sostanza — hook fuori
+# contesto, stile bocciato — e il video va ritagliato da capo.
+DA_RIFARE = "da_rifare"
+
+
 def is_processed(state: dict, video_id: str) -> bool:
-    return any(v["video_id"] == video_id for v in state["processed_videos"])
+    return any(v["video_id"] == video_id and v.get("status") != DA_RIFARE
+               for v in state["processed_videos"])

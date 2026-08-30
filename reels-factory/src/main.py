@@ -134,13 +134,21 @@ def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
 
 
 def _mark(st: dict, v: dict, status: str, clips: list | None = None) -> None:
-    st["processed_videos"].append({
+    voce = {
         "video_id": v["video_id"],
         "title": v["title"],
         "status": status,
         "processed_at": state_mod.now_iso(),
         "clips": clips or [],
-    })
+    }
+    # Si sostituisce invece di accodare: un video segnato "da_rifare" viene
+    # rilavorato, e senza questo si ritroverebbe due volte nell'elenco con
+    # due esiti diversi.
+    for i, vecchia in enumerate(st["processed_videos"]):
+        if vecchia["video_id"] == v["video_id"]:
+            st["processed_videos"][i] = voce
+            return
+    st["processed_videos"].append(voce)
 
 
 def _process_video(v: dict, cfg: dict, st: dict) -> bool:
