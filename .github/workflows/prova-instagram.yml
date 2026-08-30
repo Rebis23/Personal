@@ -1,0 +1,49 @@
+# Prova secca: da un IP pulito di GitHub, Instagram si lascia leggere?
+#
+# Ho detto a Lorenzo che da GitHub non si possono studiare i Reel. Era
+# troppo assoluto. L'endpoint pubblico di Instagram, chiamato da instaloader
+# invece che a mano con curl, non risponde 401 ("non autorizzato") ma 429
+# ("troppe richieste"): e limitazione di frequenza, non un muro. Il mio
+# indirizzo l'ho consumato con le prove; il runner parte pulito.
+#
+# Questo workflow serve solo a rispondere si o no. Non scrive niente.
+
+name: "Prova · Instagram da runner"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --quiet instaloader
+      - name: Leggere un profilo pubblico italiano della nicchia
+        run: |
+          python - <<'PY'
+          import time, instaloader
+          L = instaloader.Instaloader(quiet=True, download_pictures=False,
+                                      download_videos=False, max_connection_attempts=1)
+          # Profili pubblici della nicchia. Uno alla volta, con pause lunghe:
+          # se si va di fretta il 429 arriva comunque e non impariamo niente.
+          for nome in ("efficacemente", "ilmiopsicologo", "riccardozanetti"):
+              try:
+                  p = instaloader.Profile.from_username(L.context, nome)
+                  print(f"✅ {nome}: {p.followers:,} follower, {p.mediacount} post")
+                  n = 0
+                  for post in p.get_posts():
+                      if not post.is_video:
+                          continue
+                      print(f"   views={post.video_view_count} like={post.likes} "
+                            f"{post.date_utc:%Y-%m-%d} {(post.caption or '')[:60]!r}")
+                      n += 1
+                      if n >= 5:
+                          break
+              except Exception as e:
+                  print(f"❌ {nome}: {type(e).__name__}: {str(e)[:200]}")
+              time.sleep(30)
+          PY
