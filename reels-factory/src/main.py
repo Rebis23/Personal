@@ -184,8 +184,29 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         else:
             print("  📁 Nessun nuovo file nella cartella Drive")
     if source is None:
-        print("   Download impossibile: carica il file del video nella cartella "
-              "Drive dedicata, riprovo alla prossima esecuzione")
+        # Il messaggio deve dire la verita su COSA manca. Prima diceva
+        # "carica il file nella cartella Drive": ma il 30/08 si e scoperto che
+        # GDRIVE_API_KEY e GDRIVE_FOLDER_ID sono vuoti, cioe quella cartella
+        # non esiste. Mandare qualcuno a caricare un file in una cartella
+        # inesistente e peggio che non dire niente.
+        print("   ⛔ Download impossibile: nessuna delle vie e disponibile.")
+        print("      · yt-dlp: YouTube blocca l'IP del runner "
+              "(\"Sign in to confirm you're not a bot\")"
+              + ("" if os.environ.get("YT_COOKIES", "").strip()
+                 else " — e YT_COOKIES non e impostato"))
+        print("      · Apify: 403 su tutti gli actor"
+              + ("" if os.environ.get("APIFY_TOKEN", "").strip()
+                 else " — e APIFY_TOKEN non e impostato"))
+        if drive.is_configured():
+            print("      · Drive: cartella configurata ma nessun file nuovo "
+                  "abbinabile a questo video")
+        else:
+            print("      · Drive: NON configurato (mancano GDRIVE_API_KEY e "
+                  "GDRIVE_FOLDER_ID), quindi non c'e nessuna cartella dove "
+                  "caricare il file")
+        if not os.environ.get("YT_PROXY", "").strip():
+            print("      Sblocco piu solido: un proxy residenziale in "
+                  "YT_PROXY — vale sia per lo scarico sia per la ricerca.")
         return False
     if drive_file_id:
         st.setdefault("used_drive_files", []).append(drive_file_id)
