@@ -43,28 +43,21 @@ def _proxy_args() -> list[str]:
     return ["--proxy", proxy] if proxy else []
 
 
-# YouTube applica un controllo anti-bot legato al "client" che chiede il
-# video, e non tutti i client lo prendono allo stesso modo. Misurato il
-# 30/08 sullo stesso video, uno per uno:
+# Come si passa il controllo anti-bot di YouTube, misurato il 30/08 e
+# finalmente riuscito (run 33341525826):
 #
-#   tv, tv_embedded, android_vr, default  →  "Sign in to confirm you're not
-#                                            a bot": muro, la richiesta muore
-#   web_safari, mweb, web_embedded, ios   →  passano il controllo e falliscono
-#                                            piu avanti, su cose risolvibili
+#   1. il tunnel WARP, che cambia l'indirizzo di uscita (lo alza il workflow)
+#   2. questa catena di client, che parte da "web" invece che sbatterci
+#   3. --remote-components ejs:github, che scarica il risolutore della
+#      sfida JavaScript: deno da solo non basta, lo script va chiesto
 #
-# La catena aveva "tv" per primo, quindi sbatteva sul muro e non arrivava mai
-# a provare quelli che passano. Ora ci sono solo i tre che passano.
-#
-# "ios" resta fuori apposta: passa il controllo ma i suoi flussi vogliono un
-# GVS PO token che il provider bgutil non sa generare, quindi restano solo
-# le anteprime.
-#
-# Dopo il controllo restano due ostacoli, e per entrambi il pezzo necessario
-# e gia sul runner: la sfida JavaScript (la risolve deno, installato dal
-# workflow) e il PO token con i suoi Visitor Data (li da il provider bgutil,
-# avviato dal workflow). In locale la sfida JS si e risolta appena installato
-# deno, e l'ultimo errore rimasto era il 429 da IP consumato dalle prove.
-CLIENT_ARGS = ["--extractor-args", "youtube:player_client=web_safari,mweb,web_embedded"]
+# Servono tutti e tre insieme. Tolto uno qualsiasi si torna a "Sign in to
+# confirm you're not a bot", e ci sono voluti cinque giri per capirlo
+# perche ogni giro ne provava due su tre.
+CLIENT_ARGS = [
+    "--remote-components", "ejs:github",
+    "--extractor-args", "youtube:player_client=web,tv,mweb,web_safari",
+]
 
 
 def _net_args() -> list[str]:

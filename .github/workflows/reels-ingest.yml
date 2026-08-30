@@ -48,6 +48,25 @@ jobs:
         with:
           python-version: "3.11"
 
+      # WARP: la VPN gratuita di Cloudflare. E il pezzo che fa cadere il
+      # muro anti-bot di YouTube — provato il 30/08, senza di lui la catena
+      # dei client non basta. Nessun account, nessuna carta: wgcf registra
+      # un dispositivo anonimo e genera una configurazione WireGuard.
+      - name: Alza il tunnel WARP
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wireguard-tools
+          V=$(curl -s https://api.github.com/repos/ViRb3/wgcf/releases/latest \
+              | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
+          curl -sL -o /tmp/wgcf \
+            "https://github.com/ViRb3/wgcf/releases/download/${V}/wgcf_${V#v}_linux_amd64"
+          chmod +x /tmp/wgcf
+          cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
+          sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
+          sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
+          sudo wg-quick up warp
+          echo "esco da: $(curl -s --max-time 25 https://api.ipify.org)"
+
       - name: Installa ffmpeg e font
         run: sudo apt-get update -q && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
 
