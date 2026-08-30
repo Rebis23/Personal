@@ -1,0 +1,93 @@
+# Prova: Cloudflare WARP come indirizzo gratuito.
+#
+# Il muro di YouTube e di Instagram e lo stesso: l'IP del runner e di un
+# datacenter. La soluzione a pagamento e un proxy residenziale. Prima di
+# far spendere un euro a Lorenzo, si prova quella gratuita.
+#
+# WARP e la VPN gratuita di Cloudflare. Non serve account, non serve carta:
+# wgcf registra un dispositivo anonimo e produce una configurazione
+# WireGuard. Il traffico esce da un indirizzo Cloudflare, che non e ne
+# residenziale ne un datacenter qualunque — ed e li che sta la scommessa.
+#
+# Questo workflow non tocca la fabbrica. Stampa solo: indirizzo prima,
+# indirizzo dopo, e se YouTube e Instagram rispondono.
+
+name: "Prova · WARP gratuito"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Indirizzo di partenza
+        run: |
+          echo "PRIMA: $(curl -s --max-time 20 https://api.ipify.org)"
+          curl -s --max-time 20 "https://ipinfo.io/json" | head -c 300 || true
+          echo
+
+      - name: Installa WireGuard e wgcf
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wireguard-tools resolvconf
+          V=$(curl -s https://api.github.com/repos/ViRb3/wgcf/releases/latest \
+              | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
+          echo "wgcf $V"
+          curl -sL -o /tmp/wgcf \
+            "https://github.com/ViRb3/wgcf/releases/download/${V}/wgcf_${V#v}_linux_amd64"
+          chmod +x /tmp/wgcf
+
+      - name: Registra un dispositivo WARP e alza il tunnel
+        run: |
+          cd /tmp
+          ./wgcf register --accept-tos
+          ./wgcf generate
+          # wg-quick vuole il file in /etc/wireguard e non gradisce la riga
+          # DNS su runner senza resolvconf funzionante.
+          sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
+          sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
+          sudo wg-quick up warp
+          sudo wg show | head -12
+
+      - name: Indirizzo dopo il tunnel
+        run: |
+          echo "DOPO: $(curl -s --max-time 25 https://api.ipify.org)"
+          curl -s --max-time 25 "https://ipinfo.io/json" | head -c 300 || true
+          echo
+
+      - name: YouTube passa?
+        run: |
+          pip install --quiet yt-dlp
+          yt-dlp --extractor-args "youtube:player_client=web_safari,mweb" \
+                 --skip-download --print "%(title)s | %(duration)ss" \
+                 "https://www.youtube.com/watch?v=H2Z1w2EMork" \
+            && echo "✅ YOUTUBE PASSA" || echo "❌ YouTube ancora bloccato"
+
+      - name: Instagram passa?
+        run: |
+          pip install --quiet instaloader
+          python - <<'PY'
+          import instaloader
+          L = instaloader.Instaloader(quiet=True, download_pictures=False,
+                                      download_videos=False, max_connection_attempts=1)
+          try:
+              p = instaloader.Profile.from_username(L.context, "efficacemente")
+              print(f"✅ INSTAGRAM PASSA — {p.username}: {p.followers:,} follower")
+              for n, post in enumerate(p.get_posts()):
+                  if post.is_video:
+                      print(f"   views={post.video_view_count} like={post.likes}")
+                  if n >= 4:
+                      break
+          except Exception as e:
+              print(f"❌ Instagram ancora bloccato: {type(e).__name__}: {str(e)[:160]}")
+          PY
+
+      - name: Chiudi il tunnel
+        if: always()
+        run: sudo wg-quick down warp || true
