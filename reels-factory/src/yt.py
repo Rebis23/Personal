@@ -44,11 +44,27 @@ def _proxy_args() -> list[str]:
 
 
 # YouTube applica un controllo anti-bot legato al "client" che chiede il
-# video. I client tv e web_safari passano il controllo molto piu spesso di
-# quello predefinito e non richiedono alcun account: e il tentativo gratuito
-# prima di ricorrere ad Apify. Sugli IP dei datacenter puo comunque non
-# bastare, ma non costa nulla provarci.
-CLIENT_ARGS = ["--extractor-args", "youtube:player_client=tv,web_safari,default"]
+# video, e non tutti i client lo prendono allo stesso modo. Misurato il
+# 30/08 sullo stesso video, uno per uno:
+#
+#   tv, tv_embedded, android_vr, default  →  "Sign in to confirm you're not
+#                                            a bot": muro, la richiesta muore
+#   web_safari, mweb, web_embedded, ios   →  passano il controllo e falliscono
+#                                            piu avanti, su cose risolvibili
+#
+# La catena aveva "tv" per primo, quindi sbatteva sul muro e non arrivava mai
+# a provare quelli che passano. Ora ci sono solo i tre che passano.
+#
+# "ios" resta fuori apposta: passa il controllo ma i suoi flussi vogliono un
+# GVS PO token che il provider bgutil non sa generare, quindi restano solo
+# le anteprime.
+#
+# Dopo il controllo restano due ostacoli, e per entrambi il pezzo necessario
+# e gia sul runner: la sfida JavaScript (la risolve deno, installato dal
+# workflow) e il PO token con i suoi Visitor Data (li da il provider bgutil,
+# avviato dal workflow). In locale la sfida JS si e risolta appena installato
+# deno, e l'ultimo errore rimasto era il 429 da IP consumato dalle prove.
+CLIENT_ARGS = ["--extractor-args", "youtube:player_client=web_safari,mweb,web_embedded"]
 
 
 def _net_args() -> list[str]:
