@@ -80,7 +80,7 @@ jobs:
         run: |
           pip install --quiet yt-dlp bgutil-ytdlp-pot-provider
           yt-dlp --remote-components ejs:github \
-                 --extractor-args "youtube:player_client=mweb,web_safari" \
+                 --extractor-args "youtube:player_client=web,tv,mweb,web_safari" \
                  --skip-download --print "%(title)s | %(duration)ss" \
                  "https://www.youtube.com/watch?v=H2Z1w2EMork" \
             && echo "✅ YOUTUBE PASSA" || echo "❌ YouTube ancora bloccato"
