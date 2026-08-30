@@ -52,20 +52,29 @@ jobs:
       # muro anti-bot di YouTube — provato il 30/08, senza di lui la catena
       # dei client non basta. Nessun account, nessuna carta: wgcf registra
       # un dispositivo anonimo e genera una configurazione WireGuard.
+      #
+      # continue-on-error e timeout non sono prudenza generica: al primo
+      # giro nella fabbrica questo passo si e piantato per minuti (apt in
+      # attesa del lock di unattended-upgrades) e avrebbe bruciato i 110
+      # minuti del job senza produrre niente. Se WARP non si alza, il
+      # lavoro prosegue senza: si torna a com'era prima, non ci si ferma.
       - name: Alza il tunnel WARP
+        continue-on-error: true
+        timeout-minutes: 6
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq wireguard-tools
-          V=$(curl -s https://api.github.com/repos/ViRb3/wgcf/releases/latest \
+          set -x
+          sudo apt-get -o DPkg::Lock::Timeout=240 update -qq
+          sudo apt-get -o DPkg::Lock::Timeout=240 install -y -qq wireguard-tools
+          V=$(curl -s --max-time 30 https://api.github.com/repos/ViRb3/wgcf/releases/latest \
               | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
-          curl -sL -o /tmp/wgcf \
+          curl -sL --max-time 60 -o /tmp/wgcf \
             "https://github.com/ViRb3/wgcf/releases/download/${V}/wgcf_${V#v}_linux_amd64"
           chmod +x /tmp/wgcf
           cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
           sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
           sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
           sudo wg-quick up warp
-          echo "esco da: $(curl -s --max-time 25 https://api.ipify.org)"
+          echo "esco da: $(curl -s --max-time 30 https://api.ipify.org)"
 
       - name: Installa ffmpeg e font
         run: sudo apt-get update -q && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
