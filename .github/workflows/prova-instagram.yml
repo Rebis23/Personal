@@ -7,6 +7,17 @@
 # indirizzo l'ho consumato con le prove; il runner parte pulito.
 #
 # Questo workflow serve solo a rispondere si o no. Non scrive niente.
+#
+# ESITO, 30/08 22:44 UTC (run 33339894543): NO.
+# Tutti e tre i profili rispondono 429 alla PRIMA richiesta, su un runner
+# appena creato che non aveva mai contattato Instagram. Quindi non era il
+# mio indirizzo consumato: Instagram rifiuta in blocco le fasce IP di
+# GitHub, a prescindere dalla frequenza. Da qui non si leggono i Reel, e
+# adesso e una misura, non un'opinione.
+#
+# Resta vero che serve un indirizzo residenziale — oppure un fornitore che
+# ne abbia uno per conto suo (vidIQ, Apify). Il workflow resta qui: se un
+# giorno si aggiunge un proxy, si rilancia e si vede subito se basta.
 
 name: "Prova · Instagram da runner"
 
