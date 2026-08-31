@@ -139,6 +139,12 @@ jobs:
         working-directory: reels-factory
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Serve in LETTURA: prima di scegliere le clip, il sistema rilegge
+          # quante views hanno fatto quelle gia uscite, per non riproporre un
+          # taglio gia morto. Senza token quel controllo restava fermo alla
+          # scheda vecchia e nei log compariva "Storico non aggiornato".
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

@@ -11,6 +11,38 @@ import anthropic
 from . import prestazioni
 
 
+class Punteggi(BaseModel):
+    """I cinque assi dell'hook, uno per campo invece che in un dizionario.
+
+    Era un dict opzionale, e il modello lo lasciava vuoto senza violare lo
+    schema: nei log si leggeva "punteggio 0/15 ()" e la soglia minima non
+    filtrava piu niente, restando li a dare una falsa sicurezza. Cinque campi
+    obbligatori non si possono saltare."""
+
+    bersaglio: int = Field(ge=0, le=3, description=(
+        "Nomina una cosa concreta che il pubblico riconosce (la laurea, i "
+        "corsi, le bollette). 0 se parla di concetti astratti."))
+    numero: int = Field(ge=0, le=3, description=(
+        "Contiene una cifra o una quantita ('il 90%', 'tre anni', '12.000 "
+        "euro'). 0 se non ce n'e nessuna."))
+    ribaltamento: int = Field(ge=0, le=3, description=(
+        "Nega una convinzione diffusa e la sostituisce, forma 'non e X, e Y'."))
+    tu: int = Field(ge=0, le=3, description=(
+        "Parla direttamente a chi guarda, lo chiama in causa o lo accusa. "
+        "0 per le formule impersonali tipo 'si tende a...'."))
+    tensione: int = Field(ge=0, le=3, description=(
+        "Lascia un buco che si chiude solo continuando a guardare."))
+
+    @property
+    def somma(self) -> int:
+        return self.bersaglio + self.numero + self.ribaltamento + self.tu + self.tensione
+
+    def __str__(self) -> str:
+        return (f"bersaglio={self.bersaglio} numero={self.numero} "
+                f"ribaltamento={self.ribaltamento} tu={self.tu} "
+                f"tensione={self.tensione}")
+
+
 class ClipPick(BaseModel):
     start_seconds: float = Field(description="Inizio della clip, in secondi dal principio del video")
     end_seconds: float = Field(description="Fine della clip, in secondi")
@@ -41,14 +73,8 @@ class ClipPick(BaseModel):
         "motivazione'. Stringa vuota se l'hook non nomina niente di concreto — "
         "e allora quasi sempre è un hook debole."
     ))
-    punteggi: dict[str, int] = Field(default_factory=dict, description=(
-        "Voto da 0 a 3 su ognuno di questi cinque assi, con queste chiavi "
-        "esatte: bersaglio (nomina una cosa concreta che il pubblico "
-        "riconosce), numero (contiene una cifra o una quantità), "
-        "ribaltamento (nega una convinzione e la sostituisce, forma "
-        "'non è X, è Y'), tu (parla direttamente a chi guarda, lo accusa o "
-        "lo chiama in causa), tensione (lascia qualcosa in sospeso che "
-        "obbliga a restare). Somma massima 15."
+    punteggi: Punteggi = Field(description=(
+        "Voto da 0 a 3 su ognuno dei cinque assi dell'hook. Somma massima 15."
     ))
     caption: str = Field(description="Caption Instagram in italiano: hook forte nella prima riga, 2-4 righe totali, niente hashtag qui")
     hashtags: list[str] = Field(description=(

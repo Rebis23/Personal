@@ -248,10 +248,10 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     # meglio pubblicare tre clip forti che sei di cui due tiepide. Se un video
     # non ha momenti abbastanza buoni, e giusto che ne esca meno del massimo.
     soglia = int(clip_cfg.get("punteggio_minimo", 7))
-    scartate = [p for p in picks if p.punteggi and sum(p.punteggi.values()) < soglia]
+    scartate = [p for p in picks if p.punteggi.somma < soglia]
     for p in scartate:
-        print(f"   🚫 Scartata ({sum(p.punteggi.values())}/15, sotto {soglia}): «{p.hook}»")
-    picks = [p for p in picks if not (p.punteggi and sum(p.punteggi.values()) < soglia)]
+        print(f"   🚫 Scartata ({p.punteggi.somma}/15, sotto {soglia}): «{p.hook}»")
+    picks = [p for p in picks if p.punteggi.somma >= soglia]
 
     if not picks:
         print("   ⚠️ Claude non ha trovato clip valide, salto")
@@ -263,8 +263,8 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     queued = []
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{n}"
-        somma = sum(pick.punteggi.values()) if pick.punteggi else 0
-        assi = " ".join(f"{k}={v}" for k, v in (pick.punteggi or {}).items())
+        somma = pick.punteggi.somma
+        assi = str(pick.punteggi)
         print(f"   ✂️ Clip {n}: [{pick.start_seconds:.0f}s → {pick.end_seconds:.0f}s] «{pick.hook}»")
         print(f"      punteggio {somma}/15 ({assi})"
               + (f" · bersaglio: {pick.bersaglio}" if pick.bersaglio else " · nessun bersaglio"))
