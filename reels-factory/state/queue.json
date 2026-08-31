@@ -49,16 +49,6 @@
   ],
   "queue": [
     {
-      "clip_id": "H2Z1w2EMork-2",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "La scuola ti dice: se sei intelligente hai vinto. Falso",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
-      "caption": "La scuola ti dice: se sei intelligente hai vinto.\nTi abitua a ripetere un procedimento e arrivare alla risposta giusta.\nPoi esci e scopri che nella vita la risposta giusta non esiste.\n\n#scuola #mentalita #crescitapersonale #intelligenza #decisioni #sistemascolastico #risultati\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-08-31T00:37:54Z"
-    },
-    {
       "clip_id": "H2Z1w2EMork-3",
       "video_id": "H2Z1w2EMork",
       "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
@@ -169,6 +159,14 @@
       "ig_media_id": "17918924259221632",
       "permalink": "https://www.instagram.com/reel/DcmuKTYkvIJ/",
       "published_at": "2026-08-29T01:08:53Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-2",
+      "video_id": "H2Z1w2EMork",
+      "hook": "La scuola ti dice: se sei intelligente hai vinto. Falso",
+      "ig_media_id": "18137545318584932",
+      "permalink": "https://www.instagram.com/reel/Dct2ag8FbbG/",
+      "published_at": "2026-08-31T19:35:40Z"
     }
   ],
   "archive_done": [
