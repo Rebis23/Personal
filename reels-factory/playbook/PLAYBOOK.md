@@ -201,6 +201,10 @@ input 0 = video montato; per ogni PNG: -loop 1 -t <dur> -i file.png; per ogni cl
 | Download che non partono dal browser automatizzato | L'estensione Chrome blocca i download → Uppbeat lo scarica Lorenzo a mano |
 | YouTube blocca yt-dlp (403) e il player nel Chrome remoto | Per studiare una reference: storyboard `yt-dlp -f sb0` con `--extractor-args "youtube:player_client=mweb"` (mosaici in .mhtml, estrarli con email.message_from_bytes) + thumbnail maxres `i.ytimg.com/vi/<id>/maxresdefault.jpg` |
 | zsh non splitta le variabili non quotate | Niente `for c in "a b c"; set -- $c` → comandi espliciti |
+| Girato Sony misto 4K/1080p nella stessa cartella | Mai probe a campione: normalizzare OGNI segmento a `scale=1920:1080,setsar=1`; punch-in relativo `crop=iw/1.13:ih/1.13:(iw-ow)/2:(ih-oh)*0.35`, mai il crop assoluto |
+| Grafo ffmpeg unico (overlay+amix su montato lungo) si incastra a metà | Piano B (vlog 31/08): grafiche bruciate nei SINGOLI segmenti, concat -c copy, musica con -c:v copy. Robusto e 10x più veloce |
+| Render "vivo" ma fermo da ore | ps non basta: lanciare con `-nostats -progress file.txt` + watcher che confronta out_time e avvisa se fermo 60s |
+| Concat lunghissimo (64 min invece di 19) | Sui segmenti mute `-t` va anche come opzione di OUTPUT, non solo sull'input anullsrc |
 | Voce che parte a metà parola all'inizio del video | Il primo segmento inizia su una ripresa scartata → controllare che l'apertura sia la ripresa buona |
 
 ## File del progetto di riferimento (sul Mac)
@@ -218,3 +222,8 @@ input 0 = video montato; per ogni PNG: -loop 1 -t <dur> -i file.png; per ogni cl
 ```
 
 Se lavori su questo Mac: USA questi script, non riscriverli. Se sei altrove: ricostruiscili dalle ricette qui sopra — contengono tutto il necessario.
+
+
+## Vlog multi-clip (aggiunto 31/08/2026)
+
+Progetto di riferimento: `~/Downloads/vlog-lisbona-edit/` — pipeline completa per montare un vlog da N clip (probe → wav+frame → whisper word-level → digest → provini a griglia → agenti sui clip >20 min → cutlist multi-sorgente con word-snap → QA giunture → piano-b.py). Gli script sono generici: cambiare solo la cartella sorgente.
