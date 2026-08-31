@@ -89,7 +89,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/bgutil
-          key: bgutil-pot-provider-1.3.1
+          key: bgutil-pot-provider-1.3.2
 
       # Provider comunitario dei "PO token" (Brainicism/bgutil-ytdlp-pot-provider):
       # genera i token che YouTube richiede per servire i flussi video.
@@ -97,7 +97,7 @@ jobs:
       - name: Avvia PO token provider
         run: |
           if [ ! -f /tmp/bgutil/server/build/main.js ]; then
-            git clone --depth 1 --branch 1.3.1 https://github.com/Brainicism/bgutil-ytdlp-pot-provider.git /tmp/bgutil
+            git clone --depth 1 --branch 1.3.2 https://github.com/Brainicism/bgutil-ytdlp-pot-provider.git /tmp/bgutil
             cd /tmp/bgutil/server && npm ci --silent && npx tsc
           fi
           cd /tmp/bgutil/server && nohup node build/main.js > /tmp/pot-server.log 2>&1 &
