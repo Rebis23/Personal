@@ -489,7 +489,10 @@ def cmd_publish() -> int:
     # non devono trasformarsi in tre Reel nello stesso giorno.
     forzato = os.environ.get("PUBLISH_FORCE", "").strip().lower() in ("1", "true", "yes")
     if st["published"] and not forzato:
-        ultima = st["published"][-1].get("published_at", "")[:10]
+        # La piu recente in assoluto, non l'ultima della lista: l'ordine
+        # dell'elenco non e garantito, e fidarsi della posizione e stato
+        # meta del guaio del 31/08.
+        ultima = max((p.get("published_at", "") for p in st["published"]))[:10]
         if ultima == state_mod.now_iso()[:10]:
             print(f"✅ Gia pubblicato oggi ({ultima}): non ne esce un secondo")
             return 0
@@ -557,12 +560,25 @@ RICEVUTA = Path(__file__).resolve().parent.parent / "state" / "ultima-pubblicazi
 
 def _registra(st: dict, reg: dict) -> bool:
     """Toglie la clip dalla coda e la mette tra le pubblicate. Idempotente:
-    richiamarla due volte sulla stessa ricevuta non cambia niente."""
-    gia = any(p["clip_id"] == reg["clip_id"] for p in st["published"])
-    prima = len(st["queue"])
-    st["queue"] = [c for c in st["queue"] if c["clip_id"] != reg["clip_id"]]
+    richiamarla due volte sulla STESSA pubblicazione non cambia niente.
+
+    L'identita di una pubblicazione e ig_media_id, non clip_id. Sembra un
+    dettaglio ed e costato due Reel in un giorno il 31/08: quando un video
+    viene ritagliato da capo le clip riprendono gli stessi identificativi
+    (H2Z1w2EMork-1, -2...), quindi la nuova pubblicazione di "-1" veniva
+    scambiata per quella vecchia del 29/08 e non registrata. La data restava
+    al 29, la guardia del giorno la leggeva e lasciava uscire un secondo Reel.
+
+    Ora l'elenco si limita ad accodare, e a impedire i doppioni guarda
+    ig_media_id. Due Reel diversi nati dallo stesso clip_id restano tutti e
+    due nella storia, che e la verita: sono entrambi online. A tenere la
+    cadenza ci pensa la guardia del giorno, che guarda la data piu recente."""
+    media = reg.get("ig_media_id")
+    gia = bool(media) and any(p.get("ig_media_id") == media for p in st["published"])
     if not gia:
         st["published"].append(reg)
+    prima = len(st["queue"])
+    st["queue"] = [c for c in st["queue"] if c["clip_id"] != reg["clip_id"]]
     return not gia or len(st["queue"]) != prima
 
 

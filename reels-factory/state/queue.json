@@ -1,213 +1,222 @@
 {
-  "processed_videos": [
-    {
-      "video_id": "tCyZ18Ubms4",
-      "title": "Rendi Conscio il Tuo Inconscio | Il Grande Disegno #2",
-      "status": "done",
-      "processed_at": "2026-08-16T11:20:54Z",
-      "clips": [
-        "tCyZ18Ubms4-1",
-        "tCyZ18Ubms4-2",
-        "tCyZ18Ubms4-3"
-      ]
-    },
-    {
-      "video_id": "eFVPQDJXKk4",
-      "title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
-      "status": "done",
-      "processed_at": "2026-08-23T00:53:01Z",
-      "clips": [
-        "eFVPQDJXKk4-1",
-        "eFVPQDJXKk4-2",
-        "eFVPQDJXKk4-3"
-      ]
-    },
-    {
-      "video_id": "Enp0wWhaP8M",
-      "title": "Perché la Realtà è Solo un'Illusione | Il Grande Disegno #1",
-      "status": "done",
-      "processed_at": "2026-08-24T17:43:42Z",
-      "clips": [
-        "Enp0wWhaP8M-1",
-        "Enp0wWhaP8M-2",
-        "Enp0wWhaP8M-3"
-      ]
-    },
-    {
-      "video_id": "H2Z1w2EMork",
-      "title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "status": "done",
-      "processed_at": "2026-08-31T00:55:30Z",
-      "clips": [
-        "H2Z1w2EMork-1",
-        "H2Z1w2EMork-2",
-        "H2Z1w2EMork-3",
-        "H2Z1w2EMork-4",
-        "H2Z1w2EMork-5"
-      ]
-    }
-  ],
-  "queue": [
-    {
-      "clip_id": "H2Z1w2EMork-3",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "Sai che il 90% fallisce, quindi non parti. Lo stupido parte",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
-      "caption": "Sai che il 90% degli imprenditori fallisce, e questo ti blocca.\nChi non si fa tutte queste domande inizia a fare e a un certo punto ottiene risultati.\nVedere tutte le variabili non è sempre un vantaggio.\n\n#imprenditoria #mentalita #paura #azione #crescitapersonale #decisioni #rischio\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-08-31T00:43:17Z"
-    },
-    {
-      "clip_id": "H2Z1w2EMork-4",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "Quella decisione che credi ragionata l'hai già presa in due secondi: la tua intelligenza è servita solo a giustificarla dopo",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
-      "caption": "Usi l'intelligenza come maschera per giustificare le tue emozioni.\nJung lo diceva meglio: pensare è difficile, per questo la maggior parte della gente giudica.\nLa decisione l'hai già presa in due secondi, il resto è solo motivazione a posteriori.\n\n#psicologia #jung #decisioni #intelligenza #crescitapersonale #emozioni #mentalita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-08-31T00:44:47Z"
-    },
-    {
-      "clip_id": "H2Z1w2EMork-5",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "Se tieni aperti dieci obiettivi perché non vuoi rinunciare a nessuno, ne otterrai zero: scegline uno e sacrifica gli altri",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-5.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-5.mp4",
-      "caption": "Se lasci aperte 100 possibilità, ne hai 100 potenziali e ne ottieni zero.\nScegliere significa sacrificare le altre: è la condizione normale dell'esistenza.\nDopo aver scelto, l'unica cosa che conta sono i comportamenti che ripeti.\n\n#decisioni #obiettivi #abitudini #mentalita #crescitapersonale #focus #comportamenti\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-08-31T00:55:30Z"
-    }
-  ],
-  "published": [
-    {
-      "clip_id": "tCyZ18Ubms4-1",
-      "video_id": "tCyZ18Ubms4",
-      "hook": "Il 95% della tua vita non l'hai scelto tu",
-      "ig_media_id": "18095242100062134",
-      "permalink": "https://www.instagram.com/reel/DcIyKNXAvSi/",
-      "published_at": "2026-08-17T10:07:01Z"
-    },
-    {
-      "clip_id": "tCyZ18Ubms4-2",
-      "video_id": "tCyZ18Ubms4",
-      "hook": "Studia, prendi una laurea: il paradigma scaduto",
-      "ig_media_id": "18116561654512657",
-      "permalink": "https://www.instagram.com/reel/DcLWIBwkeHj/",
-      "published_at": "2026-08-18T09:59:37Z"
-    },
-    {
-      "clip_id": "tCyZ18Ubms4-3",
-      "video_id": "tCyZ18Ubms4",
-      "hook": "Non devi capire per agire: devi agire per capire",
-      "ig_media_id": "18333419830261070",
-      "permalink": "https://www.instagram.com/reel/DcN69z-Cb4q/",
-      "published_at": "2026-08-19T09:59:59Z"
-    },
-    {
-      "clip_id": "eFVPQDJXKk4-1",
-      "video_id": "eFVPQDJXKk4",
-      "hook": "Non è disciplina: lavorare tanto non mi costa nessuna fatica",
-      "ig_media_id": "18368679157208812",
-      "permalink": "https://www.instagram.com/reel/DcYNbN1ir3I/",
-      "published_at": "2026-08-23T09:53:24Z"
-    },
-    {
-      "clip_id": "eFVPQDJXKk4-2",
-      "video_id": "eFVPQDJXKk4",
-      "hook": "Non hai fallito. Ti manca solo una competenza",
-      "ig_media_id": "18462652531142638",
-      "permalink": "https://www.instagram.com/reel/Dca0RaqicVN/",
-      "published_at": "2026-08-24T10:11:17Z"
-    },
-    {
-      "clip_id": "eFVPQDJXKk4-3",
-      "video_id": "eFVPQDJXKk4",
-      "hook": "Lo sforzo non paga le bollette",
-      "ig_media_id": "18146160097493946",
-      "permalink": "https://www.instagram.com/reel/DcdX9MSEcuw/",
-      "published_at": "2026-08-25T10:01:44Z"
-    },
-    {
-      "clip_id": "Enp0wWhaP8M-1",
-      "video_id": "Enp0wWhaP8M",
-      "hook": "Stessa notte insonne: lui si sveglia felice, io distrutto",
-      "ig_media_id": "17943531858335858",
-      "permalink": "https://www.instagram.com/reel/Dclikiekeyf/",
-      "published_at": "2026-08-28T14:08:36Z"
-    },
-    {
-      "clip_id": "Enp0wWhaP8M-2",
-      "video_id": "Enp0wWhaP8M",
-      "hook": "L'ansia è la stessa faccia del coraggio",
-      "ig_media_id": "18375007213237518",
-      "permalink": "https://www.instagram.com/reel/DclwuZPCGgQ/",
-      "published_at": "2026-08-28T16:12:12Z"
-    },
-    {
-      "clip_id": "Enp0wWhaP8M-3",
-      "video_id": "Enp0wWhaP8M",
-      "hook": "Ciò che più cerchi si trova dove meno vuoi guardare",
-      "ig_media_id": "18004908263994104",
-      "permalink": "https://www.instagram.com/reel/Dcl9uxmFRUh/",
-      "published_at": "2026-08-28T18:05:39Z"
-    },
-    {
-      "clip_id": "H2Z1w2EMork-1",
-      "video_id": "H2Z1w2EMork",
-      "hook": "La vita non ha una risposta giusta né un procedimento per arrivarci",
-      "ig_media_id": "17918924259221632",
-      "permalink": "https://www.instagram.com/reel/DcmuKTYkvIJ/",
-      "published_at": "2026-08-29T01:08:53Z"
-    },
-    {
-      "clip_id": "H2Z1w2EMork-2",
-      "video_id": "H2Z1w2EMork",
-      "hook": "La scuola ti dice: se sei intelligente hai vinto. Falso",
-      "ig_media_id": "18137545318584932",
-      "permalink": "https://www.instagram.com/reel/Dct2ag8FbbG/",
-      "published_at": "2026-08-31T19:35:40Z"
-    }
-  ],
-  "archive_done": [
-    "Enp0wWhaP8M"
-  ],
-  "sospese": [
-    {
-      "clip_id": "H2Z1w2EMork-2",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "L'intelligenza diventa paralisi quando vuoi valutare tutte le variabili",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
-      "caption": "Paralisi da analisi: più pensi, più trovi variabili, più resti fermo.\nLe variabili non le saprai mai tutte. Lo stato base della vita è l'incertezza: se non lo accetti, la tua intelligenza lavora contro di te.\n\n#paralisidaanalisi #perfezionismo #decisioni #overthinking #incertezza #crescitapersonale #mentalita",
-      "created_at": "2026-08-28T16:59:52Z",
-      "sospesa_il": "2026-08-30",
-      "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
-    },
-    {
-      "clip_id": "H2Z1w2EMork-3",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "Il vantaggio iniziale è sempre dello stupido",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
-      "caption": "Il vantaggio iniziale è sempre dello stupido.\nVede meno complessità, meno ostacoli, e quindi parte prima. Incontra i problemi e li risolve nel modo più semplice.\nTu invece stai ancora analizzando.\n\n#azione #semplicita #overthinking #crescitapersonale #mentalita #imprenditoria #decisioni",
-      "created_at": "2026-08-28T17:38:14Z",
-      "sospesa_il": "2026-08-30",
-      "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
-    },
-    {
-      "clip_id": "H2Z1w2EMork-4",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "Più velocemente agisci, meno problemi incontri",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
-      "caption": "I problemi si creano quando sei fermo, non quando corri.\nNon controlli la fortuna, non controlli il tempismo, non controlli le circostanze. Controlli solo quello che fai.\nPer questo l'intelligenza va messa al servizio dell'azione, non al posto suo.\n\n#azione #produttivita #decisioni #imprenditoria #mentalita #crescitapersonale #abitudini",
-      "created_at": "2026-08-28T18:04:04Z",
-      "sospesa_il": "2026-08-30",
-      "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
-    }
-  ]
+ "processed_videos": [
+  {
+   "video_id": "tCyZ18Ubms4",
+   "title": "Rendi Conscio il Tuo Inconscio | Il Grande Disegno #2",
+   "status": "done",
+   "processed_at": "2026-08-16T11:20:54Z",
+   "clips": [
+    "tCyZ18Ubms4-1",
+    "tCyZ18Ubms4-2",
+    "tCyZ18Ubms4-3"
+   ]
+  },
+  {
+   "video_id": "eFVPQDJXKk4",
+   "title": "10.000 ore di Crescita Personale in 10 minuti (avrei voluto saperlo prima)",
+   "status": "done",
+   "processed_at": "2026-08-23T00:53:01Z",
+   "clips": [
+    "eFVPQDJXKk4-1",
+    "eFVPQDJXKk4-2",
+    "eFVPQDJXKk4-3"
+   ]
+  },
+  {
+   "video_id": "Enp0wWhaP8M",
+   "title": "Perché la Realtà è Solo un'Illusione | Il Grande Disegno #1",
+   "status": "done",
+   "processed_at": "2026-08-24T17:43:42Z",
+   "clips": [
+    "Enp0wWhaP8M-1",
+    "Enp0wWhaP8M-2",
+    "Enp0wWhaP8M-3"
+   ]
+  },
+  {
+   "video_id": "H2Z1w2EMork",
+   "title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "status": "done",
+   "processed_at": "2026-08-31T00:55:30Z",
+   "clips": [
+    "H2Z1w2EMork-1",
+    "H2Z1w2EMork-2",
+    "H2Z1w2EMork-3",
+    "H2Z1w2EMork-4",
+    "H2Z1w2EMork-5"
+   ]
+  }
+ ],
+ "queue": [
+  {
+   "clip_id": "H2Z1w2EMork-3",
+   "video_id": "H2Z1w2EMork",
+   "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "hook": "Sai che il 90% fallisce, quindi non parti. Lo stupido parte",
+   "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
+   "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
+   "caption": "Sai che il 90% degli imprenditori fallisce, e questo ti blocca.\nChi non si fa tutte queste domande inizia a fare e a un certo punto ottiene risultati.\nVedere tutte le variabili non è sempre un vantaggio.\n\n#imprenditoria #mentalita #paura #azione #crescitapersonale #decisioni #rischio\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+   "created_at": "2026-08-31T00:43:17Z"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-4",
+   "video_id": "H2Z1w2EMork",
+   "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "hook": "Quella decisione che credi ragionata l'hai già presa in due secondi: la tua intelligenza è servita solo a giustificarla dopo",
+   "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
+   "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
+   "caption": "Usi l'intelligenza come maschera per giustificare le tue emozioni.\nJung lo diceva meglio: pensare è difficile, per questo la maggior parte della gente giudica.\nLa decisione l'hai già presa in due secondi, il resto è solo motivazione a posteriori.\n\n#psicologia #jung #decisioni #intelligenza #crescitapersonale #emozioni #mentalita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+   "created_at": "2026-08-31T00:44:47Z"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-5",
+   "video_id": "H2Z1w2EMork",
+   "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "hook": "Se tieni aperti dieci obiettivi perché non vuoi rinunciare a nessuno, ne otterrai zero: scegline uno e sacrifica gli altri",
+   "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-5.mp4",
+   "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-5.mp4",
+   "caption": "Se lasci aperte 100 possibilità, ne hai 100 potenziali e ne ottieni zero.\nScegliere significa sacrificare le altre: è la condizione normale dell'esistenza.\nDopo aver scelto, l'unica cosa che conta sono i comportamenti che ripeti.\n\n#decisioni #obiettivi #abitudini #mentalita #crescitapersonale #focus #comportamenti\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+   "created_at": "2026-08-31T00:55:30Z"
+  }
+ ],
+ "published": [
+  {
+   "clip_id": "tCyZ18Ubms4-1",
+   "video_id": "tCyZ18Ubms4",
+   "hook": "Il 95% della tua vita non l'hai scelto tu",
+   "ig_media_id": "18095242100062134",
+   "permalink": "https://www.instagram.com/reel/DcIyKNXAvSi/",
+   "published_at": "2026-08-17T10:07:01Z"
+  },
+  {
+   "clip_id": "tCyZ18Ubms4-2",
+   "video_id": "tCyZ18Ubms4",
+   "hook": "Studia, prendi una laurea: il paradigma scaduto",
+   "ig_media_id": "18116561654512657",
+   "permalink": "https://www.instagram.com/reel/DcLWIBwkeHj/",
+   "published_at": "2026-08-18T09:59:37Z"
+  },
+  {
+   "clip_id": "tCyZ18Ubms4-3",
+   "video_id": "tCyZ18Ubms4",
+   "hook": "Non devi capire per agire: devi agire per capire",
+   "ig_media_id": "18333419830261070",
+   "permalink": "https://www.instagram.com/reel/DcN69z-Cb4q/",
+   "published_at": "2026-08-19T09:59:59Z"
+  },
+  {
+   "clip_id": "eFVPQDJXKk4-1",
+   "video_id": "eFVPQDJXKk4",
+   "hook": "Non è disciplina: lavorare tanto non mi costa nessuna fatica",
+   "ig_media_id": "18368679157208812",
+   "permalink": "https://www.instagram.com/reel/DcYNbN1ir3I/",
+   "published_at": "2026-08-23T09:53:24Z"
+  },
+  {
+   "clip_id": "eFVPQDJXKk4-2",
+   "video_id": "eFVPQDJXKk4",
+   "hook": "Non hai fallito. Ti manca solo una competenza",
+   "ig_media_id": "18462652531142638",
+   "permalink": "https://www.instagram.com/reel/Dca0RaqicVN/",
+   "published_at": "2026-08-24T10:11:17Z"
+  },
+  {
+   "clip_id": "eFVPQDJXKk4-3",
+   "video_id": "eFVPQDJXKk4",
+   "hook": "Lo sforzo non paga le bollette",
+   "ig_media_id": "18146160097493946",
+   "permalink": "https://www.instagram.com/reel/DcdX9MSEcuw/",
+   "published_at": "2026-08-25T10:01:44Z"
+  },
+  {
+   "clip_id": "Enp0wWhaP8M-1",
+   "video_id": "Enp0wWhaP8M",
+   "hook": "Stessa notte insonne: lui si sveglia felice, io distrutto",
+   "ig_media_id": "17943531858335858",
+   "permalink": "https://www.instagram.com/reel/Dclikiekeyf/",
+   "published_at": "2026-08-28T14:08:36Z"
+  },
+  {
+   "clip_id": "Enp0wWhaP8M-2",
+   "video_id": "Enp0wWhaP8M",
+   "hook": "L'ansia è la stessa faccia del coraggio",
+   "ig_media_id": "18375007213237518",
+   "permalink": "https://www.instagram.com/reel/DclwuZPCGgQ/",
+   "published_at": "2026-08-28T16:12:12Z"
+  },
+  {
+   "clip_id": "Enp0wWhaP8M-3",
+   "video_id": "Enp0wWhaP8M",
+   "hook": "Ciò che più cerchi si trova dove meno vuoi guardare",
+   "ig_media_id": "18004908263994104",
+   "permalink": "https://www.instagram.com/reel/Dcl9uxmFRUh/",
+   "published_at": "2026-08-28T18:05:39Z"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-1",
+   "video_id": "H2Z1w2EMork",
+   "hook": "La vita non ha una risposta giusta né un procedimento per arrivarci",
+   "ig_media_id": "17918924259221632",
+   "permalink": "https://www.instagram.com/reel/DcmuKTYkvIJ/",
+   "published_at": "2026-08-29T01:08:53Z"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-1",
+   "video_id": "H2Z1w2EMork",
+   "hook": "Le persone intelligenti ottengono meno di quelle poco sveglie",
+   "ig_media_id": "18126558460747909",
+   "permalink": "",
+   "published_at": "2026-08-31T17:12:12Z",
+   "nota": "registrato a mano il 01/09: la pubblicazione non era stata salvata perche il clip_id combaciava con quella del 29/08"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-2",
+   "video_id": "H2Z1w2EMork",
+   "hook": "La scuola ti dice: se sei intelligente hai vinto. Falso",
+   "ig_media_id": "18137545318584932",
+   "permalink": "https://www.instagram.com/reel/Dct2ag8FbbG/",
+   "published_at": "2026-08-31T19:35:40Z"
+  }
+ ],
+ "archive_done": [
+  "Enp0wWhaP8M"
+ ],
+ "sospese": [
+  {
+   "clip_id": "H2Z1w2EMork-2",
+   "video_id": "H2Z1w2EMork",
+   "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "hook": "L'intelligenza diventa paralisi quando vuoi valutare tutte le variabili",
+   "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
+   "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-2.mp4",
+   "caption": "Paralisi da analisi: più pensi, più trovi variabili, più resti fermo.\nLe variabili non le saprai mai tutte. Lo stato base della vita è l'incertezza: se non lo accetti, la tua intelligenza lavora contro di te.\n\n#paralisidaanalisi #perfezionismo #decisioni #overthinking #incertezza #crescitapersonale #mentalita",
+   "created_at": "2026-08-28T16:59:52Z",
+   "sospesa_il": "2026-08-30",
+   "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-3",
+   "video_id": "H2Z1w2EMork",
+   "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "hook": "Il vantaggio iniziale è sempre dello stupido",
+   "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
+   "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-3.mp4",
+   "caption": "Il vantaggio iniziale è sempre dello stupido.\nVede meno complessità, meno ostacoli, e quindi parte prima. Incontra i problemi e li risolve nel modo più semplice.\nTu invece stai ancora analizzando.\n\n#azione #semplicita #overthinking #crescitapersonale #mentalita #imprenditoria #decisioni",
+   "created_at": "2026-08-28T17:38:14Z",
+   "sospesa_il": "2026-08-30",
+   "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
+  },
+  {
+   "clip_id": "H2Z1w2EMork-4",
+   "video_id": "H2Z1w2EMork",
+   "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
+   "hook": "Più velocemente agisci, meno problemi incontri",
+   "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
+   "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-4.mp4",
+   "caption": "I problemi si creano quando sei fermo, non quando corri.\nNon controlli la fortuna, non controlli il tempismo, non controlli le circostanze. Controlli solo quello che fai.\nPer questo l'intelligenza va messa al servizio dell'azione, non al posto suo.\n\n#azione #produttivita #decisioni #imprenditoria #mentalita #crescitapersonale #abitudini",
+   "created_at": "2026-08-28T18:04:04Z",
+   "sospesa_il": "2026-08-30",
+   "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
+  }
+ ]
 }
