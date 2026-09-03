@@ -47,18 +47,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "H2Z1w2EMork-5",
-      "video_id": "H2Z1w2EMork",
-      "video_title": "Se sei così intelligente, perchè non ottieni risultati?",
-      "hook": "Se tieni aperti dieci obiettivi perché non vuoi rinunciare a nessuno, ne otterrai zero: scegline uno e sacrifica gli altri",
-      "r2_key": "reels/H2Z1w2EMork/H2Z1w2EMork-5.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/H2Z1w2EMork/H2Z1w2EMork-5.mp4",
-      "caption": "Se lasci aperte 100 possibilità, ne hai 100 potenziali e ne ottieni zero.\nScegliere significa sacrificare le altre: è la condizione normale dell'esistenza.\nDopo aver scelto, l'unica cosa che conta sono i comportamenti che ripeti.\n\n#decisioni #obiettivi #abitudini #mentalita #crescitapersonale #focus #comportamenti\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-08-31T00:55:30Z"
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -172,6 +161,14 @@
       "ig_media_id": "17988898017044510",
       "permalink": "https://www.instagram.com/reel/DcyYVbaD_0H/",
       "published_at": "2026-09-02T13:49:06Z"
+    },
+    {
+      "clip_id": "H2Z1w2EMork-5",
+      "video_id": "H2Z1w2EMork",
+      "hook": "Se tieni aperti dieci obiettivi perché non vuoi rinunciare a nessuno, ne otterrai zero: scegline uno e sacrifica gli altri",
+      "ig_media_id": "18481141867106804",
+      "permalink": "https://www.instagram.com/reel/Dc088hnjOLK/",
+      "published_at": "2026-09-03T13:47:25Z"
     }
   ],
   "archive_done": [
