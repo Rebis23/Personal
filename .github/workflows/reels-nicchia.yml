@@ -59,7 +59,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Lo storico va commesso insieme alla scheda: e la memoria della
           # scuola, e senza di lui ogni lunedi ripartirebbe da sedici video.
-          git add reels-factory/nicchia.md reels-factory/state/scuola.json
+          git add reels-factory/nicchia-shorts.md reels-factory/state/scuola.json
           if git diff --cached --quiet; then
             echo "Schede invariate"
             exit 0

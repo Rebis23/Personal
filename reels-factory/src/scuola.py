@@ -29,7 +29,10 @@ import subprocess
 import time
 from pathlib import Path
 
-SCHEDA = Path(__file__).resolve().parent.parent / "nicchia.md"
+# Scrive su un file suo, NON su nicchia.md. Dal 03/09 la scuola primaria e
+# quella sui Reel veri (vidIQ): questa resta la rete di sicurezza, gira gratis
+# ogni lunedi, e se scrivesse sullo stesso file cancellerebbe la migliore.
+SCHEDA = Path(__file__).resolve().parent.parent / "nicchia-shorts.md"
 STORICO = Path(__file__).resolve().parent.parent / "state" / "scuola.json"
 
 # Quanto resta valido un outlier trovato. Sei mesi: gli agganci non cambiano
@@ -494,7 +497,8 @@ def scrivi_scheda(video: list[dict], schemi: str, query: list[str]) -> None:
     arco = (f" Raccolti nell'arco di {max(eta)} giorni."
             if eta and max(eta) > 7 else "")
     testa = (
-        "# La scuola: come sono costruiti i video brevi che sfondano\n\n"
+        "# Rete di sicurezza: gli Shorts YouTube che sfondano\n\n"
+        "> Fonte secondaria. La scuola vera e `nicchia.md`, sui Reel.\n\n"
         f"> Estratto automaticamente da **{len(video)} video brevi italiani** di\n"
         f"> {canali} canali diversi, che hanno superato di almeno 3 volte la mediana\n"
         f"> del proprio canale (scarto mediano: {mediana:.1f}x).{arco}\n"

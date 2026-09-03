@@ -234,6 +234,8 @@ l'audio continua. Usalo al massimo in 1-2 clip su 3, mai forzato."""
 
 HOOKS_FILE = Path(__file__).resolve().parent.parent / "hooks.md"
 NICCHIA_FILE = Path(__file__).resolve().parent.parent / "nicchia.md"
+# Il ripiego: gli Shorts YouTube. Si legge solo se la scuola sui Reel manca.
+NICCHIA_RIPIEGO = Path(__file__).resolve().parent.parent / "nicchia-shorts.md"
 
 
 def load_hooks_library() -> str:
@@ -245,12 +247,19 @@ def load_hooks_library() -> str:
 
 
 def load_nicchia() -> str:
-    """Gli schemi dei Reel che sfondano nella nicchia. E la fonte primaria:
-    dieci Reel di un profilo solo sono un campione troppo piccolo per
-    insegnare qualcosa, migliaia di outlier del settore no."""
-    try:
-        testo = NICCHIA_FILE.read_text(encoding="utf-8").strip()
-    except OSError:
+    """Gli schemi degli agganci che sfondano nella nicchia.
+
+    Prima si cerca nicchia.md, che dal 03/09 e ricavato dai REEL veri e
+    quindi dal primo secondo vero: inquadratura, testo a schermo, audio.
+    Se manca si ripiega su nicchia-shorts.md, dedotto dai soli titoli degli
+    Shorts YouTube — meno buono ma gratuito e sempre aggiornato."""
+    for f in (NICCHIA_FILE, NICCHIA_RIPIEGO):
+        try:
+            testo = f.read_text(encoding="utf-8").strip()
+            break
+        except OSError:
+            continue
+    else:
         return ""
     # Finche il file e solo la struttura vuota, non vale la pena occupare
     # spazio nel prompt con dei titoli senza contenuto.
