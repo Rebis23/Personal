@@ -110,6 +110,7 @@ def emphasis_times(words: list[dict], emphasis: set[str]) -> list[float]:
 def render(base_video: Path, out_path: Path, *, pages: list[dict],
            duration: float, font_size: int, vertical_position: float,
            uppercase: bool, hook_text: str = "", hook_seconds: float = 0.0,
+           images: list[Path] | None = None,
            timeout_minutes: int = 25) -> Path:
     """Renderizza la clip finale con Remotion. Solleva RuntimeError se fallisce."""
     public_input = REMOTION_DIR / "public" / "input.mp4"
@@ -131,6 +132,21 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
               f"finirebbero sul viso. Riportate a {MINIMO}")
         vertical_position = MINIMO
 
+    # Le foto della fascia devono stare dentro public/: staticFile() legge
+    # solo da li. Si ricopia la cartella a ogni clip invece di accumulare —
+    # altrimenti la clip 3 si ritroverebbe in cima le foto della clip 1.
+    img_dir = REMOTION_DIR / "public" / "img"
+    if img_dir.exists():
+        shutil.rmtree(img_dir)
+    nomi: list[str] = []
+    for i, sorgente in enumerate(images or []):
+        if not Path(sorgente).is_file():
+            continue
+        img_dir.mkdir(parents=True, exist_ok=True)
+        dest = img_dir / f"{i}{Path(sorgente).suffix.lower()}"
+        shutil.copyfile(sorgente, dest)
+        nomi.append(f"img/{dest.name}")
+
     props = {
         "video": "input.mp4",
         "durationSeconds": round(duration, 3),
@@ -140,6 +156,7 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
         "uppercase": uppercase,
         "hookText": hook_text,
         "hookSeconds": round(hook_seconds, 3),
+        "images": nomi,
     }
     props_file = REMOTION_DIR / "props.json"
     props_file.write_text(json.dumps(props, ensure_ascii=False), encoding="utf-8")

@@ -37,6 +37,7 @@ export const reelSchema = z.object({
   uppercase: z.boolean().default(false),
   hookText: z.string().default(''),
   hookSeconds: z.number().default(0),
+  images: z.array(z.string()).default([]),
 });
 
 export type ReelProps = z.infer<typeof reelSchema>;
@@ -53,6 +54,67 @@ export const defaultReelProps: ReelProps = {
   uppercase: false,
   hookText: '',
   hookSeconds: 0,
+  images: [],
+};
+
+// ------------------------------------------------------------- FASCIA ---
+// Le foto in cima, come nel riferimento mandato da Lorenzo il 4/09: due o
+// tre immagini in fila sopra il banner, dentro la fascia nera che il
+// formato quadrato lascia libera (il video occupa 420-1500 su 1920).
+//
+// Entrano sfalsate di un decimo l'una dall'altra, scendendo di poco: se
+// comparissero tutte insieme sembrerebbero un collage incollato, cosi
+// invece si posano.
+
+const Fascia: React.FC<{images: string[]}> = ({images}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  if (images.length === 0) {
+    return null;
+  }
+
+  const GAP = 22;
+  // Tre foto stanno in 1008 px con i margini; con due si allarga ciascuna
+  // invece di lasciare un buco al centro.
+  const larghezza = Math.min(340, (1008 - GAP * (images.length - 1)) / images.length);
+  const altezza = 216;
+
+  return (
+    <AbsoluteFill style={{alignItems: 'center'}}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 42,
+          display: 'flex',
+          gap: GAP,
+        }}
+      >
+        {images.map((src, i) => {
+          const t = clamp01((frame / fps - i * 0.1) / 0.42);
+          return (
+            <div
+              key={src}
+              style={{
+                width: larghezza,
+                height: altezza,
+                borderRadius: 26,
+                overflow: 'hidden',
+                backgroundColor: '#111',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
+                opacity: ease(t),
+                transform: `translateY(${(1 - ease(t)) * -26}px)`,
+              }}
+            >
+              <img
+                src={staticFile(src)}
+                style={{width: '100%', height: '100%', objectFit: 'cover'}}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
 };
 
 // ------------------------------------------------------------- CAPTION ---
@@ -132,8 +194,9 @@ const CaptionPage: React.FC<{
                 w.em
                   ? {
                       ...anim,
-                      fontStyle: 'italic',
-                      fontSize: '1.07em',
+                      // niente corsivo: Anton non ce l'ha e il browser lo
+                      // inclinerebbe a forza, con un risultato storto
+                      fontSize: '1.09em',
                       textShadow:
                         '0 2px 8px rgba(0,0,0,0.6), 0 10px 44px rgba(0,0,0,0.65), 0 0 60px rgba(255,255,255,0.28)',
                     }
@@ -155,7 +218,8 @@ const CaptionPage: React.FC<{
 // pieno, mai su nero): entra con una molla mentre il video già scorre.
 // seconds = 0 → resta visibile per tutta la clip.
 
-const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) => {
+const HookBanner: React.FC<{text: string; seconds: number; sottoFascia: boolean}> =
+  ({text, seconds, sottoFascia}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const total = seconds > 0 ? Math.round(seconds * fps) : Number.MAX_SAFE_INTEGER;
@@ -185,7 +249,10 @@ const HookBanner: React.FC<{text: string; seconds: number}> = ({text, seconds}) 
       <div
         style={{
           position: 'absolute',
-          top: 190,
+          // Con le foto in cima il banner scende sotto di loro; senza,
+          // resta dov'era. In tutti e due i casi sta nella fascia nera o
+          // appena sopra la testa, mai sul viso.
+          top: sottoFascia ? 288 : 190,
           opacity: opacity * fadeOut,
           transform: `scale(${scale})`,
           maxWidth: '86%',
@@ -229,8 +296,13 @@ export const Reel: React.FC<ReelProps> = (props) => {
           uppercase={props.uppercase}
         />
       ) : null}
+      <Fascia images={props.images} />
       {props.hookText ? (
-        <HookBanner text={props.hookText} seconds={props.hookSeconds} />
+        <HookBanner
+          text={props.hookText}
+          seconds={props.hookSeconds}
+          sottoFascia={props.images.length > 0}
+        />
       ) : null}
     </AbsoluteFill>
   );

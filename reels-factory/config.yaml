@@ -44,6 +44,20 @@ clips:
   corner_radius: 96
   # Lento zoom-in progressivo (0 = disattivato — scelta di Lorenzo)
   zoom: 0
+  # Fascia di foto in cima al Reel (Pinterest), come il riferimento mandato
+  # da Lorenzo il 4/09: due o tre fotografie vere sopra il banner.
+  # Le ricerche le scrive Claude a partire da cio che la clip dice; la parola
+  # di stile viene appesa a tutte per tenere il colpo d'occhio coerente fra
+  # un Reel e l'altro.
+  immagini:
+    attive: true
+    quante: 3
+    stile: "aesthetic editorial photography"
+    # Quante candidate scaricare per ogni ricerca. Si pesca largo perche la
+    # prima che Pinterest restituisce non e la migliore: sceglie poi Claude
+    # guardandole, scartando quelle con scritte dentro, i collage e i disegni.
+    per_ricerca: 4
+
   # Motore delle caption: "remotion" (premium, animato) con fallback
   # automatico su "ass" (classico) se Remotion non è disponibile
   renderer: "remotion"

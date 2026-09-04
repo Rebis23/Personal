@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import aggancio, apify, brain, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import aggancio, apify, brain, immagini, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -397,6 +397,30 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             whoosh=whoosh, pop=pop, pop_times=pop_times,
         )
 
+        # La fascia di foto in cima. Le ricerche le ha scritte Claude leggendo
+        # la clip; qui si scaricano da Pinterest e si fanno guardare prima di
+        # metterle a schermo. Qualunque cosa vada storta, `foto` resta vuota e
+        # la clip esce senza fascia: e un ornamento, non deve fermare niente.
+        img_cfg = cfg["clips"].get("immagini", {})
+        foto: list[Path] = []
+        if img_cfg.get("attive") and getattr(pick, "immagini", None):
+            try:
+                foto = immagini.per_clip(
+                    pick.immagini,
+                    quante=int(img_cfg.get("quante", 3)),
+                    dove=vdir / f"{clip_id}-foto",
+                    tema=pick.hook,
+                    model=cfg["anthropic"]["model"],
+                    stile=img_cfg.get("stile", ""),
+                    per_ricerca=int(img_cfg.get("per_ricerca", 4)),
+                )
+                if foto:
+                    print(f"      🖼️ Fascia: {len(foto)} foto "
+                          f"({', '.join(pick.immagini[:3])})")
+            except Exception as e:                      # noqa: BLE001
+                print(f"      ⚠️ Fascia saltata: {e}")
+                foto = []
+
         out_mp4 = vdir / f"{clip_id}.mp4"
         rendered = False
         if cfg["clips"].get("renderer", "remotion") == "remotion":
@@ -415,6 +439,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                     uppercase=sub_cfg.get("uppercase", False),
                     hook_text=pick.hook if cfg["clips"].get("hook_card", True) else "",
                     hook_seconds=float(cfg["clips"].get("hook_card_seconds", 0)),
+                    images=foto,
                 )
                 rendered = True
             except Exception as e:  # noqa: BLE001 — il fallback ASS tiene viva la pipeline

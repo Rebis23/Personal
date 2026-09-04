@@ -47,7 +47,9 @@ class ClipPick(BaseModel):
     start_seconds: float = Field(description="Inizio della clip, in secondi dal principio del video")
     end_seconds: float = Field(description="Fine della clip, in secondi")
     hook: str = Field(description=(
-        "Il gancio della clip: max 12 parole, compare come banner sopra la testa "
+        "Il gancio della clip: AL MASSIMO 7 PAROLE, compare come banner sopra la "
+        "testa per tutta la durata. Sette parole sono una riga sola: quattro "
+        "righe di testo non le legge nessuno mentre scorre. "
         "per tutta la durata. DEVE essere una frase COMPLETA e CHIUSA, che si "
         "capisce da sola senza il resto: soggetto e verbo, mai un frammento "
         "preso a meta di un discorso, mai una frase che inizia con 'e', 'ma', "
@@ -75,6 +77,17 @@ class ClipPick(BaseModel):
     ))
     punteggi: Punteggi = Field(description=(
         "Voto da 0 a 3 su ognuno dei cinque assi dell'hook. Somma massima 15."
+    ))
+    immagini: list[str] = Field(default_factory=list, description=(
+        "Da 2 a 3 chiavi di ricerca IN INGLESE per trovare su Pinterest le "
+        "foto da mettere in cima al Reel. Devono essere COSE FOTOGRAFABILI "
+        "nominate o evocate dalla clip: una persona famosa col suo nome "
+        "('muhammad ali boxing'), un oggetto, un luogo, una scena concreta. "
+        "Mai concetti astratti ('success', 'mindset', 'growth'): di quelli "
+        "Pinterest restituisce grafiche con su scritte le parole, e sopra c'e "
+        "gia il banner. Se la clip nomina una persona reale, la prima ricerca "
+        "e il suo nome. Ricerche DIVERSE fra loro: tre foto della stessa cosa "
+        "valgono come una."
     ))
     caption: str = Field(description="Caption Instagram in italiano: hook forte nella prima riga, 2-4 righe totali, niente hashtag qui")
     hashtags: list[str] = Field(description=(
@@ -215,7 +228,7 @@ piuttosto che farlo fare a una forbice cieca.
 start_seconds e end_seconds con precisione.
 
 Il campo `hook` finisce a schermo come banner sopra la testa di chi parla: deve \
-essere leggibile in un secondo, massimo 12 parole, senza virgolette.
+essere leggibile in un secondo, MASSIMO 7 PAROLE, senza virgolette. Sopra quella soglia viene accorciato d'ufficio prendendone un pezzo, quindi tanto vale scriverlo gia corto e scegliere tu quale pezzo.
 
 Per le caption: prima riga = hook che ferma lo scroll, poi 1-3 righe che aggiungono \
 valore o creano curiosità verso il video completo. Tono diretto, zero fuffa, \
