@@ -89,6 +89,26 @@ jobs:
           sudo wg-quick up warp
           echo "esco da: $(curl -s --max-time 30 https://api.ipify.org)"
 
+          # IL TUNNEL DEVE LASCIARE PASSARE ANCHE GITHUB. Il 4/09 (run 89) e
+          # successo il peggio possibile: WARP si e alzato e ha inghiottito la
+          # rotta verso GitHub. Il runner ha smesso di poter riferire — il
+          # record del run e rimasto congelato all'istante esatto in cui il
+          # tunnel e partito — e nemmeno il timeout di 5 minuti sul passo ha
+          # potuto scattare, perche per scattare bisogna essere raggiungibili.
+          # Il job e rimasto appeso, tenendo in ostaggio la pubblicazione del
+          # giorno per via del gruppo di concorrenza.
+          #
+          # Quindi dopo averlo alzato si verifica, e se GitHub non risponde si
+          # smonta il tunnel e si tira avanti senza: si torna a com'era prima,
+          # che e la stessa regola di sempre. Meglio un download che fallisce
+          # in due minuti di un job che muore appeso in due ore.
+          if ! curl -sf --max-time 25 -o /dev/null https://api.github.com; then
+            echo "::warning::Con WARP acceso GitHub non risponde: smonto il tunnel"
+            sudo wg-quick down warp || true
+            exit 1
+          fi
+          echo "GitHub raggiungibile con il tunnel su"
+
       - name: Avvisa se WARP non e in piedi
         if: steps.warp.outcome != 'success'
         run: |
