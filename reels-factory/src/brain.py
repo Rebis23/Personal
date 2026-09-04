@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 import anthropic
 
-from . import prestazioni
+from . import aggancio, prestazioni
 
 
 class Punteggi(BaseModel):
@@ -360,6 +360,19 @@ def select_clips(
     # A parità di clip disponibili si preferiscono gli hook più forti
     strong = [c for c in usable if c.hook_strength >= 7]
     picked = (strong if len(strong) >= clips_per_video else usable)[:clips_per_video]
+
+    # UNA RIGA SOLA. Lorenzo, guardando il Reel del 3/09: "l'hook scritto e
+    # lunghissimo e non attrae, perche quando ti trovi una sbrodolata di testo
+    # del genere e chiaro che non ti fermerai a guardare". Il prompt diceva
+    # gia "max 12 parole" e ne sono usciti da 27: qui si taglia per davvero, e
+    # si taglia soltanto — ogni parola del banner resta una parola che nel
+    # video si sente.
+    corti = aggancio.accorcia({i: c.hook for i, c in enumerate(picked)}, model=model)
+    for i, breve in corti.items():
+        print(f"   ✂️ aggancio accorciato ({aggancio.quante(picked[i].hook)} → "
+              f"{aggancio.quante(breve)} parole) → «{breve}»")
+        picked[i].hook = breve
+
     for c in picked:
         print(f"      hook {c.hook_strength}/10 [{c.hook_pattern}] «{c.hook}»")
     if len(strong) < len(usable):

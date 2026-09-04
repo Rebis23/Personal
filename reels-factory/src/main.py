@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import apify, brain, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import aggancio, apify, brain, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -272,6 +272,30 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             words, pick.start_seconds, pick.end_seconds,
             min_seconds=clip_cfg["min_seconds"], max_seconds=clip_cfg["max_seconds"],
         )
+
+        # SI APRE SULL'AGGANCIO, NON SULLA PREMESSA. Lorenzo, 4/09: "i primi
+        # secondi del video sono sbagliati, perche tu sei partito da
+        # «selezionando quale comportamento mi e utile...» quando bastava
+        # iniziare dicendo «pensare e roba da stupidi» e poi partire".
+        #
+        # Il banner adesso e un pezzo di parlato (aggancio.accorcia taglia e
+        # basta), quindi lo si puo CERCARE nel sonoro e far partire la clip
+        # esattamente li. Non si ri-aggancia all'inizio della frase: il pezzo
+        # forte spesso sta in mezzo a un periodo, ed e proprio da li che deve
+        # partire.
+        t_hook = aggancio.trova_nel_parlato(words, pick.hook, start - 25.0, end)
+        if t_hook is not None and t_hook > start + 0.4:
+            nuovo = max(0.0, t_hook - 0.15)     # un soffio, per non tagliare la prima sillaba
+            if end - nuovo >= clip_cfg["min_seconds"]:
+                print(f"      ▶️ Apertura spostata avanti di {nuovo - start:.1f}s: "
+                      f"la clip parte sull'aggancio")
+                start = nuovo
+            else:
+                print(f"      ▶️ Aggancio a {t_hook:.0f}s ma la clip resterebbe "
+                      f"sotto i {clip_cfg['min_seconds']}s: apertura invariata")
+        elif t_hook is None:
+            print("      ⚠️ L'aggancio non si ritrova nel parlato: banner e voce "
+                  "diranno cose diverse")
 
         # Cold open: la frase piu tagliente estratta e montata in apertura.
         # Deve stare dentro la clip e almeno 6s dopo il suo inizio, altrimenti

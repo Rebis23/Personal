@@ -72,7 +72,7 @@ subtitles:
   base_color: "&HFFFFFF&"        # bianco
   highlight_color: "&H00FFFF&"   # giallo (usato solo dallo stile karaoke)
   # Parole per schermata (stile word) / per riga (stile karaoke)
-  words_per_line: 3
+  words_per_line: 1
   # Posizione verticale del testo (0 = alto, 1 = basso).
   # 0.68 = sul petto, dentro il riquadro ma sotto il viso
   vertical_position: 0.68
