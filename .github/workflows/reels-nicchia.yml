@@ -68,7 +68,7 @@ jobs:
           # Il push puo perdere la corsa contro il workflow di pubblicazione,
           # che scrive nella stessa cartella state/. Si riprova rifondendo.
           for tentativo in 1 2 3; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push && exit 0
             echo "Tentativo $tentativo non riuscito, riprovo"
             sleep $((tentativo * 5))
           done
