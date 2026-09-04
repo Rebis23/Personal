@@ -410,7 +410,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                     quante=int(img_cfg.get("quante", 3)),
                     dove=vdir / f"{clip_id}-foto",
                     tema=pick.hook,
-                    model=cfg["anthropic"]["model"],
+                    model=cfg["claude"]["model"],
                     stile=img_cfg.get("stile", ""),
                     per_ricerca=int(img_cfg.get("per_ricerca", 4)),
                 )

@@ -27,6 +27,7 @@ import json
 import shutil
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
 import anthropic
@@ -179,13 +180,20 @@ def scegli(candidate: list[Path], *, quante: int, tema: str,
 
     blocchi.append({"type": "text",
                     "text": GIUDICE.format(tema=tema, quante=quante)})
-    try:
-        risposta = anthropic.Anthropic().messages.create(
-            model=model, max_tokens=600,
-            messages=[{"role": "user", "content": blocchi}],
-        )
-    except Exception as e:                              # noqa: BLE001
-        print(f"      ⚠️ Giudizio sulle foto non riuscito ({e}): tengo le prime")
+    risposta = None
+    for tentativo in (1, 2, 3):
+        try:
+            risposta = anthropic.Anthropic().messages.create(
+                model=model, max_tokens=600,
+                messages=[{"role": "user", "content": blocchi}],
+            )
+            break
+        except Exception as e:                          # noqa: BLE001
+            print(f"      ⚠️ Giudizio sulle foto, tentativo {tentativo}/3 ({e})")
+            if tentativo < 3:
+                time.sleep(tentativo * 4)
+    if risposta is None:
+        print("      ⚠️ Giudizio saltato: tengo le prime, controllare a mano")
         return validi[:quante]
 
     testo = "".join(b.text for b in risposta.content if b.type == "text")

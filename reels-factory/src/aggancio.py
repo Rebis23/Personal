@@ -27,6 +27,7 @@ e un vincolo.
 
 import json
 import re
+import time
 
 import anthropic
 
@@ -140,15 +141,31 @@ def accorcia(hooks: dict[int, str], *, model: str,
         return {}
 
     elenco = "\n".join(f"{i}. {h}" for i, h in sorted(lunghi.items()))
-    try:
-        risposta = anthropic.Anthropic().messages.create(
-            model=model,
-            max_tokens=1200,
-            messages=[{"role": "user", "content": PROMPT.format(
-                max_parole=max_parole, elenco=elenco)}],
-        )
-    except Exception as e:                      # noqa: BLE001
-        print(f"      ⚠️ Accorciamento non riuscito ({e}): tengo gli agganci lunghi")
+
+    # Si riprova. Il 4/09 una singola "Connection error." ha fatto uscire
+    # tutti e cinque gli agganci lunghi — 20, 28, 23, 22 parole — cioe
+    # esattamente il difetto che Lorenzo aveva appena chiesto di togliere.
+    # Un inciampo di rete non deve costare la correzione: questo passaggio
+    # non e un ornamento, e la regola.
+    risposta = None
+    for tentativo in (1, 2, 3):
+        try:
+            risposta = anthropic.Anthropic().messages.create(
+                model=model,
+                max_tokens=1200,
+                messages=[{"role": "user", "content": PROMPT.format(
+                    max_parole=max_parole, elenco=elenco)}],
+            )
+            break
+        except Exception as e:                  # noqa: BLE001
+            print(f"      ⚠️ Accorciamento, tentativo {tentativo}/3 fallito ({e})")
+            if tentativo < 3:
+                time.sleep(tentativo * 4)
+    if risposta is None:
+        # Non si tace: senza accorciamento i banner escono lunghi, e chi
+        # legge i log deve poterlo capire senza indagare.
+        print("      ⛔ ACCORCIAMENTO SALTATO dopo 3 tentativi: gli agganci "
+              "restano lunghi e i banner saranno di piu righe")
         return {}
 
     testo = "".join(b.text for b in risposta.content if b.type == "text")
