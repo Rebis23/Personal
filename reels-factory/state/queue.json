@@ -69,16 +69,6 @@
   ],
   "queue": [
     {
-      "clip_id": "NlnJgTd3tC8-1",
-      "video_id": "NlnJgTd3tC8",
-      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
-      "hook": "Stavo centrando tutti gli obiettivi economici che mi ero prefissato e la soddisfazione durava due giorni: effimera, sbiadita, poi spariva",
-      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-1.mp4",
-      "caption": "Ho avuto i miei successi economici. La soddisfazione è durata pochissimo: sbiadita, effimera.\nA un certo punto la domanda è diventata una sola: quando sarò davvero soddisfatto?\nDa lì è partito tutto il resto.\n\n#vuoto #successo #soldi #spiritualità #crescitapersonale #significato #business\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-04T14:23:45Z"
-    },
-    {
       "clip_id": "NlnJgTd3tC8-2",
       "video_id": "NlnJgTd3tC8",
       "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
@@ -240,6 +230,14 @@
       "ig_media_id": "18481141867106804",
       "permalink": "https://www.instagram.com/reel/Dc088hnjOLK/",
       "published_at": "2026-09-03T13:47:25Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-1",
+      "video_id": "NlnJgTd3tC8",
+      "hook": "Stavo centrando tutti gli obiettivi economici che mi ero prefissato e la soddisfazione durava due giorni: effimera, sbiadita, poi spariva",
+      "ig_media_id": "18116826472981844",
+      "permalink": "https://www.instagram.com/reel/Dc31RRijzEB/",
+      "published_at": "2026-09-04T16:38:31Z"
     }
   ],
   "archive_done": [
