@@ -67,7 +67,7 @@ subtitles:
   # Grande e importante (gruppi di 2-3 parole per schermata)
   font_size: 128
   # true = PAROLE IN MAIUSCOLO, false = come pronunciate
-  uppercase: false
+  uppercase: true
   # Colori in formato ASS &HBBGGRR& (BGR!)
   base_color: "&HFFFFFF&"        # bianco
   highlight_color: "&H00FFFF&"   # giallo (usato solo dallo stile karaoke)

@@ -69,8 +69,11 @@ const CaptionPage: React.FC<{
 
   // Le parole molto lunghe non devono uscire dal riquadro: il corpo si
   // riduce in proporzione alla parola più lunga della pagina
+  // Anton e stretto: una lettera occupa circa mezza altezza di corpo, non
+  // 0.62 come Instrument Sans. Col rapporto vecchio le parole lunghe
+  // venivano rimpicciolite molto piu del necessario.
   const longest = Math.max(...page.words.map((w) => w.text.length), 1);
-  const fitted = Math.min(fontSize, Math.floor(980 / (0.62 * longest)));
+  const fitted = Math.min(fontSize, Math.floor(980 / (0.52 * longest)));
 
 
   return (
@@ -87,31 +90,40 @@ const CaptionPage: React.FC<{
           transform: 'translateY(-50%)',
           width: '92%',
           textAlign: 'center',
-          fontFamily: 'Instrument Sans',
-          fontWeight: 700,
+          // Anton: la grottesca stretta e pesantissima del riferimento.
+          // Instrument Sans Bold, al confronto, e larga e leggera — e la
+          // ragione per cui le caption "non picchiavano".
+          fontFamily: 'Anton',
+          fontWeight: 400,
           fontSize: fitted,
-          lineHeight: 1.08,
+          lineHeight: 1.02,
+          letterSpacing: '0.005em',
           color: 'white',
-          // Ombra diffusa vera: alone morbido + contatto, niente bordo
+          // Ombra corta e scura, spostata in basso a destra: nel riferimento
+          // le lettere staccano dallo sfondo con un contatto netto, non con
+          // l'alone morbido e diffuso di prima.
           textShadow:
-            '0 2px 8px rgba(0,0,0,0.55), 0 10px 36px rgba(0,0,0,0.55), 0 24px 80px rgba(0,0,0,0.35)',
+            '0 5px 14px rgba(0,0,0,0.85), 0 10px 34px rgba(0,0,0,0.5)',
         }}
       >
         {page.words.map((w, i) => {
           const text = uppercase ? w.text.toUpperCase() : w.text;
-          // Entrata sfalsata di 5 centesimi: scala 0.78 con overshoot,
-          // opacita su ease, atterraggio scendendo di 12 px
-          const t = clamp01((localFrame / fps - i * 0.05) / 0.24);
+          // ENTRATA "SCHIACCIATA". Ricavata fotogramma per fotogramma dal
+          // riferimento che Lorenzo ha mandato il 4/09 ("ma quanto sarebbe
+          // bello senza sforzo.mov"): al cambio di parola la nuova entra
+          // GIA PIU GRANDE del dovuto e si stringe fino alla misura giusta
+          // in quattro fotogrammi scarsi. Prima si faceva il contrario —
+          // partiva piccola e cresceva — ed e la differenza fra un
+          // sottotitolo che picchia e uno che si gonfia.
+          const t = clamp01((localFrame / fps - i * 0.04) / 0.13);
           const anim = {
             // inline-block e necessario per scalare la singola parola, ma
             // fa collassare lo spazio fra una e l'altra: lo si rimette
             // come margine
             display: 'inline-block',
             marginRight: i < page.words.length - 1 ? '0.26em' : 0,
-            transform: `translateY(${(1 - ease(t)) * -12}px) scale(${
-              0.78 + 0.22 * back(t)
-            })`,
-            opacity: ease(clamp01(t * 1.6)),
+            transform: `scale(${1.34 - 0.34 * ease(t)})`,
+            opacity: clamp01(t * 4),
           } as const;
           return (
             <span

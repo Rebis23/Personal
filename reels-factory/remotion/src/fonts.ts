@@ -11,6 +11,7 @@ export const useFonts = (): string => {
 
   useEffect(() => {
     Promise.all([
+      document.fonts.load("400 100px 'Anton'"),
       document.fonts.load("700 100px 'Instrument Sans'"),
       document.fonts.load("italic 700 100px 'Instrument Sans'"),
     ])
