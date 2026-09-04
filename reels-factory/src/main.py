@@ -684,10 +684,88 @@ def cmd_musica() -> int:
     return 0
 
 
+def cmd_fondi() -> int:
+    """Rifonde il lavoro di questo run sopra lo stato che c'e ADESSO su GitHub.
+
+    Serve quando il push viene rifiutato perche main e andato avanti. La
+    strada ovvia — git pull --rebase — e sbagliata: queue.json e un JSON, e
+    git prova a fonderlo riga per riga. Provato il 4/09 in un repo di prova:
+    CONFLICT su queue.json, rebase piantato a meta, e il tentativo successivo
+    riparte da un repo in stato di rebase. Cioe due ore di lavoro perse per
+    un conflitto di parentesi graffe.
+
+    Qui la fusione la fa chi conosce il significato dei campi:
+      published        -> comanda GitHub. Lo scrive il publish, e un Reel
+                          gia uscito e un fatto: non si discute.
+      queue            -> la coda di GitHub, piu le nostre clip nuove che
+                          non ci sono gia e che non risultano gia uscite.
+      processed_videos -> i suoi piu i nostri; a parita di video vince il
+                          nostro, tranne quando il nostro dice "da rifare".
+      tutto il resto   -> nostro (archive_done e simili li scrive solo
+                          l'ingest), con l'unione dove sono elenchi.
+
+    Uso: python -m src.main fondi <copia-del-nostro-stato.json>
+    """
+    if len(sys.argv) < 3:
+        print("Uso: python -m src.main fondi <nostro-stato.json>")
+        return 1
+    nostro_file = Path(sys.argv[2])
+    if not nostro_file.exists():
+        print(f"⛔ Non trovo {nostro_file}")
+        return 1
+
+    nostro = json.loads(nostro_file.read_text(encoding="utf-8"))
+    base = state_mod.load_state()          # quello appena preso da origin
+
+    fuso = dict(nostro)
+    fuso["published"] = base.get("published", [])
+
+    gia_uscite = {p.get("clip_id") for p in fuso["published"]}
+    coda = list(base.get("queue", []))
+    noti = {c.get("clip_id") for c in coda} | gia_uscite
+    aggiunte = 0
+    for c in nostro.get("queue", []):
+        if c.get("clip_id") not in noti:
+            coda.append(c)
+            noti.add(c.get("clip_id"))
+            aggiunte += 1
+    fuso["queue"] = coda
+
+    video = {v["video_id"]: v for v in base.get("processed_videos", [])}
+    ordine = [v["video_id"] for v in base.get("processed_videos", [])]
+    for v in nostro.get("processed_videos", []):
+        vid = v["video_id"]
+        if vid not in video:
+            ordine.append(vid)
+            video[vid] = v
+        elif v.get("status") != state_mod.DA_RIFARE:
+            video[vid] = v
+    fuso["processed_videos"] = [video[v] for v in ordine]
+
+    for chiave, valore in base.items():
+        if chiave in ("published", "queue", "processed_videos"):
+            continue
+        if isinstance(valore, list) and isinstance(fuso.get(chiave), list):
+            unione = list(valore)
+            for x in fuso[chiave]:
+                if x not in unione:
+                    unione.append(x)
+            fuso[chiave] = unione
+        else:
+            fuso.setdefault(chiave, valore)
+
+    state_mod.save_state(fuso)
+    print(f"🔀 Rifuso sopra GitHub: {aggiunte} clip nuove in coda, "
+          f"coda totale {len(fuso['queue'])}, "
+          f"{len(fuso['published'])} pubblicazioni intatte")
+    return 0
+
+
 def main() -> int:
     commands = {"ingest": cmd_ingest, "publish": cmd_publish,
                 "registra": cmd_registra, "nicchia": cmd_nicchia,
-                "musica": cmd_musica, "status": cmd_status}
+                "musica": cmd_musica, "status": cmd_status,
+                "fondi": cmd_fondi}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1

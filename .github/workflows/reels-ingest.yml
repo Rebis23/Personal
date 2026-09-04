@@ -181,9 +181,16 @@ jobs:
       # changes" — e il job muore DOPO aver fatto tutto il lavoro. Cinque
       # notti buttate cosi, e la coda arrivata a zero.
       #
-      # Due difese, non una: si commette tutto cio che il run scrive dentro
-      # state/, e il rebase porta comunque l'autostash, cosi nessun file
-      # inatteso potra piu uccidere un lavoro finito.
+      # Due difese, non una.
+      #
+      # 1) Si commette TUTTO cio che il run scrive dentro state/, cosi non
+      #    resta niente di sporco a bloccare il salvataggio.
+      # 2) Se il push viene rifiutato perche main e andato avanti, non si
+      #    rebasa: si riparte dallo stato di GitHub e ci si rifonde sopra il
+      #    proprio lavoro con "src.main fondi", che sa cosa significano i
+      #    campi. Il rebase su queue.json e stato provato in un repo di prova
+      #    il 4/09 e finisce in CONFLICT: git tenta di fondere un JSON riga
+      #    per riga, si pianta a meta e avvelena anche il tentativo dopo.
       - name: Commit dello stato aggiornato
         run: |
           git config user.name "reels-factory-bot"
@@ -193,11 +200,21 @@ jobs:
             echo "Nessuna modifica allo stato"
             exit 0
           fi
+          cp -r reels-factory/state /tmp/nostro-state
           git commit -m "Reels Factory: stato aggiornato dopo ingest [skip ci]"
           for tentativo in 1 2 3; do
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" \
-              && git push && echo "Stato salvato al tentativo ${tentativo}" && exit 0
-            echo "Tentativo ${tentativo} non riuscito, riprovo"
+            if git push; then
+              echo "Stato salvato al tentativo ${tentativo}"
+              exit 0
+            fi
+            echo "Push rifiutato: riparto dallo stato di GitHub e ci rifondo il lavoro"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git reset --hard "origin/${GITHUB_REF_NAME}"
+            cp /tmp/nostro-state/prestazioni.md reels-factory/state/prestazioni.md
+            (cd reels-factory && python -m src.main fondi /tmp/nostro-state/queue.json) || exit 1
+            git add -A reels-factory/state
+            git diff --cached --quiet && echo "Niente da aggiungere" && exit 0
+            git commit -m "Reels Factory: stato aggiornato dopo ingest [skip ci]"
             sleep $((tentativo * 5))
           done
           echo "::error::Le clip sono su R2 ma la coda non e stata salvata"
