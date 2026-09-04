@@ -115,6 +115,22 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
     public_input = REMOTION_DIR / "public" / "input.mp4"
     shutil.copyfile(base_video, public_input)
 
+    # LE CAPTION NON VANNO MAI SULLA FACCIA. Lorenzo, 4/09: "niente scritte
+    # sulla mia faccia come vedo in questo fotogramma". Aveva ragione a
+    # dirlo — quel fotogramma era una mia prova, dove avevo alzato le
+    # caption apposta per non farle sbattere contro quelle gia impresse nel
+    # suo video, ma un provino non e una scusa per lasciare la porta aperta.
+    #
+    # In un'inquadratura verticale la testa sta nella meta alta: sotto 0.55
+    # non si scende. Non e rilevamento del volto, e un limite invalicabile —
+    # e un limite invalicabile e piu affidabile di una configurazione giusta,
+    # perche la configurazione qualcuno prima o poi la cambia.
+    MINIMO = 0.55
+    if vertical_position < MINIMO:
+        print(f"      ⚠️ Caption a {vertical_position:.2f}: troppo in alto, "
+              f"finirebbero sul viso. Riportate a {MINIMO}")
+        vertical_position = MINIMO
+
     props = {
         "video": "input.mp4",
         "durationSeconds": round(duration, 3),

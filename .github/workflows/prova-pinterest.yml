@@ -1,0 +1,98 @@
+# SONDA: Pinterest si raggiunge dai server di GitHub?
+#
+# Lorenzo vuole le foto in alto ai Reel prese da Pinterest. Qui dentro
+# (container di Claude) gallery-dl funziona: ricerca, sei immagini scaricate,
+# nessun login e nessuna chiave. Ma il container di Claude e GitHub Actions
+# escono da IP diversi, e su Instagram abbiamo gia imparato la lezione: 429
+# alla PRIMA richiesta da un runner pulito, mentre da qui rispondeva.
+#
+# Quindi prima di costruirci sopra la funzione, si misura. Tre prove:
+#   A) gallery-dl senza VPN
+#   B) gallery-dl sotto WARP (la stessa che sblocca YouTube)
+#   C) scaricamento vero di un'immagine, non solo l'elenco
+#
+# L'esito va letto nel riepilogo del run, non nei log.
+
+name: "Prova · Pinterest"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa gallery-dl
+        run: pip install -q gallery-dl && gallery-dl --version
+
+      - name: A) Ricerca senza VPN
+        id: senza
+        continue-on-error: true
+        run: |
+          echo "esco da: $(curl -s --max-time 20 https://api.ipify.org)"
+          gallery-dl --simulate --range 1-5 \
+            "https://www.pinterest.com/search/pins/?q=aesthetic%20minimal" \
+            2>&1 | tee /tmp/senza.txt
+          n=$(grep -c '^# pinterest' /tmp/senza.txt || true)
+          echo "trovati=$n" >> "$GITHUB_OUTPUT"
+          echo "SENZA WARP: $n pin"
+
+      - name: B) Scarico vero senza VPN
+        id: scarico
+        continue-on-error: true
+        run: |
+          gallery-dl -q --range 1-3 -D /tmp/pin \
+            "https://www.pinterest.com/search/pins/?q=muhammad%20ali%20boxing" || true
+          n=$(ls /tmp/pin 2>/dev/null | wc -l)
+          echo "scaricati=$n" >> "$GITHUB_OUTPUT"
+          ls -la /tmp/pin 2>/dev/null || echo "niente scaricato"
+
+      - name: Alza WARP
+        id: warp
+        continue-on-error: true
+        timeout-minutes: 6
+        run: |
+          sudo apt-get -o DPkg::Lock::Timeout=240 update -qq
+          sudo apt-get -o DPkg::Lock::Timeout=240 install -y -qq wireguard-tools
+          V=$(curl -s --max-time 30 https://api.github.com/repos/ViRb3/wgcf/releases/latest \
+              | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
+          curl -sL --max-time 60 -o /tmp/wgcf \
+            "https://github.com/ViRb3/wgcf/releases/download/${V}/wgcf_${V#v}_linux_amd64"
+          chmod +x /tmp/wgcf
+          cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
+          sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
+          sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
+          sudo wg-quick up warp
+          echo "ora esco da: $(curl -s --max-time 30 https://api.ipify.org)"
+
+      - name: C) Ricerca sotto WARP
+        id: con
+        continue-on-error: true
+        run: |
+          gallery-dl --simulate --range 1-5 \
+            "https://www.pinterest.com/search/pins/?q=aesthetic%20minimal" \
+            2>&1 | tee /tmp/con.txt
+          n=$(grep -c '^# pinterest' /tmp/con.txt || true)
+          echo "trovati=$n" >> "$GITHUB_OUTPUT"
+          echo "CON WARP: $n pin"
+
+      - name: Riepilogo
+        if: always()
+        run: |
+          {
+            echo "## Pinterest dai server di GitHub"
+            echo ""
+            echo "| prova | esito |"
+            echo "|---|---|"
+            echo "| ricerca senza WARP | ${{ steps.senza.outputs.trovati || 0 }} pin |"
+            echo "| immagini scaricate davvero | ${{ steps.scarico.outputs.scaricati || 0 }} file |"
+            echo "| ricerca sotto WARP | ${{ steps.con.outputs.trovati || 0 }} pin |"
+            echo ""
+            echo "Zero ovunque = Pinterest blocca gli IP dei runner, come Instagram."
+            echo "Numeri sopra zero senza WARP = si puo costruire la banda di immagini."
+          } >> "$GITHUB_STEP_SUMMARY"
