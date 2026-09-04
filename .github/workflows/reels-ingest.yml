@@ -58,13 +58,26 @@ jobs:
       # attesa del lock di unattended-upgrades) e avrebbe bruciato i 110
       # minuti del job senza produrre niente. Se WARP non si alza, il
       # lavoro prosegue senza: si torna a com'era prima, non ci si ferma.
+      # I pacchetti si installano UNA VOLTA SOLA, qui. Prima erano due apt
+      # separati — uno in questo passo per wireguard, uno dopo per ffmpeg —
+      # e il 4/09 si sono pestati i piedi: ffmpeg ci ha messo DIECI MINUTI
+      # aspettando il lock di unattended-upgrades, e nel frattempo l'apt di
+      # WARP moriva in 22 secondi. Senza WARP YouTube ributta giu il
+      # download, e il run e finito senza fare niente sembrando riuscito.
+      - name: Installa i pacchetti di sistema
+        timeout-minutes: 12
+        run: |
+          sudo apt-get -o DPkg::Lock::Timeout=300 update -qq
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y -qq --no-install-recommends \
+            wireguard-tools ffmpeg fonts-dejavu-core
+          wg --version && ffmpeg -version | head -1
+
       - name: Alza il tunnel WARP
+        id: warp
         continue-on-error: true
-        timeout-minutes: 6
+        timeout-minutes: 5
         run: |
           set -x
-          sudo apt-get -o DPkg::Lock::Timeout=240 update -qq
-          sudo apt-get -o DPkg::Lock::Timeout=240 install -y -qq wireguard-tools
           V=$(curl -s --max-time 30 https://api.github.com/repos/ViRb3/wgcf/releases/latest \
               | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
           curl -sL --max-time 60 -o /tmp/wgcf \
@@ -76,8 +89,11 @@ jobs:
           sudo wg-quick up warp
           echo "esco da: $(curl -s --max-time 30 https://api.ipify.org)"
 
-      - name: Installa ffmpeg e font
-        run: sudo apt-get update -q && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
+      - name: Avvisa se WARP non e in piedi
+        if: steps.warp.outcome != 'success'
+        run: |
+          echo "::warning::WARP non si e alzato: il download da YouTube "\
+            "probabilmente fallira e il run finira senza clip."
 
       # Deno: motore JavaScript che yt-dlp usa per risolvere le sfide
       # anti-bot di YouTube (senza, il download è bloccato)
