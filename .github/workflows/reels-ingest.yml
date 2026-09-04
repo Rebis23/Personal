@@ -76,11 +76,27 @@ jobs:
         id: warp
         continue-on-error: true
         timeout-minutes: 5
+        env:
+          # SENZA QUESTO TOKEN LA RICHIESTA VIENE RIFIUTATA. Il 4/09 (run 90)
+          # il passo e morto in cinque secondi: la chiamata all'API di GitHub
+          # per sapere l'ultima versione di wgcf era anonima, e i runner
+          # escono da IP pubblici condivisi che quel limite lo hanno gia
+          # esaurito. V restava vuota, l'URL diventava spazzatura, e da li
+          # crollava tutto — senza che nessuno dicesse perche.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
-          V=$(curl -s --max-time 30 https://api.github.com/repos/ViRb3/wgcf/releases/latest \
+          V=$(curl -sf --max-time 30 -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              https://api.github.com/repos/ViRb3/wgcf/releases/latest \
               | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
-          curl -sL --max-time 60 -o /tmp/wgcf \
+          if [ -z "$V" ]; then
+            echo "::warning::Non riesco a sapere quale versione di wgcf scaricare"
+            exit 1
+          fi
+          echo "wgcf ${V}"
+          # -f: un 404 o un 403 devono fermare qui, non produrre un file di
+          # errore da rendere eseguibile e poi lanciare.
+          curl -sfL --max-time 60 -o /tmp/wgcf \
             "https://github.com/ViRb3/wgcf/releases/download/${V}/wgcf_${V#v}_linux_amd64"
           chmod +x /tmp/wgcf
           cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
