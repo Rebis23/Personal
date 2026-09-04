@@ -97,6 +97,78 @@ def trova_nel_parlato(words: list[dict], frase: str,
     return None
 
 
+# Dove una frase italiana si spezza naturalmente. I due punti per primi:
+# nella lingua parlata quello che viene dopo i due punti e quasi sempre la
+# frase forte, e la premessa sta davanti.
+SEPARATORI = r"[:;–—]|,|\s+\bma\b\s+|\s+\bpero\b\s+|\s+\bperò\b\s+|\s+\bquindi\b\s+"
+
+
+def spezza(intero: str, max_parole: int = MAX_PAROLE) -> str | None:
+    """Ritaglia meccanicamente il pezzo migliore, senza chiedere a nessuno.
+
+    E l'ultima rete quando il modello, invece di tagliare, riscrive: il 4/09
+    su quattro agganci lunghi ne ha accorciato bene uno solo, e gli altri tre
+    erano parafrasi respinte da e_contiguo. La guardia faceva il suo mestiere,
+    ma il risultato era comunque un banner lungo.
+
+    Qui non c'e niente da riscrivere: si spezza la frase dove si spezza da
+    sola — due punti, punto e virgola, virgola, "ma" — e si tiene il tratto
+    che sta nel limite. A parita di lunghezza vince quello piu avanti, perche
+    in italiano la premessa sta davanti e la frase che fa male viene dopo.
+
+    Torna None se nessun tratto regge: meglio un aggancio lungo che un
+    moncone di due parole che non vuol dire niente.
+    """
+    # Si spezza tenendo da parte i separatori, perche SERVE sapere quale
+    # pezzo viene subito dopo i due punti: e quasi sempre quello buono.
+    parti = re.split(f"({SEPARATORI})", intero)
+    pezzi: list[str] = []
+    dopo_i_due_punti: list[bool] = []
+    due_punti_visti = False
+    for k, grezzo in enumerate(parti):
+        if grezzo is None:
+            continue
+        if k % 2 == 1:                      # e un separatore
+            if ":" in grezzo:
+                due_punti_visti = True
+            continue
+        testo = grezzo.strip(" ,;:—–")
+        if testo:
+            pezzi.append(testo)
+            dopo_i_due_punti.append(due_punti_visti)
+    if len(pezzi) < 2:
+        return None
+
+    migliore = None
+    voto_migliore = (-1, 1, -1)
+    for i in range(len(pezzi)):
+        for j in range(i + 1, len(pezzi) + 1):
+            tratto = " ".join(pezzi[i:j])
+            n = quante(tratto)
+            # Sotto le tre parole non e una frase, e sopra il limite non e
+            # una riga: in mezzo si sceglie.
+            if not (3 <= n <= max_parole):
+                continue
+            # Deve restare un pezzo consecutivo dell'originale, come tutto
+            # il resto del meccanismo.
+            if not e_contiguo(tratto, intero):
+                continue
+            # L'ORDINE DI PREFERENZA, corretto il 4/09 dopo averlo visto
+            # sbagliare: prima quello che sta DOPO i due punti (in italiano
+            # la premessa sta davanti e la frase che fa male viene dopo),
+            # poi il PIU VICINO ai due punti — non l'ultimo. Con la regola
+            # vecchia, su «...a 25 anni: quello studio e falso, i
+            # partecipanti avevano al massimo 20 anni» sceglieva la coda
+            # («i partecipanti avevano...») invece del pugno («quello studio
+            # e falso»). A parita, il tratto piu lungo porta piu contesto.
+            voto = (1 if dopo_i_due_punti[i] else 0, -i, n)
+            if voto > voto_migliore:
+                voto_migliore, migliore = voto, tratto
+    if migliore is None:
+        return None
+    return migliore[0].upper() + migliore[1:]
+
+
 PROMPT = """Questi sono gli agganci di alcuni Reel: la frase che compare \
 scritta a schermo sopra la testa di chi parla, e che deve fermare lo scroll.
 
@@ -201,4 +273,22 @@ def accorcia(hooks: dict[int, str], *, model: str,
                   f"«{frammento}»")
             continue
         buoni[i] = frammento[0].upper() + frammento[1:]
+
+    # ULTIMA RETE. Quello che il modello non ha saputo tagliare — perche ha
+    # riscritto, o perche non ha risposto per quella riga — lo si taglia a
+    # mano, spezzando la frase dove si spezza da sola. Non risolve tutto:
+    # sui quattro agganci veri del 4/09 sera ne recupera uno (quello coi due
+    # punti) e lascia stare gli altri due, che non hanno un punto di rottura.
+    # E' una rete, non una soluzione, e va detto invece che vantato.
+    for i, intero in lunghi.items():
+        if i in buoni:
+            continue
+        tratto = spezza(intero, max_parole)
+        if tratto:
+            print(f"      ✂️ Tagliato a mano sui due punti: «{tratto}»")
+            buoni[i] = tratto
+    ancora_lunghi = [i for i in lunghi if i not in buoni]
+    if ancora_lunghi:
+        print(f"      ⚠️ {len(ancora_lunghi)} agganci restano lunghi: non c'e "
+              f"un punto dove spezzarli senza mutilarli")
     return buoni
