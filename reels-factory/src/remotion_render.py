@@ -11,6 +11,7 @@ import json
 import os
 import shutil
 import subprocess
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -111,8 +112,15 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
            duration: float, font_size: int, vertical_position: float,
            uppercase: bool, hook_text: str = "", hook_seconds: float = 0.0,
            images: list[Path] | None = None,
-           timeout_minutes: int = 25) -> Path:
-    """Renderizza la clip finale con Remotion. Solleva RuntimeError se fallisce."""
+           timeout_minutes: int = 40) -> Path:
+    """Renderizza la clip finale con Remotion. Solleva RuntimeError se fallisce.
+
+    Il tetto e a 40 minuti e non a 25: il 5/09 due clip su cinque hanno
+    sfondato i 25 e sono uscite col renderer vecchio, cioe senza i
+    sottotitoli nuovi. Meglio una clip lenta che una clip con la grafica
+    che Lorenzo aveva chiesto di cambiare. Il tempo vero adesso finisce
+    nel log a ogni clip, cosi la prossima volta si decide su un numero.
+    """
     public_input = REMOTION_DIR / "public" / "input.mp4"
     shutil.copyfile(base_video, public_input)
 
@@ -162,18 +170,37 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
     props_file.write_text(json.dumps(props, ensure_ascii=False), encoding="utf-8")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    # Il 5/09 due clip su cinque hanno sfondato i 25 minuti e sono uscite
+    # col renderer vecchio, cioe senza i sottotitoli nuovi: il difetto che
+    # Lorenzo aveva chiesto di togliere e tornato per un timeout. Remotion
+    # da solo usa circa meta dei core; su un runner a due o quattro core
+    # meta e poco, e ogni fotogramma e uno screenshot di Chromium.
     cmd = [
         "npx", "remotion", "render", "src/index.ts", "Reel", str(out_path),
         f"--props={props_file}",
         "--codec=h264",
         "--audio-codec=aac",
+        f"--concurrency={max(1, os.cpu_count() or 2)}",
+        "--image-format=jpeg",
         "--log=error",
     ]
     env = dict(os.environ)
-    proc = subprocess.run(
-        cmd, cwd=REMOTION_DIR, capture_output=True, text=True,
-        timeout=timeout_minutes * 60, env=env,
-    )
+    partito = time.monotonic()
+    try:
+        proc = subprocess.run(
+            cmd, cwd=REMOTION_DIR, capture_output=True, text=True,
+            timeout=timeout_minutes * 60, env=env,
+        )
+    except subprocess.TimeoutExpired:
+        # Il numero serve: senza, la prossima volta si tira di nuovo a
+        # indovinare se alzare il tetto o accelerare il disegno.
+        print(f"      ⏱️ Remotion oltre i {timeout_minutes} minuti su "
+              f"{duration:.0f}s di clip con {max(1, os.cpu_count() or 2)} core")
+        public_input.unlink(missing_ok=True)
+        raise
+    passati = time.monotonic() - partito
+    print(f"      ⏱️ Remotion: {passati / 60:.1f} min per {duration:.0f}s di clip "
+          f"({passati / max(duration, 1):.1f}x il tempo reale)")
     public_input.unlink(missing_ok=True)
     if proc.returncode != 0 or not out_path.exists():
         raise RuntimeError(
