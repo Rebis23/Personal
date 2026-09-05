@@ -426,3 +426,161 @@ def accorcia(hooks: dict[int, str], *, model: str,
         print(f"      ⚠️ {len(ancora_lunghi)} agganci restano lunghi: non c'e "
               f"un punto dove spezzarli senza mutilarli")
     return buoni
+
+
+# ---------------------------------------------------------------------------
+# IL BANNER PRESO DAL PARLATO
+#
+# Il 5/09, su cinque clip su cinque, il log diceva "L'aggancio non si ritrova
+# nel parlato". Non era un caso sfortunato: era garantito. Il banner nasce
+# come frase SCRITTA dal modello (e poi riscritta, se la prova a freddo la
+# boccia), e accorcia() ne ritaglia un pezzo — ma un pezzo di una frase
+# scritta resta una frase scritta. Cercarla nel sonoro non poteva funzionare.
+#
+# Quindi la si prende dall'altra parte. Le righe candidate sono pezzi di
+# parlato veri, con dentro il secondo esatto in cui vengono pronunciate: al
+# modello resta solo da dire quale ferma lo scroll. Banner e voce non
+# possono divergere, perche sono la stessa cosa.
+#
+# Lorenzo, 4/09: «bastava iniziare dicendo "pensare e roba da stupidi" e poi
+# partire». Quella frase lui l'ha presa dal video, non l'ha inventata.
+# ---------------------------------------------------------------------------
+
+# Un muro non si attraversa e apre una proposizione nuova.
+MURI = ".:;?!—–"
+# Dopo una virgola si puo tirare dritto, ma li comincia anche una riga buona.
+VIRGOLE = ","
+# Nel parlato la punteggiatura di Whisper salta; il silenzio no.
+PAUSA = 0.45
+# Parole con cui una riga NON puo cominciare: sono legature, e chi le legge
+# da sole sente che manca qualcosa prima. Tutto il resto va bene, anche in
+# mezzo a un periodo — la riga che Lorenzo voleva, "pensare diventa roba da
+# stupidi", sta esattamente in mezzo a un periodo senza virgole ne pause.
+LEGATURE = {"e", "ed", "che", "di", "del", "della", "dei", "delle", "a", "al",
+            "alla", "ai", "alle", "da", "dal", "dalla", "in", "nel", "nella",
+            "con", "su", "sul", "sulla", "per", "come", "se", "o", "oppure",
+            "cioe", "cioè", "ecco", "poi", "anche", "gia", "già", "li", "lì",
+            "ci", "ne", "lo", "la", "le", "gli", "mi", "ti", "si", "vi"}
+
+
+def tratti_parlati(words: list[dict], da: float, a: float, *,
+                   max_parole: int = MAX_PAROLE, minimo: int = 4) -> list[dict]:
+    """Le righe da 4-7 parole realmente pronunciate fra `da` e `a`.
+
+    Ognuna comincia dove comincia una proposizione — inizio frase, dopo una
+    virgola o un due punti, dopo una pausa, dopo un "ma" — perche una riga
+    che parte a meta sintagma, letta o sentita, suona monca. E ognuna porta
+    il secondo in cui parte: e quello il punto da cui far partire la clip.
+    """
+    dentro = [w for w in words if da - 0.5 <= w["start"] <= a]
+    if len(dentro) < minimo:
+        return []
+
+    testi = [w["word"].strip() for w in dentro]
+    muro = [bool(set(t) & set(MURI)) for t in testi]
+    virgola = [t.endswith(tuple(VIRGOLE)) for t in testi]
+
+    # Una riga puo cominciare quasi ovunque. Il primo tentativo la faceva
+    # partire solo dopo una virgola, una pausa o un "ma", e su
+    # «...ed e li che pensare diventa roba da stupidi» offriva quattro sole
+    # opzioni, tutte dentro la premessa: la riga che Lorenzo aveva indicato
+    # come quella giusta non era nemmeno fra le scelte. Il parlato continuo
+    # non ha punteggiatura, e legare i tagli alla punteggiatura significava
+    # non trovarli mai. Si taglia dappertutto e si scarta solo cio che
+    # comincia con una legatura.
+    inizi = [i for i, t in enumerate(testi)
+             if not (parole(t) and parole(t)[0] in LEGATURE)]
+    if 0 not in inizi:
+        inizi.insert(0, 0)
+
+    fuori: list[dict] = []
+    visti: set[str] = set()
+    for i in inizi:
+        for n in range(minimo, max_parole + 1):
+            if i + n > len(testi):
+                break
+            if any(muro[i:i + n - 1]):
+                break                       # oltre il muro non si va
+            testo = " ".join(testi[i:i + n]).strip(" ,;:—–.")
+            if not (minimo <= quante(testo) <= max_parole):
+                continue
+            chiave = " ".join(parole(testo))
+            if chiave in visti:
+                continue
+            visti.add(chiave)
+            fuori.append({"testo": testo, "start": dentro[i]["start"]})
+    return fuori
+
+
+DAL_PARLATO = """Devo mettere UNA RIGA di testo sopra la testa di chi parla in \
+un Reel — la frase che ferma lo scroll — e il video deve PARTIRE esattamente \
+da quella frase. Quindi la riga non posso scriverla: devo pescarla fra le \
+cose che nel video vengono dette davvero.
+
+Qui sotto ci sono tutte le righe pronunciate in questa clip, gia ritagliate. \
+Scegline UNA.
+
+Di cosa parla la clip: {tema}
+
+RIGHE PRONUNCIATE:
+{elenco}
+
+Scegli quella che:
+- si regge DA SOLA per chi non ha visto niente e non sa nulla del video;
+- colpisce di piu: contraddice qualcosa che si da per scontato, nomina una \
+cosa concreta, fa male. Di solito NON e la premessa;
+- funziona come PRIMA COSA che si sente, non come conclusione di un \
+ragionamento (niente "quindi", "ecco perche", "come dicevo").
+
+Esempio del criterio, con le parole di chi lo ha chiesto: in un video che \
+diceva "selezionando quale comportamento mi e utile e a quel punto basta \
+eseguirlo ed e li che pensare diventa roba da stupidi", la riga giusta era \
+"pensare diventa roba da stupidi".
+
+Se NESSUNA regge da sola davanti a uno che non ha contesto, rispondi \
+NESSUNA: meglio niente che una riga che non vuol dire niente.
+
+Rispondi SOLO col numero, oppure NESSUNA. Nessun'altra parola."""
+
+
+def scegli_parlato(tratti: list[dict], *, tema: str, model: str) -> dict | None:
+    """Fa scegliere al modello quale riga pronunciata diventa il banner."""
+    if not tratti:
+        return None
+    elenco = "\n".join(f"{i}. {t['testo']}" for i, t in enumerate(tratti))
+    for tentativo in (1, 2, 3):
+        try:
+            r = _cliente().messages.create(
+                model=model, max_tokens=16,
+                messages=[{"role": "user", "content": DAL_PARLATO.format(
+                    tema=tema, elenco=elenco)}],
+            )
+            testo = "".join(b.text for b in r.content if b.type == "text").strip()
+            if "NESSUN" in testo.upper():
+                print("      ▶️ Nessuna riga pronunciata regge da sola: "
+                      "tengo il banner scritto")
+                return None
+            numeri = re.findall(r"\d+", testo)
+            if numeri and 0 <= int(numeri[0]) < len(tratti):
+                return tratti[int(numeri[0])]
+            print(f"      ⚠️ Scelta dal parlato illeggibile ({testo[:40]!r})")
+            return None
+        except Exception as e:                  # noqa: BLE001
+            print(f"      ⚠️ Scelta dal parlato, tentativo {tentativo}/3 ({e})")
+            if tentativo < 3:
+                time.sleep(tentativo * 4)
+    return None
+
+
+def dal_parlato(words: list[dict], da: float, a: float, *, tema: str,
+                model: str, max_parole: int = MAX_PAROLE) -> dict | None:
+    """La riga del banner, presa dalle parole davvero pronunciate.
+
+    Torna {"testo", "start"} — la frase e il secondo in cui parte — oppure
+    None, e allora si tiene il banner scritto e la clip parte dov'era.
+    """
+    tratti = tratti_parlati(words, da, a, max_parole=max_parole)
+    if not tratti:
+        print("      ⚠️ Nessuna riga pronunciata abbastanza corta da fare banner")
+        return None
+    return scegli_parlato(tratti, tema=tema, model=model)

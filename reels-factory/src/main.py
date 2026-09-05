@@ -278,11 +278,32 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         # «selezionando quale comportamento mi e utile...» quando bastava
         # iniziare dicendo «pensare e roba da stupidi» e poi partire".
         #
-        # Il banner adesso e un pezzo di parlato (aggancio.accorcia taglia e
-        # basta), quindi lo si puo CERCARE nel sonoro e far partire la clip
-        # esattamente li. Non si ri-aggancia all'inizio della frase: il pezzo
-        # forte spesso sta in mezzo a un periodo, ed e proprio da li che deve
-        # partire.
+        # Il banner si PESCA nel parlato invece di cercarlo dopo. Fino al
+        # 5/09 si faceva il contrario: il modello scriveva l'aggancio,
+        # accorcia() ne tagliava un pezzo e poi si andava a cercarlo nel
+        # sonoro. Ma un pezzo di una frase scritta resta una frase scritta:
+        # su cinque clip su cinque il log diceva "non si ritrova nel
+        # parlato", ed era garantito, non sfortuna. Adesso le righe fra cui
+        # scegliere sono pezzi di parlato veri, ognuno col suo secondo:
+        # banner e voce non possono piu divergere, sono la stessa cosa.
+        # Si offrono solo le righe dette abbastanza presto: la clip deve
+        # partire da li e restare sopra la durata minima. Offrire una riga
+        # detta al quarantesimo secondo di una clip da cinquanta significa
+        # far scegliere qualcosa che poi non si puo usare.
+        limite = max(start + 1.0, end - clip_cfg["min_seconds"])
+        detta = aggancio.dal_parlato(
+            words, start, limite,
+            tema=pick.bersaglio or pick.hook,
+            model=cfg["claude"]["model"],
+        )
+        if detta:
+            print(f"      🎯 Banner preso dal parlato: «{detta['testo']}» "
+                  f"(detto a {detta['start']:.0f}s)")
+            pick.hook = detta["testo"][0].upper() + detta["testo"][1:]
+            start = max(0.0, detta["start"] - 0.15)
+
+        # Ripiego: se dal parlato non e uscito niente, si cerca comunque il
+        # banner scritto nel sonoro — ogni tanto ci somiglia abbastanza.
         t_hook = aggancio.trova_nel_parlato(words, pick.hook, start - 25.0, end)
         if t_hook is not None and t_hook > start + 0.4:
             nuovo = max(0.0, t_hook - 0.15)     # un soffio, per non tagliare la prima sillaba
