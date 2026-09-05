@@ -169,6 +169,100 @@ def spezza(intero: str, max_parole: int = MAX_PAROLE) -> str | None:
     return migliore[0].upper() + migliore[1:]
 
 
+def candidati(intero: str, max_parole: int = MAX_PAROLE,
+              minimo: int = 4) -> list[str]:
+    """Tutti i tratti consecutivi di 4-7 parole dentro l'aggancio.
+
+    E il cambio di impostazione del 5/09. Finora si CHIEDEVA al modello di
+    tagliare e poi si controllava se aveva obbedito: su quattro agganci veri
+    ne ha tagliati bene uno, gli altri tre erano parafrasi e sono stati
+    respinti. Chiedere e controllare e una lotta.
+
+    Qui il taglio lo genera il codice — tutte le finestre possibili — e al
+    modello resta solo la cosa che sa fare davvero: dire quale delle frasi
+    gia pronte colpisce di piu. Cosi la contiguita non e piu una regola da
+    far rispettare: e una proprieta di come le opzioni sono nate. Nessuna
+    puo essere una riscrittura, perche nessuna e stata scritta.
+
+    Copre anche i casi senza punteggiatura, dove spezza() alza le mani: su
+    «...allena il tuo cervello a fare lo spettatore invece del protagonista»
+    non c'e nessun due punti, ma «il tuo cervello a fare lo spettatore» e li
+    dentro e si regge.
+    """
+    # Si lavora sulle parole con la loro punteggiatura attaccata, cosi il
+    # tratto scelto si puo restituire leggibile invece che spellato.
+    pezzi = intero.split()
+    fuori: list[str] = []
+    visti: set[str] = set()
+    for i in range(len(pezzi)):
+        for n in range(minimo, max_parole + 1):
+            if i + n > len(pezzi):
+                break
+            tratto = " ".join(pezzi[i:i + n]).strip(" ,;:—–.")
+            if not (minimo <= quante(tratto) <= max_parole):
+                continue
+            chiave = " ".join(parole(tratto))
+            if chiave in visti:
+                continue
+            visti.add(chiave)
+            fuori.append(tratto)
+    return fuori
+
+
+SCELTA = """Devo mettere UNA RIGA di testo sopra la testa di chi parla in un \
+Reel: la frase che ferma lo scroll. L'aggancio che ho e troppo lungo, quindi \
+ho gia ritagliato tutti i pezzi possibili e ora devo scegliere.
+
+AGGANCIO INTERO:
+{intero}
+
+PEZZI FRA CUI SCEGLIERE:
+{elenco}
+
+Scegli il numero del pezzo che:
+- si regge DA SOLO per chi non ha visto niente e non legge il resto;
+- colpisce di piu — contraddice qualcosa, nomina una cosa concreta, fa male. \
+Di solito NON e la premessa;
+- comincia e finisce dove comincerebbe e finirebbe una frase, non a meta di \
+un'espressione ("a fare lo" no, "il tuo cervello a fare lo spettatore" si).
+
+Rispondi SOLO col numero. Se nessun pezzo si regge da solo, rispondi 0: \
+meglio un aggancio lungo che un moncone senza senso."""
+
+
+def scegli_tratto(intero: str, *, model: str,
+                  max_parole: int = MAX_PAROLE) -> str | None:
+    """Fa scegliere al modello UNO dei tratti gia ritagliati dal codice."""
+    opzioni = candidati(intero, max_parole)
+    if not opzioni:
+        return None
+    elenco = "\n".join(f"{k + 1}. {o}" for k, o in enumerate(opzioni))
+    for tentativo in (1, 2, 3):
+        try:
+            r = anthropic.Anthropic().messages.create(
+                model=model, max_tokens=200,
+                messages=[{"role": "user", "content": SCELTA.format(
+                    intero=intero, elenco=elenco)}],
+            )
+            testo = "".join(b.text for b in r.content if b.type == "text")
+            numeri = re.findall(r"\d+", testo)
+            if not numeri:
+                return None
+            k = int(numeri[0])
+            if k == 0 or k > len(opzioni):
+                return None
+            scelto = opzioni[k - 1]
+            # Cintura e bretelle: e nato da un taglio, ma si verifica lo stesso.
+            if not e_contiguo(scelto, intero):
+                return None
+            return scelto[0].upper() + scelto[1:]
+        except Exception as e:                          # noqa: BLE001
+            print(f"      ⚠️ Scelta del tratto, tentativo {tentativo}/3 ({e})")
+            if tentativo < 3:
+                time.sleep(tentativo * 4)
+    return None
+
+
 PROMPT = """Questi sono gli agganci di alcuni Reel: la frase che compare \
 scritta a schermo sopra la testa di chi parla, e che deve fermare lo scroll.
 
@@ -283,6 +377,15 @@ def accorcia(hooks: dict[int, str], *, model: str,
     for i, intero in lunghi.items():
         if i in buoni:
             continue
+        # Secondo giro, con le carte in tavola: invece di chiedere di
+        # tagliare, si mostrano i tagli gia fatti e si chiede solo di
+        # scegliere. Cosi una riscrittura non e nemmeno possibile.
+        tratto = scegli_tratto(intero, model=model, max_parole=max_parole)
+        if tratto:
+            print(f"      ✂️ Scelto fra i tratti pronti: «{tratto}»")
+            buoni[i] = tratto
+            continue
+        # Terzo giro, senza chiedere niente a nessuno.
         tratto = spezza(intero, max_parole)
         if tratto:
             print(f"      ✂️ Tagliato a mano sui due punti: «{tratto}»")
