@@ -62,9 +62,15 @@
     {
       "video_id": "NlnJgTd3tC8",
       "title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
-      "status": "da_rifare",
-      "processed_at": "2026-09-04T14:48:33Z",
-      "clips": []
+      "status": "done",
+      "processed_at": "2026-09-05T17:17:21Z",
+      "clips": [
+        "NlnJgTd3tC8-1",
+        "NlnJgTd3tC8-2",
+        "NlnJgTd3tC8-3",
+        "NlnJgTd3tC8-4",
+        "NlnJgTd3tC8-5"
+      ]
     }
   ],
   "queue": [
@@ -117,6 +123,56 @@
       "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/KBOAz2kzvNw/KBOAz2kzvNw-5.mp4",
       "caption": "Quello studio lo ripetono tutti: il cervello smette di svilupparsi a 25 anni. È falso.\nEra fatto su ventenni, quindi il tetto era il campione. La maturazione finisce verso i 30, ma la neuroplasticità non si ferma mai: a 40, a 50, a 60.\nLa domanda non è se puoi cambiare. È se vuoi.\n\n#neuroplasticità #crescitapersonale #cambiamento #neuroscienze #abitudini #mentalita #cervello\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
       "created_at": "2026-09-05T13:11:35Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-1",
+      "video_id": "NlnJgTd3tC8",
+      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
+      "hook": "Zanzara che depone le uova negli occhi",
+      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-1.mp4",
+      "caption": "Il male non è solo una scelta umana.\nAgli uomini puoi dire libero arbitrio. Agli animali no: non hanno coscienza, eppure si sbranano. È l'obiezione a cui nessuno mi ha ancora risposto.\n\n#fede #ateismo #filosofia #domandescomode #spiritualita #dibattito #pensierocritico\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-05T16:55:31Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-2",
+      "video_id": "NlnJgTd3tC8",
+      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
+      "hook": "Anche la scienza è una religione",
+      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-2.mp4",
+      "caption": "Anche la scienza si basa su assunti: è una religione travestita da metodo.\nÈ un linguaggio, e come tutti i linguaggi descrive fino a un certo punto. Come i colori: ne vedi una parte, il resto c'è lo stesso.\n\n#scienza #spiritualita #pensierocritico #coscienza #filosofia #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-05T17:02:03Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-3",
+      "video_id": "NlnJgTd3tC8",
+      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
+      "hook": "Quella connessione che senti non è Dio",
+      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-3.mp4",
+      "caption": "Quella connessione con qualcosa di superiore che senti dentro? Non è Dio.\nUna delle frasi più dure di tutta la conversazione. Io ho continuato a chiedere: e se invece lo fosse?\n\n#fede #spiritualita #religione #dibattito #credere #pensierocritico\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-05T17:06:39Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-4",
+      "video_id": "NlnJgTd3tC8",
+      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
+      "hook": "Questa non è ancora una prova",
+      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-4.mp4",
+      "caption": "Le testimonianze non sono una prova: sono esperienze personali.\nGliel'ho detto in faccia. E la risposta è stata la più onesta che potessi ricevere: non posso darti la prova.\n\n#fede #ateismo #dibattito #pensierocritico #religione #verita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-05T17:11:46Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-5",
+      "video_id": "NlnJgTd3tC8",
+      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
+      "hook": "I valori cristiani sono oggettivamente i migliori",
+      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-5.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-5.mp4",
+      "caption": "Anche se non credi, i valori cristiani restano il miglior investimento che puoi fare.\nQualità della società, senso della tua vita, felicità reale: praticarli conviene comunque. Quasi nessuno lo fa.\n\n#valori #crescitapersonale #societa #fede #significato #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-05T17:17:21Z"
     }
   ],
   "published": [
