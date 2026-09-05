@@ -76,6 +76,17 @@ def _wg(azione: str) -> bool:
         return False
 
 
+def _uscita() -> str:
+    """L'IP pubblico da cui si esce adesso."""
+    try:
+        p = subprocess.run(["curl", "-s", "--max-time", "15",
+                            "https://api.ipify.org"],
+                           capture_output=True, text=True, timeout=25)
+        return p.stdout.strip()
+    except Exception:                                   # noqa: BLE001
+        return ""
+
+
 @contextmanager
 def acceso():
     """Tunnel su per il tempo del blocco, giu comunque vada.
@@ -94,6 +105,13 @@ def acceso():
             alzato = _wg("up")
             if not alzato:
                 print("      ⚠️ Tunnel non alzato: provo lo stesso senza")
+            else:
+                # L'IP di uscita, ogni volta. Serve a distinguere due
+                # spiegazioni che dal log si somigliano: "il tunnel non e
+                # davvero su" e "il tunnel e su ma da QUESTA uscita YouTube
+                # blocca lo stesso". Sono guasti diversi e si riparano in
+                # modi opposti; senza questo numero si tira a indovinare.
+                print(f"      🔒 Tunnel su, esco da {_uscita() or 'IP SCONOSCIUTO'}")
         _dentro += 1
     try:
         yield alzato or _dentro > 1
