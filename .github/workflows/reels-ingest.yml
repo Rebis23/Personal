@@ -24,6 +24,10 @@ on:
         description: "1 = pesca dall'archivio ignorando attesa e soglia sulla coda"
         required: false
         default: ""
+      senza_warp:
+        description: "1 = niente tunnel WARP (prova se YouTube passa lo stesso)"
+        required: false
+        default: ""
 
 
 concurrency:
@@ -74,8 +78,15 @@ jobs:
 
       - name: Alza il tunnel WARP
         id: warp
+        # Il tetto del passo non basta. Il 5/09 (run 99) questo passo e
+        # rimasto appeso mezz'ora con timeout-minutes: 5 scritto sopra:
+        # quando il tunnel taglia fuori il runner, chi dovrebbe far
+        # scattare il tetto e dall'altra parte del taglio. Percio ogni
+        # comando qui sotto ha il suo "timeout" locale, che e il sistema
+        # operativo del runner a far rispettare e non dipende dalla rete.
+        if: ${{ github.event.inputs.senza_warp != '1' }}
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 8
         env:
           # SENZA QUESTO TOKEN LA RICHIESTA VIENE RIFIUTATA. Il 4/09 (run 90)
           # il passo e morto in cinque secondi: la chiamata all'API di GitHub
@@ -115,10 +126,12 @@ jobs:
           alzato=0
           for giro in 1 2 3; do
             rm -f /tmp/wgcf-profile.conf /tmp/wgcf-account.toml
-            cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
+            cd /tmp && timeout 60 ./wgcf register --accept-tos \
+                    && timeout 60 ./wgcf generate || { echo '::warning::wgcf non risponde'; continue; }
             sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
             sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
-            sudo wg-quick up warp
+            sudo timeout 60 wg-quick up warp \
+              || { echo '::warning::wg-quick non sale'; sudo timeout 60 wg-quick down warp || true; continue; }
             # LA VERIFICA DEVE ESSERE RAPPRESENTATIVA, non compiacente.
             # Il 5/09 (run 98) questo controllo e passato al primo giro con
             # api.github.com che rispondeva — ma l'IP di uscita stampato era
@@ -142,7 +155,7 @@ jobs:
               break
             fi
             echo "::warning::Giro ${giro}: tunnel a meta (uscita «${uscita:-NIENTE}»), riprovo con un altro dispositivo"
-            sudo wg-quick down warp || true
+            sudo timeout 60 wg-quick down warp || true
           done
           if [ "$alzato" != "1" ]; then
             echo "::warning::WARP non e utilizzabile dopo tre tentativi"
@@ -150,7 +163,7 @@ jobs:
           fi
 
       - name: Avvisa se WARP non e in piedi
-        if: steps.warp.outcome != 'success'
+        if: ${{ github.event.inputs.senza_warp != '1' && steps.warp.outcome != 'success' }}
         run: |
           echo "::warning::WARP non si e alzato: il download da YouTube "\
             "probabilmente fallira e il run finira senza clip."
