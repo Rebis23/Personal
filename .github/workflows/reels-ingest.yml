@@ -119,13 +119,29 @@ jobs:
             sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
             sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
             sudo wg-quick up warp
-            echo "giro ${giro}: esco da $(curl -s --max-time 20 https://api.ipify.org)"
-            if curl -sf --max-time 25 -o /dev/null https://api.github.com; then
-              echo "GitHub raggiungibile con il tunnel su (giro ${giro})"
+            # LA VERIFICA DEVE ESSERE RAPPRESENTATIVA, non compiacente.
+            # Il 5/09 (run 98) questo controllo e passato al primo giro con
+            # api.github.com che rispondeva — ma l'IP di uscita stampato era
+            # VUOTO, cioe ipify non rispondeva affatto. Il tunnel portava
+            # qualcosa e non portava il resto. Sedici minuti dopo il runner
+            # e stato tolto di mezzo ("received a shutdown signal") mentre
+            # scaricava Deno, e il run e finito senza una clip.
+            #
+            # Quindi ora passano tutte e tre o si ricomincia: un IP di
+            # uscita vero, GitHub, e YouTube — che e poi il motivo per cui
+            # il tunnel esiste. Un mezzo tunnel e peggio di nessun tunnel,
+            # perche nessuno se ne accorge finche non e troppo tardi.
+            uscita=$(curl -s --max-time 20 https://api.ipify.org)
+            echo "giro ${giro}: esco da ${uscita:-NIENTE}"
+            if [ -n "$uscita" ] \
+               && curl -sf --max-time 25 -o /dev/null https://api.github.com \
+               && curl -sf --max-time 25 -o /dev/null https://raw.githubusercontent.com/ViRb3/wgcf/master/README.md \
+               && curl -sf --max-time 25 -o /dev/null https://www.youtube.com; then
+              echo "Tunnel buono al giro ${giro}: uscita ${uscita}, GitHub e YouTube rispondono"
               alzato=1
               break
             fi
-            echo "::warning::Giro ${giro}: con WARP acceso GitHub non risponde, riprovo con un altro dispositivo"
+            echo "::warning::Giro ${giro}: tunnel a meta (uscita «${uscita:-NIENTE}»), riprovo con un altro dispositivo"
             sudo wg-quick down warp || true
           done
           if [ "$alzato" != "1" ]; then
