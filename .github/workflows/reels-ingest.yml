@@ -182,13 +182,23 @@ jobs:
             echo "::warning::Giro ${giro}: tunnel a meta (uscita=${uscita:-NIENTE} github=${gh} raw=${raw}), riprovo con un altro dispositivo"
             sudo timeout 60 wg-quick down warp || true
           done
-          # SI SMONTA SUBITO. La prova serviva solo a scegliere un
-          # dispositivo che funziona; da qui in avanti il tunnel sta giu, e
-          # lo alza src/tunnel.py per il tempo dello scarico.
+          # IL TUNNEL RESTA SU, E NON E' UN RIPENSAMENTO. Il primo disegno
+          # lo smontava qui e lo faceva rialzare a src/tunnel.py solo
+          # attorno a yt-dlp. Non funziona, e la run 109 dice perche: il
+          # lasciapassare anti-bot (PO token) viene coniato all'avvio del
+          # suo provider — il passo qui sotto — e YouTube lo lega all'IP da
+          # cui e stato chiesto. Coniato dall'IP vero del runner e speso da
+          # un IP Cloudflare, non combacia: "Sign in to confirm you're not
+          # a bot" anche col tunnel perfettamente su.
+          #
+          # Quindi il tunnel deve coprire ANCHE l'avvio del provider. Resta
+          # su di qui, e lo abbassa main.py appena i download sono finiti:
+          # cinque minuti di esposizione invece di cinquanta, che era il
+          # punto di partenza.
           if [ "$alzato" = "1" ]; then
-            sudo timeout 60 wg-quick down warp || true
             echo "WARP_PRONTO=1" >> "$GITHUB_ENV"
-            echo "Profilo pronto in /etc/wireguard/warp.conf — tunnel GIU, si alzera solo per yt-dlp"
+            echo "WARP_SU=1" >> "$GITHUB_ENV"
+            echo "Tunnel SU: copre l'avvio del PO token provider e lo scarico, poi lo abbassa main.py"
             exit 0
           fi
           # Se nessuno dei tre dispositivi regge, si toglie di mezzo il

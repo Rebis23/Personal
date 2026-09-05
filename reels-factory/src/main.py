@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import aggancio, apify, brain, immagini, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, video, yt
+from . import aggancio, apify, brain, immagini, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -210,6 +210,13 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         return False
     if drive_file_id:
         st.setdefault("used_drive_files", []).append(drive_file_id)
+
+    # QUI FINISCE IL BISOGNO DEL TUNNEL. Da adesso in poi non si parla piu
+    # con YouTube: si trascrive, si monta, si carica su R2, si salva su
+    # GitHub. Tenere ancora il traffico dentro Cloudflare non serve a
+    # niente e rischia soltanto — e' cosi che il runner e stato isolato
+    # quattro volte in due giorni.
+    tunnel.abbassa()
 
     # Trascrizione con Whisper: parola-per-parola, nessuna dipendenza dai
     # sottotitoli automatici di YouTube

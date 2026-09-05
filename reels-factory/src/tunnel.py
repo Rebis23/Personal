@@ -38,6 +38,23 @@ CONF = Path("/etc/wireguard/warp.conf")
 # apposta per non farsi leggere da nessuno tranne root.
 PRONTO = "WARP_PRONTO"
 
+# Il workflow lo mette a 1 quando lascia il tunnel GIA' SU. Succede perche
+# il lasciapassare anti-bot (PO token) viene coniato all'avvio del suo
+# provider, e YouTube lo lega all'IP da cui e stato chiesto: se il token
+# nasce dall'IP vero del runner e poi la richiesta esce da Cloudflare, non
+# combacia e si viene bloccati lo stesso.
+#
+# Misurato, non supposto. Run 109: "🔒 Tunnel su, esco da 104.28.210.137"
+# — lo stesso IP che la prova aveva approvato — e subito sotto "Sign in to
+# confirm you're not a bot". Il tunnel c'era. Mancava che ci fosse anche
+# PRIMA, quando il token e stato coniato.
+#
+# Quindi il tunnel copre l'avvio del provider e lo scarico, e main.py lo
+# abbassa appena i download sono finiti: restano su cinque minuti su
+# cinquanta invece di tutti.
+SU = "WARP_SU"
+_gia_su = False
+
 # Piu chiamate a yt-dlp possono annidarsi: si conta chi e dentro, e si
 # smonta solo quando esce l'ultimo. Senza, la prima uscita spegnerebbe il
 # tunnel a un'altra chiamata ancora in corso.
@@ -87,6 +104,26 @@ def _uscita() -> str:
         return ""
 
 
+def _esterno() -> bool:
+    """Il tunnel e gia su, alzato dal workflow, e non tocca a noi."""
+    return not _gia_su and os.environ.get(SU) == "1"
+
+
+def abbassa() -> bool:
+    """Smonta il tunnel lasciato su dal workflow. Da chiamare quando i
+    download sono finiti: da li in poi restare dentro Cloudflare e solo
+    rischio, ed e il rischio che ha isolato il runner quattro volte."""
+    global _gia_su
+    if not _esterno():
+        return False
+    _gia_su = True                      # da qui in avanti se lo gestisce acceso()
+    ok = _wg("down")
+    print("      🔓 Tunnel abbassato: i download sono finiti, il resto del "
+          "lavoro va sulla rete normale" if ok
+          else "      ⚠️ Non sono riuscito ad abbassare il tunnel")
+    return ok
+
+
 @contextmanager
 def acceso():
     """Tunnel su per il tempo del blocco, giu comunque vada.
@@ -95,6 +132,12 @@ def acceso():
     muro anti-bot, e un fallimento chiaro e meglio di un lavoro fermo.
     """
     global _dentro
+    if _esterno():
+        # Gia su da prima che partisse il provider del PO token: non si
+        # tocca, altrimenti si rialzerebbe da un'altra uscita e il token
+        # tornerebbe a non combaciare.
+        yield True
+        return
     if not disponibile():
         yield False
         return

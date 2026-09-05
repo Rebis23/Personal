@@ -108,5 +108,33 @@ os.environ[T.PRONTO] = "1"
 prova("WARP_PRONTO=1 vince sul file", T.disponibile() is True)
 os.environ.pop(T.PRONTO, None)
 
+# IL TUNNEL GIA' SU. Se lo ha alzato il workflow — perche il lasciapassare
+# anti-bot va coniato da dentro il tunnel — non si deve toccare: rialzarlo
+# significherebbe uscire da un altro IP e far tornare il blocco. E quando i
+# download sono finiti va abbassato una volta sola.
+importlib.reload(T)
+mosse.clear()
+T.disponibile = lambda: True
+T._wg = lambda azione: (mosse.append(azione), True)[1]
+os.environ[T.SU] = "1"
+
+with T.acceso() as vivo:
+    prova("tunnel gia su: si usa e basta", vivo is True)
+prova("tunnel gia su: non lo si tocca", mosse == [], str(mosse))
+
+prova("a scarico finito lo si abbassa", T.abbassa() is True and mosse == ["down"],
+      str(mosse))
+mosse.clear()
+prova("abbassarlo due volte non lo tocca di nuovo",
+      T.abbassa() is False and mosse == [], str(mosse))
+
+# Da li in avanti torna a gestirselo acceso(), per eventuali chiamate dopo.
+mosse.clear()
+with T.acceso():
+    pass
+prova("dopo l'abbassata torna ad alzarsi da solo",
+      mosse == ["up", "down"], str(mosse))
+os.environ.pop(T.SU, None)
+
 print(f"\n{verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
