@@ -265,14 +265,25 @@ def scegli_tratto(intero: str, *, model: str,
     elenco = "\n".join(f"{k + 1}. {o}" for k, o in enumerate(opzioni))
     for tentativo in (1, 2, 3):
         try:
+            # IL BUDGET NON E' LA LUNGHEZZA DELLA RISPOSTA. Chiedere "dimmi
+            # solo un numero" non vuol dire che bastino pochi token: prima
+            # della risposta il modello ragiona, e quel ragionamento consuma
+            # il budget. Con 200 la risposta usciva VUOTA con
+            # stop_reason=max_tokens — il modello veniva tagliato mentre
+            # pensava e non arrivava mai a dire il numero. Il 5/09 questo ha
+            # spento in silenzio due passaggi su tre della catena.
             r = _cliente().messages.create(
-                model=model, max_tokens=200,
+                model=model, max_tokens=3000,
                 messages=[{"role": "user", "content": SCELTA.format(
                     intero=intero, elenco=elenco)}],
             )
             testo = "".join(b.text for b in r.content if b.type == "text")
             numeri = re.findall(r"\d+", testo)
             if not numeri:
+                # Prima si tornava None e basta: il passaggio spariva dal
+                # log e sembrava non essere mai stato scritto.
+                print(f"      ⚠️ Scelta del tratto senza numero "
+                      f"(stop_reason={r.stop_reason}, testo={testo[:40]!r})")
                 return None
             k = int(numeri[0])
             if k == 0 or k > len(opzioni):
@@ -550,14 +561,16 @@ def scegli_parlato(tratti: list[dict], *, tema: str, model: str) -> dict | None:
     elenco = "\n".join(f"{i}. {t['testo']}" for i, t in enumerate(tratti))
     for tentativo in (1, 2, 3):
         try:
-            # 200 e non 16. Avevo messo 16 pensando "tanto deve dire solo un
-            # numero": il 5/09 (run 101) la risposta e tornata VUOTA su tutte
-            # e cinque le clip, sempre, e il meccanismo nuovo non e mai
-            # entrato in funzione. Tutte le altre chiamate della fabbrica
-            # stanno fra 200 e 16000; questa era l'unica stretta cosi, ed
-            # era l'unica che non rispondeva.
+            # 3000, dopo due tentativi sbagliati nella stessa serata.
+            # Prima 16, pensando "tanto deve dire solo un numero": risposta
+            # vuota su cinque clip su cinque (run 101). Poi 200: ancora
+            # vuota su quattro su cinque (run 104), e stavolta lo
+            # stop_reason l'ha detto — max_tokens. Il modello non veniva
+            # tagliato mentre scriveva la risposta: veniva tagliato mentre
+            # RAGIONAVA, prima di arrivare a scriverla. Il budget non e la
+            # lunghezza della risposta, e tutto cio che serve per produrla.
             r = _cliente().messages.create(
-                model=model, max_tokens=200,
+                model=model, max_tokens=3000,
                 messages=[{"role": "user", "content": DAL_PARLATO.format(
                     tema=tema, elenco=elenco)}],
             )
