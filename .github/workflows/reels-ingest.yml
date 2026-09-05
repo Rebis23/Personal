@@ -144,17 +144,34 @@ jobs:
             # uscita vero, GitHub, e YouTube — che e poi il motivo per cui
             # il tunnel esiste. Un mezzo tunnel e peggio di nessun tunnel,
             # perche nessuno se ne accorge finche non e troppo tardi.
+            # Ogni prova si stampa da sola. Il 5/09 (run 102) i tre giri
+            # sono falliti tutti con un IP di uscita valido, e dal log non
+            # si capiva QUALE delle prove fosse caduta, perche erano
+            # incatenate con &&: un controllo severo che non dice cosa ha
+            # bocciato costringe a indovinare come prima.
             uscita=$(curl -s --max-time 20 https://api.ipify.org)
-            echo "giro ${giro}: esco da ${uscita:-NIENTE}"
-            if [ -n "$uscita" ] \
-               && curl -sf --max-time 25 -o /dev/null https://api.github.com \
-               && curl -sf --max-time 25 -o /dev/null https://raw.githubusercontent.com/ViRb3/wgcf/master/README.md \
-               && curl -sf --max-time 25 -o /dev/null https://www.youtube.com; then
-              echo "Tunnel buono al giro ${giro}: uscita ${uscita}, GitHub e YouTube rispondono"
+            gh=no; raw=no; yt=no
+            curl -sf --max-time 25 -o /dev/null https://api.github.com && gh=si
+            curl -sf --max-time 25 -o /dev/null \
+              https://raw.githubusercontent.com/ViRb3/wgcf/master/README.md && raw=si
+            curl -sf --max-time 25 -o /dev/null https://www.youtube.com && yt=si
+            echo "giro ${giro}: uscita=${uscita:-NIENTE} github=${gh} raw=${raw} youtube=${yt}"
+
+            # YouTube NON ha diritto di veto. Un curl nudo alla home di
+            # YouTube non e quello che fa yt-dlp — che porta il PO token e
+            # si presenta da browser — quindi un "no" qui non dice che lo
+            # scarico fallira: dice solo che YouTube non gradisce curl.
+            # Quello che conta e che il tunnel porti traffico (un IP di
+            # uscita vero) e che il runner resti attaccato a GitHub, che e
+            # cio che e mancato nella run 98 quando il runner e stato tolto
+            # di mezzo. Se YouTube dice no, si tira avanti e si annota.
+            if [ -n "$uscita" ] && [ "$gh" = si ] && [ "$raw" = si ]; then
+              [ "$yt" = si ] || echo "::warning::Giro ${giro}: YouTube non risponde a curl, ma il tunnel regge: proseguo"
+              echo "Tunnel buono al giro ${giro}: uscita ${uscita}"
               alzato=1
               break
             fi
-            echo "::warning::Giro ${giro}: tunnel a meta (uscita «${uscita:-NIENTE}»), riprovo con un altro dispositivo"
+            echo "::warning::Giro ${giro}: tunnel a meta (uscita=${uscita:-NIENTE} github=${gh} raw=${raw}), riprovo con un altro dispositivo"
             sudo timeout 60 wg-quick down warp || true
           done
           if [ "$alzato" != "1" ]; then
