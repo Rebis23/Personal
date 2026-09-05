@@ -24,6 +24,7 @@ stesso senza fascia. Le immagini sono un ornamento, il Reel e il lavoro.
 import base64
 import io
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -31,6 +32,20 @@ import time
 from pathlib import Path
 
 import anthropic
+
+# Il segreto va SEMPRE passato con .strip(). Quando si incolla una chiave nei
+# GitHub Secrets ci resta attaccato un a-capo, e un a-capo dentro un header
+# HTTP e illegale: la richiesta non parte nemmeno, e la libreria lo riporta
+# come "Connection error." — che sembra la rete e invece e questa riga.
+#
+# Il 4 e il 5 settembre ho perso due giorni dietro a questo. Avevo scritto
+# anthropic.Anthropic() senza chiave in tre punti nuovi, mentre brain.py la
+# passava gia con .strip() dal primo giorno. Risultato: le chiamate vecchie
+# funzionavano, le mie no, sempre, e io davo la colpa alla rete e a WARP.
+# Tre tentativi su tre fallivano perche il guasto era deterministico.
+def _cliente() -> anthropic.Anthropic:
+    return anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
+
 
 # Sotto questa misura sul lato corto l'immagine sgrana appena viene
 # ingrandita nella fascia: si scarta invece di metterci una foto sfocata.
@@ -183,7 +198,7 @@ def scegli(candidate: list[Path], *, quante: int, tema: str,
     risposta = None
     for tentativo in (1, 2, 3):
         try:
-            risposta = anthropic.Anthropic().messages.create(
+            risposta = _cliente().messages.create(
                 model=model, max_tokens=600,
                 messages=[{"role": "user", "content": blocchi}],
             )
