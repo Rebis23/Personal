@@ -76,7 +76,15 @@ jobs:
             wireguard-tools ffmpeg fonts-dejavu-core
           wg --version && ffmpeg -version | head -1
 
-      - name: Alza il tunnel WARP
+      # Il tunnel si PREPARA qui e si alza altrove: lo accende src/tunnel.py
+      # per i pochi minuti in cui yt-dlp scarica, e lo smonta subito. Prima
+      # restava su per tutti i cinquanta minuti del lavoro, e in quel tempo
+      # Cloudflare poteva tagliare fuori il runner da GitHub — quattro volte
+      # in due giorni, di cui una con il runner tolto di mezzo a meta lavoro.
+      # Contro quel guasto non c'e tetto che tenga: a rompersi e il canale
+      # con cui il runner riferisce, e un tetto ha bisogno di qualcuno che lo
+      # faccia rispettare. L'unica difesa e stare esposti per meno tempo.
+      - name: Prepara il tunnel WARP
         id: warp
         # Il tetto del passo non basta. Il 5/09 (run 99) questo passo e
         # rimasto appeso mezz'ora con timeout-minutes: 5 scritto sopra:
@@ -174,10 +182,20 @@ jobs:
             echo "::warning::Giro ${giro}: tunnel a meta (uscita=${uscita:-NIENTE} github=${gh} raw=${raw}), riprovo con un altro dispositivo"
             sudo timeout 60 wg-quick down warp || true
           done
-          if [ "$alzato" != "1" ]; then
-            echo "::warning::WARP non e utilizzabile dopo tre tentativi"
-            exit 1
+          # SI SMONTA SUBITO. La prova serviva solo a scegliere un
+          # dispositivo che funziona; da qui in avanti il tunnel sta giu, e
+          # lo alza src/tunnel.py per il tempo dello scarico.
+          if [ "$alzato" = "1" ]; then
+            sudo timeout 60 wg-quick down warp || true
+            echo "Profilo pronto in /etc/wireguard/warp.conf — tunnel GIU, si alzera solo per yt-dlp"
+            exit 0
           fi
+          # Se nessuno dei tre dispositivi regge, si toglie di mezzo il
+          # profilo: meglio un download che fallisce dicendo "YouTube mi
+          # blocca" che un tunnel malato alzato in mezzo al lavoro.
+          sudo rm -f /etc/wireguard/warp.conf
+          echo "::warning::WARP non e utilizzabile dopo tre tentativi: profilo rimosso"
+          exit 1
 
       - name: Avvisa se WARP non e in piedi
         if: ${{ github.event.inputs.senza_warp != '1' && steps.warp.outcome != 'success' }}

@@ -3,12 +3,14 @@
 import json
 import os
 import subprocess
-import time
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import urlopen, Request
+
+from . import tunnel
 
 RSS_URL = "https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
 NS = {
@@ -116,9 +118,21 @@ def video_age_hours(published_iso: str) -> float:
     return (datetime.now(timezone.utc) - published).total_seconds() / 3600
 
 
-def _run(cmd: list[str]) -> subprocess.CompletedProcess:
+# Tutte le chiamate a yt-dlp passano di qui: e l'unico punto in cui serve
+# il tunnel, ed e per questo che il tunnel si accende solo qui invece che
+# per tutto il lavoro (vedi src/tunnel.py per il perche).
+#
+# E hanno un tetto di tempo. Prima non ce l'avevano: uno scarico appeso
+# avrebbe tenuto il tunnel su a oltranza, cioe esattamente la condizione
+# che stiamo togliendo di mezzo.
+def _run(cmd: list[str], *, tetto: int = 900) -> subprocess.CompletedProcess:
     print("  $", " ".join(cmd[:6]), "...")
-    return subprocess.run(cmd, capture_output=True, text=True)
+    with tunnel.acceso():
+        try:
+            return subprocess.run(cmd, capture_output=True, text=True, timeout=tetto)
+        except subprocess.TimeoutExpired:
+            print(f"  ⚠️ yt-dlp oltre i {tetto // 60} minuti: interrotto")
+            return subprocess.CompletedProcess(cmd, 1, "", f"timeout dopo {tetto}s")
 
 
 def get_video_info(video_id: str) -> dict | None:
