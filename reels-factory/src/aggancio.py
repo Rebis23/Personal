@@ -207,12 +207,23 @@ def candidati(intero: str, max_parole: int = MAX_PAROLE,
     # Si lavora sulle parole con la loro punteggiatura attaccata, cosi il
     # tratto scelto si puo restituire leggibile invece che spellato.
     pezzi = intero.split()
+    # Nessun tratto puo SCAVALCARE un due punti o un punto fermo. Fra le 62
+    # opzioni offerte per l'aggancio sui 25 anni ce n'erano di questo tipo:
+    # «di svilupparsi a 25 anni: quello studio» — meta premessa e meta
+    # pugno, incollate. Come banner non vogliono dire niente, e offrirle
+    # significa dare al modello la possibilita di sceglierne una. La virgola
+    # invece si attraversa: «nebbia mentale, ansia, libido a zero» e una
+    # riga sola e funziona.
+    MURI = set(".:;?!—–")
+    muro_dopo = [bool(MURI & set(w)) for w in pezzi]
     fuori: list[str] = []
     visti: set[str] = set()
     for i in range(len(pezzi)):
         for n in range(minimo, max_parole + 1):
             if i + n > len(pezzi):
                 break
+            if any(muro_dopo[i:i + n - 1]):
+                break                       # oltre il muro non si va
             tratto = " ".join(pezzi[i:i + n]).strip(" ,;:—–.")
             if not (minimo <= quante(tratto) <= max_parole):
                 continue
@@ -342,23 +353,28 @@ def accorcia(hooks: dict[int, str], *, model: str,
             print(f"      ⚠️ Accorciamento, tentativo {tentativo}/3 fallito ({e})")
             if tentativo < 3:
                 time.sleep(tentativo * 4)
+    # Qui non si esce MAI in anticipo. Il 5/09 il modello ha risposto senza
+    # graffe, questa funzione ha fatto "return {}" e i tre agganci lunghi
+    # sono usciti lunghi — 17, 16 e 20 parole. Le due reti scritte apposta
+    # sotto (scegli fra i tratti pronti, taglia sui due punti) non sono
+    # nemmeno state sfiorate: erano irraggiungibili proprio nel caso in cui
+    # servivano. Una rete di sicurezza dopo un return non e una rete.
+    grezzo: dict = {}
     if risposta is None:
-        # Non si tace: senza accorciamento i banner escono lunghi, e chi
-        # legge i log deve poterlo capire senza indagare.
-        print("      ⛔ ACCORCIAMENTO SALTATO dopo 3 tentativi: gli agganci "
-              "restano lunghi e i banner saranno di piu righe")
-        return {}
-
-    testo = "".join(b.text for b in risposta.content if b.type == "text")
-    inizio, fine = testo.find("{"), testo.rfind("}")
-    if inizio < 0 or fine < 0:
-        print("      ⚠️ Accorciamento senza risposta leggibile")
-        return {}
-    try:
-        grezzo = json.loads(testo[inizio:fine + 1])
-    except json.JSONDecodeError:
-        print("      ⚠️ Accorciamento con JSON rotto")
-        return {}
+        print("      ⛔ Accorciamento: nessuna risposta dopo 3 tentativi, "
+              "passo alle reti")
+    else:
+        testo = "".join(b.text for b in risposta.content if b.type == "text")
+        inizio, fine = testo.find("{"), testo.rfind("}")
+        if inizio < 0 or fine < 0:
+            print(f"      ⚠️ Accorciamento senza graffe ({testo[:60]!r}), "
+                  f"passo alle reti")
+        else:
+            try:
+                letto = json.loads(testo[inizio:fine + 1])
+                grezzo = letto if isinstance(letto, dict) else {}
+            except json.JSONDecodeError:
+                print("      ⚠️ Accorciamento con JSON rotto, passo alle reti")
 
     buoni: dict[int, str] = {}
     for chiave, frammento in grezzo.items():
