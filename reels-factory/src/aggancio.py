@@ -550,12 +550,25 @@ def scegli_parlato(tratti: list[dict], *, tema: str, model: str) -> dict | None:
     elenco = "\n".join(f"{i}. {t['testo']}" for i, t in enumerate(tratti))
     for tentativo in (1, 2, 3):
         try:
+            # 200 e non 16. Avevo messo 16 pensando "tanto deve dire solo un
+            # numero": il 5/09 (run 101) la risposta e tornata VUOTA su tutte
+            # e cinque le clip, sempre, e il meccanismo nuovo non e mai
+            # entrato in funzione. Tutte le altre chiamate della fabbrica
+            # stanno fra 200 e 16000; questa era l'unica stretta cosi, ed
+            # era l'unica che non rispondeva.
             r = _cliente().messages.create(
-                model=model, max_tokens=16,
+                model=model, max_tokens=200,
                 messages=[{"role": "user", "content": DAL_PARLATO.format(
                     tema=tema, elenco=elenco)}],
             )
             testo = "".join(b.text for b in r.content if b.type == "text").strip()
+            if not testo:
+                # Il motivo dello stop e l'unica cosa che distingue "il
+                # modello non ha risposto" da "l'ho tagliato io": senza,
+                # si ricomincia a indovinare.
+                print(f"      ⚠️ Scelta dal parlato: risposta vuota "
+                      f"(stop_reason={r.stop_reason})")
+                return None
             if "NESSUN" in testo.upper():
                 print("      ▶️ Nessuna riga pronunciata regge da sola: "
                       "tengo il banner scritto")
