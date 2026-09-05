@@ -49,13 +49,9 @@
     {
       "video_id": "KBOAz2kzvNw",
       "title": "Quanto ci vuole a GUARIRE il Tuo Cervello dal P0rn0?",
-      "status": "done",
+      "status": "da_rifare",
       "processed_at": "2026-09-05T09:10:11Z",
-      "clips": [
-        "KBOAz2kzvNw-1",
-        "KBOAz2kzvNw-2",
-        "KBOAz2kzvNw-3"
-      ]
+      "clips": []
     },
     {
       "video_id": "NlnJgTd3tC8",
@@ -111,36 +107,6 @@
       "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-5.mp4",
       "caption": "Dio non è nella religione. Gesù stesso ce l'aveva con i farisei, cioè con i religiosi.\nNiente croce in mano, niente rituali: la parte pratica è un'altra.\nDibattito completo sul canale.\n\n#fede #religione #chiesa #spiritualità #verità #cristianesimo #ricercainteriore\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
       "created_at": "2026-09-04T14:48:33Z"
-    },
-    {
-      "clip_id": "KBOAz2kzvNw-1",
-      "video_id": "KBOAz2kzvNw",
-      "video_title": "Quanto ci vuole a GUARIRE il Tuo Cervello dal P0rn0?",
-      "hook": "Il tuo cervello diventa letteralmente più piccolo",
-      "r2_key": "reels/KBOAz2kzvNw/KBOAz2kzvNw-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/KBOAz2kzvNw/KBOAz2kzvNw-1.mp4",
-      "caption": "Non è una metafora: uno studio del 2014 mostra materia grigia ridotta in chi consuma questi contenuti.\nLa domanda vera non è se fa danni. È se si può tornare indietro, e in quanto tempo.\nNel video la risposta, fase per fase.\n\n#crescitapersonale #abitudini #neuroscienze #cervello #dipendenze #autocontrollo #disciplina\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-05T08:45:00Z"
-    },
-    {
-      "clip_id": "KBOAz2kzvNw-2",
-      "video_id": "KBOAz2kzvNw",
-      "video_title": "Quanto ci vuole a GUARIRE il Tuo Cervello dal P0rn0?",
-      "hook": "Se ti alleni e i muscoli non crescono, guarda la prolattina: ogni volta blocca la produzione di testosterone",
-      "r2_key": "reels/KBOAz2kzvNw/KBOAz2kzvNw-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/KBOAz2kzvNw/KBOAz2kzvNw-2.mp4",
-      "caption": "Credi sia solo una questione mentale. Non lo è.\nLa prolattina inibisce il testosterone: meno muscoli, meno spinta a competere, meno voglia di costruire qualcosa nel lungo termine.\nQuando sopprimi quella produzione perdi la voglia di fare tutto.\n\n#testosterone #abitudini #crescitapersonale #disciplina #motivazione #palestra #autocontrollo\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-05T09:00:24Z"
-    },
-    {
-      "clip_id": "KBOAz2kzvNw-3",
-      "video_id": "KBOAz2kzvNw",
-      "video_title": "Quanto ci vuole a GUARIRE il Tuo Cervello dal P0rn0?",
-      "hook": "Ti hanno detto che il cervello smette di svilupparsi a 25 anni: quello studio è stato fatto su partecipanti che avevano al massimo 20 anni",
-      "r2_key": "reels/KBOAz2kzvNw/KBOAz2kzvNw-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/KBOAz2kzvNw/KBOAz2kzvNw-3.mp4",
-      "caption": "Quello studio l'hanno fatto su ventenni: il partecipante più vecchio aveva 20 anni. Quel numero è buttato lì.\nLa maturazione finisce intorno ai 30. La neuroplasticità no: continua a 40, a 50, a 60.\nQuindi la domanda non è se puoi cambiare. È se vuoi.\n\n#neuroplasticità #crescitapersonale #cervello #cambiamento #abitudini #mentalità #neuroscienze\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-05T09:10:11Z"
     }
   ],
   "published": [
@@ -275,8 +241,7 @@
     }
   ],
   "archive_done": [
-    "Enp0wWhaP8M",
-    "KBOAz2kzvNw"
+    "Enp0wWhaP8M"
   ],
   "sospese": [
     {
