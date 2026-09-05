@@ -24,12 +24,19 @@ su R2 e push, il runner sta sulla sua rete di sempre e nessuno puo
 isolarlo.
 """
 
+import os
+import shutil
 import subprocess
 import threading
 from contextlib import contextmanager
 from pathlib import Path
 
 CONF = Path("/etc/wireguard/warp.conf")
+
+# Il workflow lo mette a 1 quando il profilo e pronto, a 0 quando nessun
+# dispositivo ha retto. E' il modo pulito di saperlo: /etc/wireguard esiste
+# apposta per non farsi leggere da nessuno tranne root.
+PRONTO = "WARP_PRONTO"
 
 # Piu chiamate a yt-dlp possono annidarsi: si conta chi e dentro, e si
 # smonta solo quando esce l'ultimo. Senza, la prima uscita spegnerebbe il
@@ -39,7 +46,24 @@ _chiave = threading.Lock()
 
 
 def disponibile() -> bool:
-    return CONF.is_file()
+    """C'e un profilo WARP da alzare?
+
+    Prima qui c'era solo CONF.is_file(), e il 5/09 ha fatto morire l'ingest
+    alla prima chiamata a yt-dlp con "PermissionError: /etc/wireguard/
+    warp.conf". Quella cartella e di root e mode 0700: guardarci dentro non
+    e permesso, e is_file() su un errore di permessi non risponde "no", ti
+    solleva un'eccezione in faccia. Chiedere "esiste?" a un file che non
+    hai il diritto di guardare non e una domanda a cui si possa rispondere.
+    """
+    segnale = os.environ.get(PRONTO)
+    if segnale in ("0", "1"):
+        return segnale == "1"
+    try:
+        return CONF.is_file()
+    except OSError:
+        # Non poter guardare non vuol dire che non ci sia. Si prova ad
+        # alzarlo: se non c'e, wg-quick fallisce e si tira avanti senza.
+        return shutil.which("wg-quick") is not None
 
 
 def _wg(azione: str) -> bool:

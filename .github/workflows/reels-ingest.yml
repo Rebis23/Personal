@@ -187,6 +187,7 @@ jobs:
           # lo alza src/tunnel.py per il tempo dello scarico.
           if [ "$alzato" = "1" ]; then
             sudo timeout 60 wg-quick down warp || true
+            echo "WARP_PRONTO=1" >> "$GITHUB_ENV"
             echo "Profilo pronto in /etc/wireguard/warp.conf — tunnel GIU, si alzera solo per yt-dlp"
             exit 0
           fi
@@ -194,6 +195,7 @@ jobs:
           # profilo: meglio un download che fallisce dicendo "YouTube mi
           # blocca" che un tunnel malato alzato in mezzo al lavoro.
           sudo rm -f /etc/wireguard/warp.conf
+          echo "WARP_PRONTO=0" >> "$GITHUB_ENV"
           echo "::warning::WARP non e utilizzabile dopo tre tentativi: profilo rimosso"
           exit 1
 

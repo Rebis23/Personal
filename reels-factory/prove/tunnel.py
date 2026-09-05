@@ -73,5 +73,40 @@ with tunnel.acceso() as vivo:
     pass
 prova("senza profilo non si chiama wg-quick", mosse == [] and vivo is False, str(mosse))
 
+# LA DOMANDA A CUI NON SI PUO' RISPONDERE. /etc/wireguard e di root e mode
+# 0700: chiedergli "esiste questo file?" solleva PermissionError invece di
+# dire no. Il 5/09 questo ha fatto morire l'ingest alla prima chiamata a
+# yt-dlp, dentro il codice scritto apposta per rendere le cose piu sicure.
+import importlib                                               # noqa: E402
+import os                                                     # noqa: E402
+
+from src import tunnel as T                                   # noqa: E402
+
+importlib.reload(T)                 # si ricarica: sopra e stato manomesso
+os.environ.pop(T.PRONTO, None)
+
+
+class ConfVietata:
+    """Finge /etc/wireguard/warp.conf: di root, mode 0700, guai a guardarlo."""
+    def is_file(self):
+        raise PermissionError(13, "Permission denied")
+
+
+T.CONF = ConfVietata()
+try:
+    risposta = T.disponibile()
+    prova("un file che non si puo guardare non fa esplodere niente", True)
+    prova("e la risposta e un si/no", isinstance(risposta, bool), repr(risposta))
+except PermissionError as e:
+    prova("un file che non si puo guardare non fa esplodere niente", False, str(e))
+    prova("e la risposta e un si/no", False)
+
+# Il workflow ha l'ultima parola: se dice che non c'e, non si guarda nemmeno.
+os.environ[T.PRONTO] = "0"
+prova("WARP_PRONTO=0 vince sul file", T.disponibile() is False)
+os.environ[T.PRONTO] = "1"
+prova("WARP_PRONTO=1 vince sul file", T.disponibile() is True)
+os.environ.pop(T.PRONTO, None)
+
 print(f"\n{verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
