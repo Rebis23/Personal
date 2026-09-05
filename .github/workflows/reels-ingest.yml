@@ -99,31 +99,39 @@ jobs:
           curl -sfL --max-time 60 -o /tmp/wgcf \
             "https://github.com/ViRb3/wgcf/releases/download/${V}/wgcf_${V#v}_linux_amd64"
           chmod +x /tmp/wgcf
-          cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
-          sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
-          sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
-          sudo wg-quick up warp
-          echo "esco da: $(curl -s --max-time 30 https://api.ipify.org)"
 
-          # IL TUNNEL DEVE LASCIARE PASSARE ANCHE GITHUB. Il 4/09 (run 89) e
-          # successo il peggio possibile: WARP si e alzato e ha inghiottito la
-          # rotta verso GitHub. Il runner ha smesso di poter riferire — il
-          # record del run e rimasto congelato all'istante esatto in cui il
-          # tunnel e partito — e nemmeno il timeout di 5 minuti sul passo ha
-          # potuto scattare, perche per scattare bisogna essere raggiungibili.
-          # Il job e rimasto appeso, tenendo in ostaggio la pubblicazione del
-          # giorno per via del gruppo di concorrenza.
+          # TRE TENTATIVI, OGNUNO CON UN DISPOSITIVO NUOVO. Il tunnel riesce
+          # circa una volta su due: quando Cloudflare assegna un'uscita da cui
+          # GitHub non risponde, il runner resta muto — il 4/09 (run 89) e
+          # rimasto appeso 78 minuti tenendo in ostaggio la pubblicazione del
+          # giorno, e nemmeno il timeout sul passo e scattato, perche per
+          # scattare bisogna essere raggiungibili.
           #
-          # Quindi dopo averlo alzato si verifica, e se GitHub non risponde si
-          # smonta il tunnel e si tira avanti senza: si torna a com'era prima,
-          # che e la stessa regola di sempre. Meglio un download che fallisce
-          # in due minuti di un job che muore appeso in due ore.
-          if ! curl -sf --max-time 25 -o /dev/null https://api.github.com; then
-            echo "::warning::Con WARP acceso GitHub non risponde: smonto il tunnel"
+          # Non e un guasto da aspettare: e una lotteria da rigiocare. Ogni
+          # "wgcf register" e un dispositivo diverso, quindi un'uscita diversa.
+          # Si smonta, si ripesca, si riprova. Se dopo tre giri GitHub non
+          # risponde ancora, si tira avanti senza tunnel: il download da
+          # YouTube fallira, ma in due minuti e dicendolo.
+          alzato=0
+          for giro in 1 2 3; do
+            rm -f /tmp/wgcf-profile.conf /tmp/wgcf-account.toml
+            cd /tmp && ./wgcf register --accept-tos && ./wgcf generate
+            sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
+            sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
+            sudo wg-quick up warp
+            echo "giro ${giro}: esco da $(curl -s --max-time 20 https://api.ipify.org)"
+            if curl -sf --max-time 25 -o /dev/null https://api.github.com; then
+              echo "GitHub raggiungibile con il tunnel su (giro ${giro})"
+              alzato=1
+              break
+            fi
+            echo "::warning::Giro ${giro}: con WARP acceso GitHub non risponde, riprovo con un altro dispositivo"
             sudo wg-quick down warp || true
+          done
+          if [ "$alzato" != "1" ]; then
+            echo "::warning::WARP non e utilizzabile dopo tre tentativi"
             exit 1
           fi
-          echo "GitHub raggiungibile con il tunnel su"
 
       - name: Avvisa se WARP non e in piedi
         if: steps.warp.outcome != 'success'
