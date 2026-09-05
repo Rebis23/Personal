@@ -25,6 +25,7 @@ import base64
 import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -212,14 +213,27 @@ def scegli(candidate: list[Path], *, quante: int, tema: str,
         return validi[:quante]
 
     testo = "".join(b.text for b in risposta.content if b.type == "text")
+
+    # Si legge la risposta in due modi, perche il 5/09 tre giudizi su cinque
+    # sono finiti in "Giudizio illeggibile": la chiamata riusciva e il
+    # modello rispondeva bene, ma senza parentesi quadre — "0, 4, 9" invece
+    # di "[0, 4, 9]" — e il mio lettore cercava solo la forma con le
+    # parentesi. Buttavo via una risposta giusta per una questione di
+    # punteggiatura, e tenevo le prime foto a caso.
+    scelti: list | None = None
     a, z = testo.find("["), testo.rfind("]")
-    if a < 0 or z < 0:
-        print("      ⚠️ Giudizio illeggibile: tengo le prime")
-        return validi[:quante]
-    try:
-        scelti = json.loads(testo[a:z + 1])
-    except json.JSONDecodeError:
-        print("      ⚠️ Giudizio con JSON rotto: tengo le prime")
+    if a >= 0 and z > a:
+        try:
+            scelti = json.loads(testo[a:z + 1])
+        except json.JSONDecodeError:
+            scelti = None
+    if scelti is None:
+        # Ripiego: i numeri nudi, nell'ordine in cui compaiono.
+        numeri = re.findall(r"\d+", testo)
+        if numeri:
+            scelti = [int(n) for n in numeri[:quante]]
+    if not scelti:
+        print(f"      ⚠️ Giudizio illeggibile ({testo[:60]!r}): tengo le prime")
         return validi[:quante]
 
     fuori = [validi[i] for i in scelti
