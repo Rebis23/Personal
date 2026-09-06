@@ -268,7 +268,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
 
     sub_cfg = cfg["subtitles"]
     queued = []
-    banner_usati: set[str] = set()          # niente due Reel col titolo identico
+    banner_usati: set[str] = set()          # niente due clip che aprono uguale
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{n}"
         somma = pick.punteggi.somma
@@ -305,28 +305,25 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             model=cfg["claude"]["model"],
             gia_usati=frozenset(banner_usati),
         )
+        # LA FRASE DA CUI PARTIRE, NON IL BANNER. Il 5/09 avevo fatto
+        # scrivere il banner con questa stessa frase pronunciata, e il 6/09
+        # Lorenzo ha visto il risultato: un Reel sulla religione col titolo
+        # «Zanzara che depone le uova negli occhi». La zanzara si sente
+        # davvero — e l'esempio che porta il discorso — ma l'argomento e
+        # Dio, e chi scorre legge il titolo, non il sottotesto.
+        #
+        # Erano due richieste diverse e le avevo fuse in un meccanismo solo:
+        # «la clip deve partire sulla frase forte» e «il banner deve fermare
+        # lo scroll». La prima si risolve nel parlato, la seconda si scrive.
+        # Qui resta solo la prima: da dove parte la clip.
         if detta:
-            print(f"      🎯 Banner preso dal parlato: «{detta['testo']}» "
+            print(f"      ▶️ La clip parte da «{detta['testo']}» "
                   f"(detto a {detta['start']:.0f}s)")
-            pick.hook = detta["testo"][0].upper() + detta["testo"][1:]
             start = max(0.0, detta["start"] - 0.15)
-        banner_usati.add(" ".join(aggancio.parole(pick.hook)))
-
-        # Ripiego: se dal parlato non e uscito niente, si cerca comunque il
-        # banner scritto nel sonoro — ogni tanto ci somiglia abbastanza.
-        t_hook = aggancio.trova_nel_parlato(words, pick.hook, start - 25.0, end)
-        if t_hook is not None and t_hook > start + 0.4:
-            nuovo = max(0.0, t_hook - 0.15)     # un soffio, per non tagliare la prima sillaba
-            if end - nuovo >= clip_cfg["min_seconds"]:
-                print(f"      ▶️ Apertura spostata avanti di {nuovo - start:.1f}s: "
-                      f"la clip parte sull'aggancio")
-                start = nuovo
-            else:
-                print(f"      ▶️ Aggancio a {t_hook:.0f}s ma la clip resterebbe "
-                      f"sotto i {clip_cfg['min_seconds']}s: apertura invariata")
-        elif t_hook is None:
-            print("      ⚠️ L'aggancio non si ritrova nel parlato: banner e voce "
-                  "diranno cose diverse")
+            banner_usati.add(" ".join(aggancio.parole(detta["testo"])))
+        else:
+            print("      ▶️ Nessuna riga d'apertura scelta: la clip parte dove "
+                  "l'ha tagliata Claude")
 
         # Cold open: la frase piu tagliente estratta e montata in apertura.
         # Deve stare dentro la clip e almeno 6s dopo il suo inizio, altrimenti

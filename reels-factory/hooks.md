@@ -15,19 +15,42 @@ codice.
 1. **La clip deve APRIRE sull'hook.** Non due frasi prima. Il primo secondo di
    parlato è già il gancio: se il momento forte arriva dopo, si taglia lì —
    oppure lo si estrae e lo si mette in apertura a freddo (vedi *Cold open*).
-2. **Frase intera, mai un frammento.** L'hook deve avere senso compiuto letto
-   da solo, senza il resto. Se comincia con *e*, *ma*, *quindi*, *perché*,
-   *che*, *allora* — non è un hook, è un pezzo di frase strappato a metà.
-3. **Massimo 12 parole, concrete.** "Il 95% delle tue scelte non le fai tu"
-   funziona. "Parliamo di come funziona la mente inconscia" no.
+2. **Deve far capire di cosa si parla, non per forza finire.** Su Instagram
+   la voce parte insieme al testo: il banner non deve reggersi da solo come
+   un titolo, deve far restare mezzo secondo di piu. Un frammento sospeso e
+   uno degli schemi che funzionano meglio — *«NOI NON DICEVAMO CHE LA MAFIA
+   ERA...»* (×93), *«C'è una frase che ho imparato alla scuola di
+   psicoterapia:»* (×20). Quello che non va bene e il frammento che non fa
+   capire il tema: *e*, *ma*, *quindi*, *che*, *allora* in apertura sono
+   quasi sempre quel caso.
+3. **Massimo 7 parole, concrete.** "Il 95% delle tue scelte non le fai tu"
+   funziona. "Parliamo di come funziona la mente inconscia" no. Sette e il
+   limite oltre il quale il banner va a capo e smette di fermare lo scroll:
+   sopra quella soglia il codice taglia d'ufficio, quindi tanto vale
+   scriverlo gia corto e scegliere tu quale pezzo tenere.
 4. **Deve creare SCONTRO.** Non basta essere interessante: serve un attrito.
    Contraddire una convinzione diffusa, mettere due cose in opposizione, dire
    la cosa scomoda che nessuno dice ad alta voce. Se nessuno può dissentire,
    non è un hook — è una didascalia.
-5. **Deve corrispondere a ciò che si sente.** Il banner riprende le parole
-   davvero pronunciate, ripulite. Chi legge e poi ascolta deve riconoscere la
-   stessa frase: se il testo scritto promette una cosa e la voce ne dice
-   un'altra, il reel si chiude nei primi due secondi.
+5. **DEVE NOMINARE L'ARGOMENTO.** Chi scorre non ha visto niente: se il
+   banner nomina un dettaglio invece del tema, il Reel non si capisce e non
+   si ferma nessuno. Lorenzo, 6/09, davanti a un Reel sulla religione che in
+   cima diceva *«Zanzara che depone le uova negli occhi»*:
+
+   > "L'hook non fa capire l'argomento, perché in questo video si parla di
+   > religione. Un hook perfetto sarebbe stato **«Perché Dio permette il male
+   > sugli animali?»**: parlava del concetto del video — Dio, la religione —
+   > ed era coerente con la mia argomentazione."
+
+   La zanzara nel video c'è davvero: è l'esempio che porta il discorso. Ma
+   l'argomento è Dio. **Il banner nomina l'argomento, non l'esempio.**
+
+   Attenzione: questa regola ha sostituito quella vecchia, che diceva il
+   contrario — "il banner riprende le parole davvero pronunciate". Era un mio
+   errore: avevo unito in un meccanismo solo due cose diverse, "la clip parte
+   sulla frase forte" e "il banner ferma lo scroll". La clip parte ancora su
+   una frase pronunciata; il banner invece si scrive, e puo essere una
+   domanda che nel video non si sente mai.
 
 ---
 
@@ -43,6 +66,65 @@ meglio una clip pulita che un'apertura confusa.
 
 - ✅ "Lo sforzo non paga le bollette." → stacco → si riparte dal ragionamento
 - ❌ "E quindi capisci che è proprio quello il punto." → non significa nulla da sola
+
+---
+
+## Cosa dicono i dati — i REEL, non i titoli YouTube (6/09/2026)
+
+Prima avevo guardato i titoli YouTube. Lorenzo mi ha fermato: «non ti ho
+chiesto l'hook su YouTube, questo sarà un Reel su Instagram». Ha ragione, e
+i due formati chiedono cose diverse:
+
+> Un titolo YouTube si legge **accanto a una miniatura, mentre scegli** cosa
+> guardare: deve reggersi da solo. Un banner su un Reel si legge **in mezzo
+> secondo, mentre stai gia scorrendo e l'audio sta gia partendo**: non deve
+> reggersi da solo, deve far restare mezzo secondo di piu.
+
+Quello che segue viene da 24 fra Reel e TikTok italiani che hanno sfondato
+rispetto alla media del loro creatore, con il testo VERO dei primi 3 secondi.
+Il numero fra parentesi e quante volte hanno superato quella media.
+
+**1. Corti. Molto piu corti di un titolo.**
+- *Ci vogliono 5 secondi* (×86)
+- *Ho postato una foto seminuda* (×27)
+- *Genio o setta? La vera storia.* (×156)
+
+**2. LA DOMANDA e la forma che vince piu spesso** — spesso e la domanda che
+farebbe l'intervistatore:
+- *PERCHÉ ABBIAMO INVENTATO DIO* (×27)
+- *SAI COSA BISOGNA FARE QUANDO UN PARENTE PARLA MALE DI TE?* (×212)
+- *PERCHÉ HAI CHIUSO IL NEGOZIO DI ORO 91?* (×26)
+- *Ma davvero la gente non sa la DIFFERENZA tra intelligenza e cultura?* (×38)
+
+Nota bene: *«PERCHÉ ABBIAMO INVENTATO DIO»* e quasi parola per parola
+l'esempio che ha fatto Lorenzo — *«Perché Dio permette il male sugli
+animali?»*. Aveva ragione, e i dati lo confermano.
+
+**3. Il frammento sospeso funziona — e su YouTube no.** Su Instagram la voce
+parte insieme al testo, quindi la frase puo restare a meta:
+- *NOI NON DICEVAMO CHE LA MAFIA ERA...* (×93)
+- *perché condanniamo solo* (×34)
+- *C'è una frase che ho imparato alla scuola di psicoterapia:* (×20)
+
+Questo **contraddice la regola 2** di questo file, che dice "frase intera,
+mai un frammento". La regola resta giusta per il senso — il frammento deve
+comunque far capire di cosa si parla — ma un banner che finisce sospeso non
+e un errore: e uno degli schemi che funzionano meglio.
+
+**4. La provocazione binaria.** *O SEI SINNER O SEI UN FALLITO* (×113),
+*Genio o setta?* (×156).
+
+**5. Il nome riconoscibile fa il lavoro dell'argomento.** *CARD. PIZZABALLA:
+DICO COSE CHE FANNO ARRABBIARE* (×38), *Charlie Kirk* (×31), *Denzel
+Washington* (×150). Se nella clip si nomina qualcuno che il pubblico
+riconosce, quel nome va nel banner.
+
+**6. La confessione in prima persona.** *Sai che sono stato denunciato per
+istigazione all'odio razziale?* (×68), *Ho postato una foto seminuda* (×27).
+
+**Cosa NON copiare:** le liste numerate ("7 abitudini…") dominano YouTube ma
+una clip non e una lista: promettere sette cose e mostrarne una fa chiudere
+il Reel.
 
 ---
 

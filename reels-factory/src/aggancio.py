@@ -75,6 +75,45 @@ def quante(testo: str) -> int:
     return len(parole(testo))
 
 
+# Parole troppo comuni per dire qualcosa sull'argomento: se l'unica cosa in
+# comune fra banner e argomento e "la", il banner non nomina niente.
+VUOTE = {
+    "il", "lo", "la", "i", "gli", "le", "un", "uno", "una", "l", "dell",
+    "di", "del", "della", "dei", "delle", "a", "al", "alla", "ai", "alle",
+    "da", "dal", "dalla", "in", "nel", "nella", "con", "su", "sul", "sulla",
+    "per", "tra", "fra", "e", "ed", "o", "ma", "che", "chi", "cui", "come",
+    "non", "piu", "più", "sono", "essere", "fare", "cosa", "cose", "tuo",
+    "tua", "tuoi", "tue", "mio", "mia", "si", "ti", "ci", "se", "quando",
+}
+
+
+def _radice(p: str) -> str:
+    """Taglia la desinenza: «pornografia» e «pornografico» devono combaciare."""
+    return p[:6] if len(p) > 7 else p
+
+
+def nomina_argomento(hook: str, argomento: str) -> bool:
+    """Il banner nomina l'argomento della clip, o parla d'altro?
+
+    LA REGOLA CHE MANCAVA. Il 6/09 e uscito un Reel sulla religione col
+    titolo «Zanzara che depone le uova negli occhi». La zanzara nel video
+    c'e — e l'esempio che porta il discorso — ma chi scorre legge il titolo
+    e non capisce di cosa si parla, quindi non si ferma. Lorenzo: "un hook
+    perfetto sarebbe stato «Perché Dio permette il male sugli animali?»".
+
+    Il controllo e grezzo di proposito: basta una parola piena in comune fra
+    banner e argomento. Non sa riconoscere i sinonimi, quindi ogni tanto
+    boccia un banner buono — e per questo un "no" non butta via niente, fa
+    solo riscrivere. Ma il caso che conta lo prende: fra «zanzara ... occhi»
+    e «la fede in Dio» non c'e una parola in comune, e si vede subito.
+    """
+    if not argomento.strip():
+        return True                     # senza argomento non c'e niente da verificare
+    dette = {_radice(x) for x in parole(hook) if x not in VUOTE}
+    cercate = {_radice(x) for x in parole(argomento) if x not in VUOTE}
+    return bool(dette & cercate)
+
+
 def e_contiguo(frammento: str, intero: str) -> bool:
     """Vero se `frammento` e un pezzo consecutivo di `intero`.
 

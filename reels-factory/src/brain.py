@@ -69,6 +69,15 @@ class ClipPick(BaseModel):
         "impossibile non fermarsi, 5 = interessante ma tiepido. Sotto 7 la clip "
         "non vale la pena: scegline un'altra."
     ))
+    argomento: str = Field(default="", description=(
+        "DI COSA PARLA questa clip, in due o tre parole, come lo direbbe chi "
+        "la guarda: 'la fede in Dio', 'la pornografia', 'le ads su Meta', "
+        "'il primo cliente'. NON e l'hook e non e un dettaglio nominato "
+        "dentro la clip: e il tema. Serve a controllare che il banner "
+        "nomini l'argomento e non l'esempio — il 6/09 e uscito un Reel sulla "
+        "religione col titolo «Zanzara che depone le uova negli occhi», e la "
+        "zanzara era solo l'esempio che portava il discorso."
+    ))
     bersaglio: str = Field(default="", description=(
         "La cosa CONCRETA che l'hook attacca o nomina, e che chi guarda "
         "riconosce subito: 'la laurea', 'la disciplina', 'i corsi di "
@@ -342,10 +351,28 @@ def select_clips(
     # brillante, per chi scorre Instagram e una frase che non vuol dire niente.
     # Lorenzo l'ha detto con parole sue il 29/08: l'hook e fuori contesto.
     esiti = prova_a_freddo([c.hook for c in usable], model=model)
-    if esiti:
-        bocciati = [(i, c.hook, esiti[i][1], c.start_seconds, c.end_seconds)
+
+    # IL CONTROLLO CHE MANCAVA, e che non ha bisogno del modello: il banner
+    # nomina l'argomento della clip? Il 6/09 un Reel sulla religione e uscito
+    # con «Zanzara che depone le uova negli occhi» — la zanzara e l'esempio,
+    # l'argomento e Dio, e chi scorre legge il titolo. La prova a freddo non
+    # poteva accorgersene: quella frase, letta da sola, e concreta e incuriosisce
+    # davvero. Manca solo che dica di cosa si parla.
+    fuori_tema = {}
+    for i, c in enumerate(usable):
+        if not aggancio.nomina_argomento(c.hook, getattr(c, "argomento", "")):
+            fuori_tema[i] = (f"non nomina l'argomento della clip "
+                             f"(«{c.argomento}»): chi scorre non capisce di "
+                             f"cosa si parla")
+            print(f"   🎯 hook fuori tema «{c.hook[:46]}» — la clip parla di "
+                  f"«{c.argomento}»")
+
+    if esiti or fuori_tema:
+        bocciati = [(i, c.hook,
+                     fuori_tema.get(i) or esiti[i][1],
+                     c.start_seconds, c.end_seconds)
                     for i, c in enumerate(usable)
-                    if i in esiti and not esiti[i][0]]
+                    if i in fuori_tema or (i in esiti and not esiti[i][0])]
         for _, hook, motivo, _, _ in bocciati:
             print(f"   ❄️ hook bocciato «{hook[:52]}» — {motivo}")
 
@@ -462,6 +489,11 @@ trascrizione del video. Riscrivi SOLO l'hook, pescando dentro quel pezzo di \
 trascrizione.
 
 Il nuovo hook deve:
+- NOMINARE L'ARGOMENTO della clip. E' l'errore piu costoso: un Reel sulla \
+religione uscito col titolo «Zanzara che depone le uova negli occhi» non lo \
+guarda nessuno, perche la zanzara e solo l'esempio che porta il discorso. \
+Al suo posto: «Perché Dio permette il male sugli animali?». Su 45 video \
+italiani che hanno sfondato, il soggetto e nominato in TUTTI;
 - reggersi da solo, senza sapere niente di cio che viene prima;
 - nominare una cosa concreta e riconoscibile (una laurea, un preventivo, un \
 cliente, delle bollette, un numero) invece di un concetto astratto;
@@ -470,6 +502,25 @@ per scontata;
 - restare fedele a cio che viene detto davvero nella clip. Non promettere \
 qualcosa che il video non mantiene: se il passaggio non permette un hook \
 concreto, scrivi SALTA e basta.
+
+Le forme misurate su 24 Reel e TikTok italiani che hanno sfondato — il \
+numero e quante volte hanno battuto la media del loro creatore:
+1. LA DOMANDA, spesso quella che farebbe l'intervistatore. E' la forma che \
+vince piu spesso: «PERCHÉ ABBIAMO INVENTATO DIO» (×27), «SAI COSA BISOGNA \
+FARE QUANDO UN PARENTE PARLA MALE DI TE?» (×212), «Ma davvero la gente non \
+sa la DIFFERENZA tra intelligenza e cultura?» (×38)
+2. IL FRAMMENTO SOSPESO. Su Instagram la voce parte insieme al testo, quindi \
+la frase puo restare a meta: «NOI NON DICEVAMO CHE LA MAFIA ERA...» (×93), \
+«Ci vogliono 5 secondi» (×86)
+3. LA PROVOCAZIONE BINARIA: «O SEI SINNER O SEI UN FALLITO» (×113), «Genio o \
+setta?» (×156)
+4. IL NOME RICONOSCIBILE, se la clip ne nomina uno: «CARD. PIZZABALLA: DICO \
+COSE CHE FANNO ARRABBIARE» (×38)
+5. LA CONFESSIONE in prima persona: «Ho postato una foto seminuda» (×27)
+
+MASSIMO 7 PAROLE, e piu corto e meglio: i Reel che sfondano hanno banner \
+molto piu corti di un titolo YouTube. Niente liste numerate: una clip non e \
+una lista, e promettere sette cose e mostrarne una fa chiudere il Reel.
 
 Una riga per clip, formato esatto:
 <numero>|<nuovo hook oppure SALTA>
