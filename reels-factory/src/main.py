@@ -815,15 +815,35 @@ def cmd_fondi() -> int:
     fuso = dict(nostro)
     fuso["published"] = base.get("published", [])
 
-    gia_uscite = {p.get("clip_id") for p in fuso["published"]}
+    # UN CLIP_ID GIA' PUBBLICATO NON BASTA PER BUTTARE VIA UNA CLIP. Gli id
+    # sono "<video>-<numero>", quindi rifare un video produce id identici a
+    # quelli gia usciti: il 6/09 in coda c'erano NlnJgTd3tC8-1 e -2 rifatti
+    # da zero, mentre i vecchi con lo stesso id erano gia su Instagram. Con
+    # la regola secca "e gia uscito, si salta" un rifacimento sarebbe
+    # sparito in silenzio proprio quando serviva — cioe dopo averlo rifatto
+    # apposta perche il primo era sbagliato.
+    #
+    # Quello che distingue le due cose e la data: una clip creata DOPO la
+    # pubblicazione di quell'id e roba nuova, non un doppione.
+    ultima_uscita: dict[str, str] = {}
+    for pb in fuso["published"]:
+        cid, quando = pb.get("clip_id"), pb.get("published_at", "")
+        if cid and quando > ultima_uscita.get(cid, ""):
+            ultima_uscita[cid] = quando
+
     coda = list(base.get("queue", []))
-    noti = {c.get("clip_id") for c in coda} | gia_uscite
+    in_coda = {c.get("clip_id") for c in coda}
     aggiunte = 0
     for c in nostro.get("queue", []):
-        if c.get("clip_id") not in noti:
-            coda.append(c)
-            noti.add(c.get("clip_id"))
-            aggiunte += 1
+        cid = c.get("clip_id")
+        if cid in in_coda:
+            continue
+        uscita = ultima_uscita.get(cid)
+        if uscita and c.get("created_at", "") <= uscita:
+            continue                    # e proprio quella gia pubblicata
+        coda.append(c)
+        in_coda.add(cid)
+        aggiunte += 1
     fuso["queue"] = coda
 
     video = {v["video_id"]: v for v in base.get("processed_videos", [])}
