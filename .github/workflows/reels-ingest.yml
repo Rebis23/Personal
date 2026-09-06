@@ -84,6 +84,74 @@ jobs:
       # Contro quel guasto non c'e tetto che tenga: a rompersi e il canale
       # con cui il runner riferisce, e un tetto ha bisogno di qualcuno che lo
       # faccia rispettare. L'unica difesa e stare esposti per meno tempo.
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Cache PO token provider
+        uses: actions/cache@v4
+        with:
+          path: /tmp/bgutil
+          key: bgutil-pot-provider-1.3.2
+
+      # Provider comunitario dei "PO token" (Brainicism/bgutil-ytdlp-pot-provider):
+      # genera i token che YouTube richiede per servire i flussi video.
+      # Il server resta attivo in background per tutta la durata del job.
+      # Si compila qui, sulla rete normale: clona da GitHub e tira giu i
+      # pacchetti npm, due cose che dentro il tunnel si piantano.
+      - name: Compila il PO token provider
+        run: |
+          if [ ! -f /tmp/bgutil/server/build/main.js ]; then
+            git clone --depth 1 --branch 1.3.2 https://github.com/Brainicism/bgutil-ytdlp-pot-provider.git /tmp/bgutil
+            cd /tmp/bgutil/server && npm ci --silent && npx tsc
+          fi
+
+      - name: Cache modello Whisper
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-small-v1
+
+      # Remotion: il motore che disegna le caption animate premium.
+      # Il browser headless che usa per il rendering finisce dentro
+      # node_modules, quindi la cache copre anche quello.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Cache Remotion
+        uses: actions/cache@v4
+        with:
+          path: reels-factory/remotion/node_modules
+          key: remotion-${{ hashFiles('reels-factory/remotion/package-lock.json') }}
+
+      - name: Installa Remotion
+        working-directory: reels-factory/remotion
+        run: |
+          if [ ! -d node_modules/remotion ]; then
+            npm ci --no-audit --no-fund
+          fi
+          npx remotion browser ensure
+
+      - name: Installa dipendenze Python
+        working-directory: reels-factory
+        run: pip install -r requirements.txt
+
+      # L'ORDINE DEI PASSI E' PARTE DEL MECCANISMO, NON UN DETTAGLIO.
+      # Tutto quello che scarica da GitHub, npm o PyPI viene PRIMA e va
+      # sulla rete normale: dentro il tunnel di Cloudflare quei download si
+      # piantano — il 5/09 hanno ucciso due run, una col runner tolto di
+      # mezzo (98) e una con Deno che non arrivava (110).
+      #
+      # Il tunnel si alza solo qui in fondo, subito prima del provider del
+      # PO token, perche il lasciapassare va coniato dallo stesso IP da cui
+      # poi esce la richiesta a YouTube (run 109). Poi c'e lo scarico, e
+      # main.py abbassa il tunnel appena finito.
+      #
+      # In sostanza: prima ci si prepara sulla rete di casa, poi si entra
+      # nel tunnel per il tempo strettamente necessario a parlare con
+      # YouTube, e si esce.
+
       - name: Prepara il tunnel WARP
         id: warp
         # Il tetto del passo non basta. Il 5/09 (run 99) questo passo e
@@ -217,59 +285,19 @@ jobs:
 
       # Deno: motore JavaScript che yt-dlp usa per risolvere le sfide
       # anti-bot di YouTube (senza, il download è bloccato)
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
-      - name: Cache PO token provider
-        uses: actions/cache@v4
-        with:
-          path: /tmp/bgutil
-          key: bgutil-pot-provider-1.3.2
-
-      # Provider comunitario dei "PO token" (Brainicism/bgutil-ytdlp-pot-provider):
-      # genera i token che YouTube richiede per servire i flussi video.
-      # Il server resta attivo in background per tutta la durata del job.
+      # SOLO L'AVVIO, non la compilazione. Se la cache non c'e, il clone da
+      # GitHub e npm ci vanno fatti PRIMA del tunnel — dentro si piantano,
+      # come e successo a Deno nella run 110. La compilazione sta nel passo
+      # "Compila il PO token provider", su in alto con gli altri download.
       - name: Avvia PO token provider
         run: |
           if [ ! -f /tmp/bgutil/server/build/main.js ]; then
-            git clone --depth 1 --branch 1.3.2 https://github.com/Brainicism/bgutil-ytdlp-pot-provider.git /tmp/bgutil
-            cd /tmp/bgutil/server && npm ci --silent && npx tsc
+            echo "::warning::PO token provider non compilato: yt-dlp provera senza"
+            exit 0
           fi
           cd /tmp/bgutil/server && nohup node build/main.js > /tmp/pot-server.log 2>&1 &
           sleep 3
           tail -2 /tmp/pot-server.log
-
-      - name: Cache modello Whisper
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/huggingface
-          key: whisper-small-v1
-
-      # Remotion: il motore che disegna le caption animate premium.
-      # Il browser headless che usa per il rendering finisce dentro
-      # node_modules, quindi la cache copre anche quello.
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Cache Remotion
-        uses: actions/cache@v4
-        with:
-          path: reels-factory/remotion/node_modules
-          key: remotion-${{ hashFiles('reels-factory/remotion/package-lock.json') }}
-
-      - name: Installa Remotion
-        working-directory: reels-factory/remotion
-        run: |
-          if [ ! -d node_modules/remotion ]; then
-            npm ci --no-audit --no-fund
-          fi
-          npx remotion browser ensure
-
-      - name: Installa dipendenze Python
-        working-directory: reels-factory
-        run: pip install -r requirements.txt
 
       - name: Ingest nuovi video
         working-directory: reels-factory
