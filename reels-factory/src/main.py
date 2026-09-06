@@ -268,6 +268,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
 
     sub_cfg = cfg["subtitles"]
     queued = []
+    banner_usati: set[str] = set()          # niente due Reel col titolo identico
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{n}"
         somma = pick.punteggi.somma
@@ -302,12 +303,14 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             words, start, limite,
             tema=pick.bersaglio or pick.hook,
             model=cfg["claude"]["model"],
+            gia_usati=frozenset(banner_usati),
         )
         if detta:
             print(f"      🎯 Banner preso dal parlato: «{detta['testo']}» "
                   f"(detto a {detta['start']:.0f}s)")
             pick.hook = detta["testo"][0].upper() + detta["testo"][1:]
             start = max(0.0, detta["start"] - 0.15)
+        banner_usati.add(" ".join(aggancio.parole(pick.hook)))
 
         # Ripiego: se dal parlato non e uscito niente, si cerca comunque il
         # banner scritto nel sonoro — ogni tanto ci somiglia abbastanza.
@@ -340,6 +343,21 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                     ptxt = " ".join(w["word"] for w in words
                                     if punch[0] <= w["start"] <= punch[1])
                     print(f"      ⚡ Cold open ({punch[1]-punch[0]:.1f}s): «{ptxt}»")
+        # TETTO INVALICABILE SULLA DURATA. Il 6/09 la clip 5 e uscita di
+        # 269 secondi — quattro minuti e mezzo di "Reel" — con max_seconds
+        # a 75. snap_to_sentences accorcia togliendo frasi dal fondo, ma se
+        # UNA frase da sola sfonda il tetto non puo togliere altro e la
+        # restituisce intera: basta che Whisper sbagli un tempo e la frase
+        # diventa lunga minuti. Il montaggio ci ha poi speso 34 minuti.
+        #
+        # Non si chiede alla funzione di stare piu attenta: si taglia qui,
+        # dove la violazione e impossibile per costruzione.
+        tetto = float(clip_cfg["max_seconds"])
+        if end - start > tetto:
+            print(f"      ✂️ Durata {end - start:.0f}s oltre il tetto di "
+                  f"{tetto:.0f}s: tagliata")
+            end = start + tetto
+
         clip_words = transcript.words_for_clip(words, start, end, punch)
         total_len = (end - start) + ((punch[1] - punch[0]) if punch else 0.0)
 

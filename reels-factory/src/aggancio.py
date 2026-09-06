@@ -52,6 +52,20 @@ def _cliente() -> anthropic.Anthropic:
 MAX_PAROLE = 7
 
 
+def ricuci(testo: str) -> str:
+    """Rimette insieme le elisioni spezzate da Whisper.
+
+    Whisper italiano restituisce le parole una per una e ogni tanto stacca
+    l'elisione: "l" e "'effetto" arrivano separate, e unendole con uno
+    spazio esce «l 'effetto». Il 6/09 e finito cosi su un banner vero, in
+    cima a un Reel: «Cervello sotto l 'effetto prolungato di pornografia».
+    In italiano l'apostrofo non ha spazi ne prima ne dopo.
+    """
+    testo = re.sub(r"\s+'", "'", testo)
+    testo = re.sub(r"'\s+", "'", testo)
+    return re.sub(r"\s{2,}", " ", testo).strip()
+
+
 def parole(testo: str) -> list[str]:
     """Solo le parole, senza punteggiatura e senza accenti di comodo."""
     return [p for p in re.findall(r"[0-9a-zàèéìòóùç']+", testo.lower()) if p]
@@ -475,7 +489,8 @@ LEGATURE = {"e", "ed", "che", "di", "del", "della", "dei", "delle", "a", "al",
 
 
 def tratti_parlati(words: list[dict], da: float, a: float, *,
-                   max_parole: int = MAX_PAROLE, minimo: int = 4) -> list[dict]:
+                   max_parole: int = MAX_PAROLE, minimo: int = 4,
+                   gia_usati: frozenset[str] = frozenset()) -> list[dict]:
     """Le righe da 4-7 parole realmente pronunciate fra `da` e `a`.
 
     Ognuna comincia dove comincia una proposizione — inizio frase, dopo una
@@ -512,11 +527,11 @@ def tratti_parlati(words: list[dict], da: float, a: float, *,
                 break
             if any(muro[i:i + n - 1]):
                 break                       # oltre il muro non si va
-            testo = " ".join(testi[i:i + n]).strip(" ,;:—–.")
+            testo = ricuci(" ".join(testi[i:i + n]).strip(" ,;:—–."))
             if not (minimo <= quante(testo) <= max_parole):
                 continue
             chiave = " ".join(parole(testo))
-            if chiave in visti:
+            if chiave in visti or chiave in gia_usati:
                 continue
             visti.add(chiave)
             fuori.append({"testo": testo, "start": dentro[i]["start"]})
@@ -599,13 +614,20 @@ def scegli_parlato(tratti: list[dict], *, tema: str, model: str) -> dict | None:
 
 
 def dal_parlato(words: list[dict], da: float, a: float, *, tema: str,
-                model: str, max_parole: int = MAX_PAROLE) -> dict | None:
+                model: str, max_parole: int = MAX_PAROLE,
+                gia_usati: frozenset[str] = frozenset()) -> dict | None:
     """La riga del banner, presa dalle parole davvero pronunciate.
 
     Torna {"testo", "start"} — la frase e il secondo in cui parte — oppure
     None, e allora si tiene il banner scritto e la clip parte dov'era.
     """
-    tratti = tratti_parlati(words, da, a, max_parole=max_parole)
+    # `gia_usati` sono i banner gia assegnati alle altre clip di questo
+    # video. Il 6/09 le clip 3 e 4 sono uscite col banner identico — «perdi
+    # la voglia di fare letteralmente tutto» tutte e due — perche le loro
+    # finestre si sovrapponevano e la frase migliore era la stessa. Due Reel
+    # di fila con lo stesso titolo in cima sembrano un errore, e lo sono.
+    tratti = tratti_parlati(words, da, a, max_parole=max_parole,
+                            gia_usati=gia_usati)
     if not tratti:
         print("      ⚠️ Nessuna riga pronunciata abbastanza corta da fare banner")
         return None

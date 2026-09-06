@@ -108,5 +108,29 @@ t6 = a.tratti_parlati(parla(lungo), 10.0, 20.0)
 prova("fuori dalla finestra non si pesca",
       all(9.4 <= x["start"] <= 20.0 for x in t6), str([x["start"] for x in t6][:4]))
 
+# L'APOSTROFO. Whisper stacca l'elisione e unendo con spazi esce «l 'effetto».
+# Il 6/09 e finito su un banner vero, in cima a un Reel pubblicabile.
+prova("l'apostrofo non ha spazi",
+      a.ricuci("cervello sotto l 'effetto prolungato") ==
+      "cervello sotto l'effetto prolungato")
+prova("vale anche dall'altro lato", a.ricuci("un' ora dopo") == "un'ora dopo")
+
+w_apo = parla("il cervello sotto l 'effetto prolungato di pornografia cambia")
+prova("nessun tratto proposto ha l'apostrofo staccato",
+      all(" '" not in x["testo"] and "' " not in x["testo"]
+          for x in a.tratti_parlati(w_apo, 0, 99)))
+
+# NIENTE DUE REEL COL TITOLO IDENTICO. Il 6/09 le clip 3 e 4 sono uscite con
+# lo stesso banner perche le finestre si sovrapponevano.
+w_dup = parla("perdi la voglia di fare letteralmente tutto e non ti alzi piu")
+primo = a.tratti_parlati(w_dup, 0, 99)
+scelto = " ".join(a.parole(primo[0]["testo"]))
+dopo = a.tratti_parlati(w_dup, 0, 99, gia_usati=frozenset({scelto}))
+prova("un banner gia usato non viene piu offerto",
+      all(" ".join(a.parole(x["testo"])) != scelto for x in dopo),
+      primo[0]["testo"])
+prova("ma le altre righe restano disponibili", len(dopo) == len(primo) - 1,
+      f"{len(primo)} → {len(dopo)}")
+
 print(f"\n{verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
