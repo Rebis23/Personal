@@ -152,6 +152,19 @@ jobs:
       # nel tunnel per il tempo strettamente necessario a parlare con
       # YouTube, e si esce.
 
+      # IL DISPOSITIVO WARP SI CONSERVA. Fino al 7/09 ogni lavorazione ne
+      # registrava uno nuovo, e Cloudflare a un certo punto ha detto basta:
+      # "429 Too Many Requests" alla prima riga del passo, tre giri su tre,
+      # perche i runner GitHub escono da IP condivisi che quel limite lo
+      # avevano gia consumato. Un dispositivo registrato pero vale a lungo:
+      # si tiene nella cache e si registra solo quando manca davvero.
+      - name: Dispositivo WARP dalla cache
+        id: warp-cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/wgcf-account.toml
+          key: wgcf-dispositivo-v1
+
       - name: Prepara il tunnel WARP
         id: warp
         # Il tetto del passo non basta. Il 5/09 (run 99) questo passo e
@@ -201,9 +214,18 @@ jobs:
           # YouTube fallira, ma in due minuti e dicendolo.
           alzato=0
           for giro in 1 2 3; do
-            rm -f /tmp/wgcf-profile.conf /tmp/wgcf-account.toml
-            cd /tmp && timeout 60 ./wgcf register --accept-tos \
-                    && timeout 60 ./wgcf generate || { echo '::warning::wgcf non risponde'; continue; }
+            rm -f /tmp/wgcf-profile.conf
+            cd /tmp
+            # Il "rm" qui sopra cancella il profilo ma non il conto: se il
+            # dispositivo c'e gia si salta la registrazione, che e proprio
+            # la chiamata che Cloudflare ha cominciato a rifiutare.
+            if [ ! -s /tmp/wgcf-account.toml ]; then
+              timeout 60 ./wgcf register --accept-tos \
+                || { echo '::warning::Cloudflare rifiuta la registrazione (probabile 429)'; continue; }
+            else
+              echo "dispositivo gia registrato, riuso quello"
+            fi
+            timeout 60 ./wgcf generate || { echo '::warning::wgcf generate non riesce'; continue; }
             sudo cp wgcf-profile.conf /etc/wireguard/warp.conf
             sudo sed -i '/^DNS/d' /etc/wireguard/warp.conf
             sudo timeout 60 wg-quick up warp \
