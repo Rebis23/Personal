@@ -264,9 +264,9 @@ jobs:
           # cinque minuti di esposizione invece di cinquanta, che era il
           # punto di partenza.
           if [ "$alzato" = "1" ]; then
+            sudo timeout 60 wg-quick down warp || true
             echo "WARP_PRONTO=1" >> "$GITHUB_ENV"
-            echo "WARP_SU=1" >> "$GITHUB_ENV"
-            echo "Tunnel SU: copre l'avvio del PO token provider e lo scarico, poi lo abbassa main.py"
+            echo "Dispositivo buono e profilo pronto — tunnel GIU. Lo rialza il passo di ingest, e solo dentro quello."
             exit 0
           fi
           # Se nessuno dei tre dispositivi regge, si toglie di mezzo il
@@ -289,16 +289,6 @@ jobs:
       # GitHub e npm ci vanno fatti PRIMA del tunnel — dentro si piantano,
       # come e successo a Deno nella run 110. La compilazione sta nel passo
       # "Compila il PO token provider", su in alto con gli altri download.
-      - name: Avvia PO token provider
-        run: |
-          if [ ! -f /tmp/bgutil/server/build/main.js ]; then
-            echo "::warning::PO token provider non compilato: yt-dlp provera senza"
-            exit 0
-          fi
-          cd /tmp/bgutil/server && nohup node build/main.js > /tmp/pot-server.log 2>&1 &
-          sleep 3
-          tail -2 /tmp/pot-server.log
-
       - name: Ingest nuovi video
         working-directory: reels-factory
         env:
@@ -335,7 +325,41 @@ jobs:
           YT_PROXY: ${{ secrets.YT_PROXY }}
           BATCH_CLIPS: ${{ inputs.clips_per_video }}
           BATCH_FORCE_ARCHIVE: ${{ inputs.force_archive }}
-        run: python -m src.main ingest
+        run: |
+          # IL TUNNEL NON DEVE MAI ATTRAVERSARE UN CONFINE FRA PASSI. Fra un
+          # passo e l'altro il runner deve riferire a GitHub cosa ha fatto, e
+          # se in quel momento il traffico esce da Cloudflare quella riga puo
+          # non arrivare: il runner resta muto e GitHub dopo un po' se lo
+          # riprende. Il 6/09 avevo lasciato il tunnel su fra i passi per far
+          # coniare il lasciapassare da dentro — e la lavorazione delle 10:09
+          # e rimasta muta 44 minuti.
+          #
+          # Qui invece si alza, si conia il lasciapassare, si scarica e si
+          # abbassa, tutto senza mai uscire da questo passo. Il trap lo
+          # smonta comunque, anche se python muore per un'altra ragione.
+          trap 'sudo timeout 60 wg-quick down warp >/dev/null 2>&1 || true' EXIT
+
+          if [ "${WARP_PRONTO:-0}" = "1" ]; then
+            sudo timeout 60 wg-quick up warp \
+              && echo "Tunnel su, esco da $(curl -s --max-time 15 https://api.ipify.org)" \
+              || echo "::warning::Tunnel non alzato: yt-dlp provera senza"
+          fi
+
+          # Il lasciapassare anti-bot va coniato dallo stesso IP da cui poi
+          # esce la richiesta a YouTube, quindi il provider parte adesso, col
+          # tunnel gia su (run 109: token coniato fuori = blocco lo stesso).
+          if [ -f /tmp/bgutil/server/build/main.js ]; then
+            (cd /tmp/bgutil/server && nohup node build/main.js > /tmp/pot-server.log 2>&1 &)
+            sleep 3
+            tail -2 /tmp/pot-server.log
+          else
+            echo "::warning::PO token provider non compilato: yt-dlp provera senza"
+          fi
+
+          # Da qui in poi comanda python: scarica, poi chiama tunnel.abbassa()
+          # e fa tutto il resto — trascrizione, montaggio, R2, stato — sulla
+          # rete normale.
+          WARP_SU=1 python -m src.main ingest
 
       # Il 2 settembre questo passo ha buttato via cinque clip gia montate e
       # gia caricate su R2: staged solo queue.json, ma il run aveva riscritto
