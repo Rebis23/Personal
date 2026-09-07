@@ -4,7 +4,13 @@ impressi, eventuale spezzone di film in sovraimpressione (cutaway)."""
 import subprocess
 from pathlib import Path
 
-SQUARE_Y = 420  # il quadrato 1080x1080 parte qui sulla tela 1080x1920
+# Il quadrato 1080x1080 parte qui sulla tela 1080x1920. Era 420, ed e sceso
+# a 700 il 7/09: con 420 il video finiva a 1500 e sotto restavano 420 px di
+# nero buttati, mentre foto e banner erano schiacciati in cima, dove
+# Instagram ci scrive sopra il nome del profilo e la riga dell'audio.
+# Lorenzo, davanti al Reel del 6/09: "le immagini sono tagliate".
+# Non erano tagliate dal montaggio: erano coperte.
+SQUARE_Y = 700
 
 
 def _vertical_filter(mode: str, duration: float, zoom: float,

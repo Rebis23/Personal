@@ -60,7 +60,7 @@ export const defaultReelProps: ReelProps = {
 // ------------------------------------------------------------- FASCIA ---
 // Le foto in cima, come nel riferimento mandato da Lorenzo il 4/09: due o
 // tre immagini in fila sopra il banner, dentro la fascia nera che il
-// formato quadrato lascia libera (il video occupa 420-1500 su 1920).
+// formato quadrato lascia libera (il video occupa 700-1780 su 1920).
 //
 // Entrano sfalsate di un decimo l'una dall'altra, scendendo di poco: se
 // comparissero tutte insieme sembrerebbero un collage incollato, cosi
@@ -84,7 +84,10 @@ const Fascia: React.FC<{images: string[]}> = ({images}) => {
       <div
         style={{
           position: 'absolute',
-          top: 42,
+          // 250 e non 42: sopra i ~230 px c'e l'interfaccia di Instagram —
+          // nome del profilo e riga dell'audio — e li sotto le foto
+          // spariscono. Misurato sullo screenshot di Lorenzo del 6/09.
+          top: 250,
           display: 'flex',
           gap: GAP,
         }}
@@ -252,7 +255,7 @@ const HookBanner: React.FC<{text: string; seconds: number; sottoFascia: boolean}
           // Con le foto in cima il banner scende sotto di loro; senza,
           // resta dov'era. In tutti e due i casi sta nella fascia nera o
           // appena sopra la testa, mai sul viso.
-          top: sottoFascia ? 288 : 190,
+          top: sottoFascia ? 496 : 400,
           opacity: opacity * fadeOut,
           transform: `scale(${scale})`,
           maxWidth: '86%',
