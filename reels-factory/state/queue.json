@@ -89,16 +89,6 @@
   ],
   "queue": [
     {
-      "clip_id": "NlnJgTd3tC8-4",
-      "video_id": "NlnJgTd3tC8",
-      "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
-      "hook": "Questa non è ancora una prova",
-      "r2_key": "reels/NlnJgTd3tC8/NlnJgTd3tC8-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/NlnJgTd3tC8/NlnJgTd3tC8-4.mp4",
-      "caption": "Le testimonianze non sono una prova: sono esperienze personali.\nGliel'ho detto in faccia. E la risposta è stata la più onesta che potessi ricevere: non posso darti la prova.\n\n#fede #ateismo #dibattito #pensierocritico #religione #verita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-05T17:11:46Z"
-    },
-    {
       "clip_id": "NlnJgTd3tC8-5",
       "video_id": "NlnJgTd3tC8",
       "video_title": "Credente vs Ateo: DIBATTO un Amico che si è Convertito",
@@ -380,6 +370,14 @@
       "ig_media_id": "18354698923223347",
       "permalink": "https://www.instagram.com/reel/DdB0_G5EU0C/",
       "published_at": "2026-09-08T13:47:52Z"
+    },
+    {
+      "clip_id": "NlnJgTd3tC8-4",
+      "video_id": "NlnJgTd3tC8",
+      "hook": "Questa non è ancora una prova",
+      "ig_media_id": "18426843820148161",
+      "permalink": "https://www.instagram.com/reel/DdEaETvjsU_/",
+      "published_at": "2026-09-09T13:50:31Z"
     }
   ],
   "archive_done": [
