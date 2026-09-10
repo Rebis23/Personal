@@ -9,6 +9,7 @@
 ## Il contratto
 
 1. All'inizio chiedi SOLO tre cose: **formato** (long-form o short), **musica** (quale file Uppbeat), **aggressività del taglio**. Poi corri fino a una bozza rivedibile. Gli umani dirigono bene le bozze e male le specifiche.
+1b. **La COLOR si manda per prima, con più opzioni** (regola di Lorenzo, 05/09/2026): griglia prima/dopo con 3–5 varianti su 2–3 frame a luce diversa, e si aspetta la sua scelta prima di renderizzare i segmenti. Trascrizione e cut-list si fanno intanto.
 2. **Anteprime PRIMA dei render lunghi**: cut-list documentata, frame delle grafiche compositati su frame veri. Uno stile si valida su 3-4 anteprime, non su un render da 20 minuti.
 3. Ogni render >2 min va in **background con watcher**. Mai bloccare la conversazione.
 4. **Mai sovrascrivere una versione approvata**: file nuovi (`montato-v2`, `finale-v3`…).
