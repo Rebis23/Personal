@@ -269,6 +269,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     sub_cfg = cfg["subtitles"]
     queued = []
     banner_usati: set[str] = set()          # niente due clip che aprono uguale
+    montate: list[tuple[float, float]] = []  # niente due clip sullo stesso spezzone
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{n}"
         somma = pick.punteggi.somma
@@ -298,7 +299,25 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         # partire da li e restare sopra la durata minima. Offrire una riga
         # detta al quarantesimo secondo di una clip da cinquanta significa
         # far scegliere qualcosa che poi non si puo usare.
-        limite = max(start + 1.0, end - clip_cfg["min_seconds"])
+        # LA RIGA D'APERTURA DEVE STARE DENTRO IL MOMENTO VOTATO.
+        # snap_to_sentences puo restituire una finestra molto piu lunga del
+        # tetto: quando Whisper non mette un punto per minuti interi, quella
+        # che lui chiama "una frase" dura minuti, e `end` finisce centinaia
+        # di secondi dopo il momento scelto. Senza questo limite la riga
+        # d'apertura si va a pescare li dentro, e la clip parte da un punto
+        # del video che con quello votato non c'entra niente.
+        #
+        # Successo l'11/09 su tre clip su sei: la 2 votata [204-265] e uscita
+        # da [265-303] (zero sovrapposizione), la 3 votata [275-316] e uscita
+        # da [395-470], e siccome anche la 4 e finita a 396s le due clip sono
+        # uscite IDENTICHE — stesso audio, 0.78s di sfasamento, misurato.
+        # Il tetto sulla durata piu sotto arrivava troppo tardi: tagliava la
+        # coda di una clip che era gia partita dal punto sbagliato.
+        limite = aggancio.limite_apertura(
+            start, end, pick.end_seconds,
+            min_seconds=float(clip_cfg["min_seconds"]),
+            max_seconds=float(clip_cfg["max_seconds"]),
+        )
         detta = aggancio.dal_parlato(
             words, start, limite,
             tema=pick.bersaglio or pick.hook,
@@ -354,6 +373,20 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             print(f"      ✂️ Durata {end - start:.0f}s oltre il tetto di "
                   f"{tetto:.0f}s: tagliata")
             end = start + tetto
+
+        # NIENTE DUE CLIP SULLO STESSO SPEZZONE DI VIDEO. Il banner gia si
+        # controlla, ma due clip possono portare banner diversi e mostrare
+        # lo stesso identico filmato: l'11/09 la 3 e la 4 sono uscite a
+        # 0.78 secondi l'una dall'altra, stesso audio, correlazione 0.99.
+        # Il testo non bastava a beccarlo perche i due banner erano diversi.
+        # Qui si confrontano i tempi, che sono la cosa che conta davvero.
+        gemella = next((g for g in montate
+                        if aggancio.stesso_spezzone((start, end), g)), None)
+        if gemella is not None:
+            print(f"      👯 Stesso spezzone della clip che parte a "
+                  f"{gemella[0]:.0f}s: saltata")
+            continue
+        montate.append((start, end))
 
         clip_words = transcript.words_for_clip(words, start, end, punch)
         total_len = (end - start) + ((punch[1] - punch[0]) if punch else 0.0)

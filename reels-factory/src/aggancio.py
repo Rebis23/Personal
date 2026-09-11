@@ -671,3 +671,33 @@ def dal_parlato(words: list[dict], da: float, a: float, *, tema: str,
         print("      ⚠️ Nessuna riga pronunciata abbastanza corta da fare banner")
         return None
     return scegli_parlato(tratti, tema=tema, model=model)
+
+
+def limite_apertura(start: float, end: float, votato_fine: float, *,
+                    min_seconds: float, max_seconds: float) -> float:
+    """L'ultimo secondo in cui puo cominciare la riga d'apertura.
+
+    La clip parte dalla riga d'apertura: se quella riga si pesca fuori dal
+    momento che Claude ha votato, la clip che esce non e quella che e stata
+    valutata. E cosi che l'11/09 la clip 2 — votata [204-265] — e uscita da
+    [265-303], zero secondi in comune col momento scelto.
+
+    Tre vincoli, il piu stretto vince:
+      · non oltre la fine della finestra vera (`end`);
+      · non oltre la fine del momento votato da Claude;
+      · non oltre il tetto sulla durata a partire da `start`;
+    e in ogni caso abbastanza presto da lasciare `min_seconds` di clip.
+    """
+    ultimo = min(end, votato_fine, start + max_seconds)
+    return max(start + 1.0, ultimo - min_seconds)
+
+
+def stesso_spezzone(a: tuple[float, float], b: tuple[float, float]) -> bool:
+    """Due clip mostrano lo stesso pezzo di video.
+
+    Si guardano i tempi, non i titoli: l'11/09 le clip 3 e 4 sono uscite con
+    banner diversi e filmato identico (0.78s di sfasamento, correlazione
+    0.99 sull'audio), e il controllo sul testo non poteva accorgersene.
+    """
+    comune = min(a[1], b[1]) - max(a[0], b[0])
+    return comune > 0.5 * min(a[1] - a[0], b[1] - b[0])
