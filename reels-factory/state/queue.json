@@ -87,16 +87,6 @@
   ],
   "queue": [
     {
-      "clip_id": "flUlQn4_vuo-1",
-      "video_id": "flUlQn4_vuo",
-      "video_title": "Perchè mi sto Brainwashando per Credere in Dio (di Proposito)",
-      "hook": "Lavaggio del cervello per credere in Dio",
-      "r2_key": "reels/flUlQn4_vuo/flUlQn4_vuo-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/flUlQn4_vuo/flUlQn4_vuo-1.mp4",
-      "caption": "Da ateo ho deciso di auto-convincermi che Dio esiste. Di proposito.\nNon è una crisi mistica: è una scelta calcolata, con tre motivi precisi dietro.\nIl primo è quello che quasi nessun ateo vuole ammettere.\n\n#crescitapersonale #fede #filosofia #decisioni #valori #spiritualità #riflessioni\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-07T19:04:32Z"
-    },
-    {
       "clip_id": "flUlQn4_vuo-2",
       "video_id": "flUlQn4_vuo",
       "video_title": "Perchè mi sto Brainwashando per Credere in Dio (di Proposito)",
@@ -354,6 +344,14 @@
       "ig_media_id": "18627016915025767",
       "permalink": "https://www.instagram.com/reel/DdG-U8gj8oK/",
       "published_at": "2026-09-10T13:45:50Z"
+    },
+    {
+      "clip_id": "flUlQn4_vuo-1",
+      "video_id": "flUlQn4_vuo",
+      "hook": "Lavaggio del cervello per credere in Dio",
+      "ig_media_id": "17916783096240233",
+      "permalink": "https://www.instagram.com/reel/DdJi6_bCFJH/",
+      "published_at": "2026-09-11T13:44:02Z"
     }
   ],
   "archive_done": [
