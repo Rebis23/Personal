@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from . import aggancio, apify, brain, immagini, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
+from . import aggancio, apify, brain, chiusura, immagini, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -338,11 +338,32 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         if detta:
             print(f"      ▶️ La clip parte da «{detta['testo']}» "
                   f"(detto a {detta['start']:.0f}s)")
-            start = max(0.0, detta["start"] - 0.15)
+            start = transcript.inizio_pulito(words, detta["start"])
             banner_usati.add(" ".join(aggancio.parole(detta["testo"])))
         else:
             print("      ▶️ Nessuna riga d'apertura scelta: la clip parte dove "
                   "l'ha tagliata Claude")
+
+        # E DEVE ANCHE FINIRE. Lorenzo, 11/09, sul Reel uscito quella
+        # mattina: "ha una conclusione sbagliata, lascia in sospeso, poi si
+        # ferma improvvisamente. Dev'essere un discorso completo, finito in
+        # se stesso". Quel Reel finiva su «...un dio specifico con un nome,
+        # una storia, delle regole» e li si spegneva.
+        #
+        # Fin qui la fine la sceglieva snap_to_sentences, dove "frase" vuol
+        # dire "fino alla prossima pausa di 0.75s". Una pausa e un respiro:
+        # la clip finiva dove Lorenzo aveva preso fiato. Adesso il codice
+        # elenca i punti in cui si puo chiudere e il modello sceglie quello
+        # in cui il ragionamento e chiuso — lo stesso schema dell'apertura.
+        fine = chiusura.scegli_finale(
+            words, start,
+            argomento=getattr(pick, "argomento", "") or pick.bersaglio or pick.hook,
+            model=cfg["claude"]["model"],
+            min_seconds=float(clip_cfg["min_seconds"]),
+            max_seconds=float(clip_cfg["max_seconds"]),
+        )
+        if fine is not None:
+            end = fine
 
         # Cold open: la frase piu tagliente estratta e montata in apertura.
         # Deve stare dentro la clip e almeno 6s dopo il suo inizio, altrimenti
@@ -372,7 +393,9 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         if end - start > tetto:
             print(f"      ✂️ Durata {end - start:.0f}s oltre il tetto di "
                   f"{tetto:.0f}s: tagliata")
-            end = start + tetto
+            # Non a secco: si torna all'ultima parola che finisce prima del
+            # tetto, altrimenti l'ultima parola resta tranciata a meta.
+            end = transcript.ultima_parola_entro(words, start, start + tetto)
 
         # NIENTE DUE CLIP SULLO STESSO SPEZZONE DI VIDEO. Il banner gia si
         # controlla, ma due clip possono portare banner diversi e mostrare

@@ -257,3 +257,26 @@ def words_for_clip(words: list[dict], start: float, end: float,
                     "start": w["start"] + offset,
                     "end": w["end"] + offset})
     return out
+
+
+def ultima_parola_entro(words: list[dict], start: float, tetto: float) -> float:
+    """La fine dell'ultima parola che sta tutta dentro il tetto.
+
+    Il taglio a secco su `start + max_seconds` cadeva dove capitava, anche in
+    mezzo a una parola. Qui si arretra al confine di parola piu vicino: e il
+    minimo, non chiude un ragionamento — di quello si occupa chiusura.py.
+    """
+    dentro = [w["end"] for w in words if w["start"] >= start - 0.5 and w["end"] <= tetto]
+    return max(dentro) + 0.25 if dentro else tetto
+
+
+def inizio_pulito(words: list[dict], t: float, margine: float = 0.15) -> float:
+    """Un filo prima della parola da cui parte la clip, mai dentro quella prima.
+
+    Il margine serve a non tranciare la prima sillaba. Ma preso alla cieca si
+    porta dentro anche la coda della parola precedente, e chi guarda sente
+    mezza parola che non c'entra: nel Reel dell'11/09 la prima cosa che si
+    sente e una "a" sospesa.
+    """
+    prima = [w["end"] for w in words if w["end"] <= t + 0.01]
+    return max(0.0, max(prima) if prima else 0.0, t - margine)

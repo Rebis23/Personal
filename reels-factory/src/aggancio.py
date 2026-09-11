@@ -555,8 +555,13 @@ def tratti_parlati(words: list[dict], da: float, a: float, *,
     # comincia con una legatura.
     inizi = [i for i, t in enumerate(testi)
              if not (parole(t) and parole(t)[0] in LEGATURE)]
-    if 0 not in inizi:
-        inizi.insert(0, 0)
+    # Qui prima si rimetteva dentro d'ufficio la prima parola della finestra
+    # anche quando era una legatura, come rete di sicurezza. Ma la rete
+    # faceva passare proprio quello che doveva fermare: il Reel dell'11/09
+    # si apre su «a credere fermamente nel dio cristiano» — la prima parola
+    # che si sente e "a", appesa a una frase che chi guarda non ha sentito.
+    # Se in tutta la finestra non c'e un attacco pulito, e giusto non
+    # offrirne nessuno: chi chiama tiene la partenza che aveva.
 
     fuori: list[dict] = []
     visti: set[str] = set()

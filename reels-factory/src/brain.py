@@ -222,8 +222,13 @@ dal contesto la rende incomprensibile, metti 0.
 
 Regole per la selezione:
 - Ogni clip deve reggersi DA SOLA: chi la guarda non ha visto il resto del video.
-- Deve iniziare su una frase di aggancio (hook) e chiudersi su una frase completa: \
-mai troncare un ragionamento a metà.
+- Deve iniziare su una frase di aggancio (hook) e CHIUDERSI SU UNA CONCLUSIONE. \
+Non basta che l'ultima frase sia grammaticalmente finita: il discorso deve essere \
+arrivato al punto. Se alla fine chi guarda resta ad aspettare il seguito, la clip \
+è sbagliata anche se l'inizio era ottimo. Lorenzo, 11/09: "dev'essere un discorso \
+completo, comprensibile e finito in sé stesso". Meglio allungare la clip fino alla \
+conclusione che fermarla prima, e meglio una clip più corta che chiude di una più \
+lunga che si spegne a metà.
 - Cerca: affermazioni forti o contrarian, numeri e dati concreti, storie di clienti, \
 demolizione di miti, momenti di verità diretta.
 - Evita: saluti iniziali, call-to-action al canale, riferimenti ad altri momenti del \

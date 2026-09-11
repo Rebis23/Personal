@@ -54,6 +54,46 @@ codice.
 
 ---
 
+## Il Reel deve anche FINIRE
+
+L'hook fa fermare lo scroll. Ma un Reel che aggancia e poi si spegne a metà
+frase è un Reel sprecato: chi guarda resta ad aspettare un seguito che non
+arriva, e non arriva neanche il pensiero "questo tizio sa di cosa parla".
+
+Lorenzo, 11/09/2026, su un Reel uscito quella mattina:
+
+> "Ha una conclusione sbagliata, nel senso che lascia in sospeso: dice 'da lì
+> a credere a un dio che ha delle regole della Bibbia eccetera eccetera' e poi
+> si ferma improvvisamente. Dev'essere un discorso completo, comprensibile e
+> finito in sé stesso."
+
+Quel Reel finiva letteralmente così — «...un dio specifico con un nome, una
+storia, delle regole» — e si spegneva.
+
+**Perché succedeva.** La fine della clip la decideva `snap_to_sentences`, e lì
+"frase" non vuol dire quello che sembra: si chiude sulla punteggiatura di
+Whisper — che nel parlato salta quasi sempre — oppure su una pausa di 0,75
+secondi. Una pausa è un respiro. La clip finiva dove Lorenzo prendeva fiato.
+
+**La regola.** Il punto in cui il Reel finisce si sceglie, non si subisce:
+
+- l'ultima frase è **finita** — niente "però", niente "da lì a", niente elenchi
+  lasciati aperti;
+- il **ragionamento** è arrivato al punto, non solo alla premessa o all'esempio;
+- se subito dopo il taglio arrivasse il silenzio, avrebbe senso.
+
+Meglio una clip più corta che chiude di una più lunga che si spegne. E meglio
+allungarla fino alla conclusione che fermarla prima: il tetto è 75 secondi, di
+solito c'è spazio.
+
+Come per l'apertura, la regola è **meccanica**: `chiusura.py` elenca tutti i
+punti in cui la clip può finire, scarta quelli che cadono su una parola appesa,
+e il modello sceglie fra quelli rimasti. Un vincolo che il codice non verifica
+non è un vincolo — e infatti "chiudersi su una frase completa" era già scritto
+nel prompt da settimane, e non è bastato.
+
+---
+
 ## Cold open — il momento forte per primo
 
 Se dentro la clip c'è una frase più tagliente di quella con cui la clip
