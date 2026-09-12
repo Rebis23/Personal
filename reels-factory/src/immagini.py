@@ -199,8 +199,15 @@ def scegli(candidate: list[Path], *, quante: int, tema: str,
     risposta = None
     for tentativo in (1, 2, 3):
         try:
+            # 600 sembravano tanti per una risposta tipo "[0, 4, 9]", e
+            # infatti passavano la prova sul budget. Ma qui il modello deve
+            # prima GUARDARE dodici immagini e ragionarci sopra, e quel
+            # ragionamento sta dentro il budget: il 6/09 due giudizi e
+            # l'11/09 altri tre sono tornati completamente vuoti. Non
+            # "illeggibili": vuoti, stringa di zero caratteri. Il segno e
+            # sempre lo stesso, stop_reason=max_tokens, e adesso si legge.
             risposta = _cliente().messages.create(
-                model=model, max_tokens=600,
+                model=model, max_tokens=3000,
                 messages=[{"role": "user", "content": blocchi}],
             )
             break
@@ -233,7 +240,8 @@ def scegli(candidate: list[Path], *, quante: int, tema: str,
         if numeri:
             scelti = [int(n) for n in numeri[:quante]]
     if not scelti:
-        print(f"      ⚠️ Giudizio illeggibile ({testo[:60]!r}): tengo le prime")
+        print(f"      ⚠️ Giudizio illeggibile ({testo[:60]!r}, "
+              f"stop_reason={risposta.stop_reason}): tengo le prime")
         return validi[:quante]
 
     fuori = [validi[i] for i in scelti

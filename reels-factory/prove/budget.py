@@ -24,7 +24,11 @@ from pathlib import Path
 SRC = Path(__file__).resolve().parent.parent / "src"
 
 # Sotto questa soglia il ragionamento non ci sta e la risposta esce vuota.
-MINIMO = 600
+# Alzata da 600 a 1000 il 12/09: il giudizio sulle foto stava esattamente a
+# 600, passava questa prova, e tornava comunque vuoto — cinque volte fra il
+# 6 e l'11 settembre. Guardare dodici immagini costa piu ragionamento di
+# quanto costi leggere del testo, e 600 non bastavano.
+MINIMO = 1000
 
 trovati = 0
 colpevoli: list[str] = []
