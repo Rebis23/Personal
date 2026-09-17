@@ -60,7 +60,7 @@ jobs:
           R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
           PUBLISH_FORCE: ${{ inputs.force }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
-        run: python -m src.main publish
+        run: python -u -m src.main publish
 
       # Il 28/08 il Reel e uscito ma questo passo e fallito: la lavorazione
       # aveva scritto sul repo nel frattempo e il rebase e finito in conflitto
@@ -87,7 +87,7 @@ jobs:
             echo "Push rifiutato: riparto dallo stato aggiornato e riapplico la ricevuta"
             git fetch origin "${GITHUB_REF_NAME}"
             git reset --hard "origin/${GITHUB_REF_NAME}"
-            (cd reels-factory && python -m src.main registra)
+            (cd reels-factory && python -u -m src.main registra)
           done
           echo "::error::Stato non salvato dopo 3 tentativi — il Reel e comunque uscito"
           exit 1

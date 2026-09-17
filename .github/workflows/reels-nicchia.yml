@@ -51,7 +51,7 @@ jobs:
           # L'unico segreto necessario: serve a distillare gli schemi, non a
           # leggere YouTube. La lettura non costa niente e non chiede permessi.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python -m src.main nicchia
+        run: python -u -m src.main nicchia
 
       - name: Commit delle schede aggiornate
         run: |

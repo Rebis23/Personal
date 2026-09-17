@@ -381,7 +381,13 @@ jobs:
           # Da qui in poi comanda python: scarica, poi chiama tunnel.abbassa()
           # e fa tutto il resto — trascrizione, montaggio, R2, stato — sulla
           # rete normale.
-          WARP_SU=1 python -m src.main ingest
+          # -u: senza, Python tiene in pancia tutto il log e lo sputa solo alla fine.
+          # Il 16/09 un run e stato annullato dopo otto minuti e mezzo e nel log non
+          # c'era UNA riga di cosa stesse facendo: il buffer non e mai stato svuotato,
+          # e la causa e rimasta indeterminabile. Con -u ogni riga esce quando viene
+          # scritta, cosi un run interrotto lascia comunque il suo racconto — e sui
+          # run da settanta minuti si vede l'avanzamento invece di aspettare al buio.
+          WARP_SU=1 python -u -m src.main ingest
 
       # Il 2 settembre questo passo ha buttato via cinque clip gia montate e
       # gia caricate su R2: staged solo queue.json, ma il run aveva riscritto
@@ -421,7 +427,7 @@ jobs:
             git fetch origin "${GITHUB_REF_NAME}"
             git reset --hard "origin/${GITHUB_REF_NAME}"
             cp /tmp/nostro-state/prestazioni.md reels-factory/state/prestazioni.md
-            (cd reels-factory && python -m src.main fondi /tmp/nostro-state/queue.json) || exit 1
+            (cd reels-factory && python -u -m src.main fondi /tmp/nostro-state/queue.json) || exit 1
             git add -A reels-factory/state
             git diff --cached --quiet && echo "Niente da aggiungere" && exit 0
             git commit -m "Reels Factory: stato aggiornato dopo ingest [skip ci]"
