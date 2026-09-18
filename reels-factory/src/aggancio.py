@@ -87,9 +87,36 @@ VUOTE = {
 }
 
 
+# L'apostrofo in italiano incolla l'articolo alla parola: «l'ego» e «ego»
+# sono la stessa parola, ma per il codice sono due stringhe diverse. Il
+# 17/09 il banner «Niente ti farebbe cambiare idea? E ego» e stato bocciato
+# perche la clip parlava di «l'ego nei dibattiti» — la stessa identica
+# parola, respinta da un apostrofo.
+ELISIONI = {"l", "d", "un", "all", "dall", "dell", "nell", "sull", "quell",
+            "bell", "grand", "sant", "com", "anch", "po"}
+
+
 def _radice(p: str) -> str:
-    """Taglia la desinenza: «pornografia» e «pornografico» devono combaciare."""
-    return p[:6] if len(p) > 7 else p
+    """La parola ridotta all'osso, per capire se due parole sono parenti.
+
+    Due tagli, tutti e due nati da un errore misurato il 17/09:
+
+    · Si butta via l'articolo elidato. «l'ego» diventa «ego».
+
+    · Si taglia SEMPRE alla stessa lunghezza. Prima si tagliava a sei solo
+      sopra le sette lettere, e questo faceva fallire proprio le parenti:
+      «tifoso» ha sei lettere e restava intera, «tifoserie» ne ha nove e
+      diventava «tifose». Stessa radice, due stringhe diverse, banner
+      bocciato. Tagliare tutte allo stesso punto e l'unico modo perche il
+      confronto sia simmetrico.
+    """
+    if "'" in p:
+        testa, _, coda = p.partition("'")
+        if coda and testa in ELISIONI:
+            p = coda
+        else:
+            p = p.replace("'", "")
+    return p[:5] if len(p) > 5 else p
 
 
 def nomina_argomento(hook: str, argomento: str) -> bool:
