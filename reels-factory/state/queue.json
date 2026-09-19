@@ -110,16 +110,6 @@
   ],
   "queue": [
     {
-      "clip_id": "g1FICBfaOIo-2",
-      "video_id": "g1FICBfaOIo",
-      "video_title": "Quello che NON mi convince del Dio Cristiano (razionalmente)",
-      "hook": "La Bibbia prova che Dio esiste?",
-      "r2_key": "reels/g1FICBfaOIo/g1FICBfaOIo-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/g1FICBfaOIo/g1FICBfaOIo-2.mp4",
-      "caption": "\"È scritto nella Bibbia\" non rende vera la Bibbia. La rende un libro che prova a spiegare qualcosa.\nSe vale per la Bibbia, vale per il Corano e per la Torah. Quindi siamo pari.\n\n#religione #fede #cristianesimo #pensierocritico #filosofia #logica #ateismo\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-11T19:46:07Z"
-    },
-    {
       "clip_id": "g1FICBfaOIo-3",
       "video_id": "g1FICBfaOIo",
       "video_title": "Quello che NON mi convince del Dio Cristiano (razionalmente)",
@@ -431,6 +421,14 @@
       "ig_media_id": "18019269002928117",
       "permalink": "https://www.instagram.com/reel/Ddbkkwfgisc/",
       "published_at": "2026-09-18T13:45:14Z"
+    },
+    {
+      "clip_id": "g1FICBfaOIo-2",
+      "video_id": "g1FICBfaOIo",
+      "hook": "La Bibbia prova che Dio esiste?",
+      "ig_media_id": "18090796745184918",
+      "permalink": "https://www.instagram.com/reel/DdeGZtrAcRi/",
+      "published_at": "2026-09-19T13:19:17Z"
     }
   ],
   "archive_done": [
