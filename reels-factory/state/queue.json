@@ -110,16 +110,6 @@
   ],
   "queue": [
     {
-      "clip_id": "g1FICBfaOIo-3",
-      "video_id": "g1FICBfaOIo",
-      "video_title": "Quello che NON mi convince del Dio Cristiano (razionalmente)",
-      "hook": "Credi alla resurrezione solo perché è Gesù?",
-      "r2_key": "reels/g1FICBfaOIo/g1FICBfaOIo-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/g1FICBfaOIo/g1FICBfaOIo-3.mp4",
-      "caption": "Se domani venissi da te, senza Bibbia e senza cristianesimo, a dirti che un rabbino ebreo è tornato dalla morte, mi rideresti in faccia.\nE faresti bene: sono io che devo provartelo. E le prove, oggi, non reggono.\n\n#religione #fede #cristianesimo #pensierocritico #filosofia #razionalità #ricercadellaverità\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-11T19:52:21Z"
-    },
-    {
       "clip_id": "g1FICBfaOIo-4",
       "video_id": "g1FICBfaOIo",
       "video_title": "Quello che NON mi convince del Dio Cristiano (razionalmente)",
@@ -429,6 +419,14 @@
       "ig_media_id": "18090796745184918",
       "permalink": "https://www.instagram.com/reel/DdeGZtrAcRi/",
       "published_at": "2026-09-19T13:19:17Z"
+    },
+    {
+      "clip_id": "g1FICBfaOIo-3",
+      "video_id": "g1FICBfaOIo",
+      "hook": "Credi alla resurrezione solo perché è Gesù?",
+      "ig_media_id": "18385126513228620",
+      "permalink": "https://www.instagram.com/reel/DdgtnLHE10c/",
+      "published_at": "2026-09-20T13:39:54Z"
     }
   ],
   "archive_done": [
