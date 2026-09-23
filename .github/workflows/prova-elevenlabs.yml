@@ -33,8 +33,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Installa requests
-        run: pip install --quiet requests PyYAML
+      # ffmpeg serve a tirare fuori l'audio dal Reel. Nella fabbrica vera
+      # c'e gia (passo "Installa i pacchetti di sistema"); qui no, e la
+      # prima prova e morta in un secondo con "command not found".
+      - name: Installa ffmpeg e requests
+        run: |
+          sudo apt-get -o DPkg::Lock::Timeout=300 update -qq
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y -qq --no-install-recommends ffmpeg
+          ffmpeg -version | head -1
+          pip install --quiet requests PyYAML
 
       - name: Otto secondi di voce vera da un Reel gia uscito
         run: |
