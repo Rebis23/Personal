@@ -19,9 +19,18 @@ apify:
   # bloccato dai runner GitHub; Apify lo fa per noi a pochi centesimi a video)
   video_quality: "1080p"
 
+trascrizione:
+  # Scribe di ElevenLabs — la strada principale dal 23/09, su richiesta di
+  # Lorenzo. Serve il segreto ELEVENLABS_API_KEY con il permesso "Speech to
+  # Text" acceso. Senza chiave, o se ElevenLabs risponde male, si ripiega su
+  # Whisper qui sotto: peggio, ma il Reel esce lo stesso.
+  modello: "scribe_v2"
+
 whisper:
-  # Modello di trascrizione: "small" = veloce (~5-10 min per un video da 20'),
-  # "medium" = più preciso ma ~2-3x più lento
+  # La rete di sicurezza. Gira sul runner, gratis ma impreciso: stacca gli
+  # apostrofi e smette di mettere la punteggiatura per minuti interi.
+  # "small" = veloce (~5-10 min per un video da 20'), "medium" = più preciso
+  # ma ~2-3x più lento
   model: "small"
 
 clips:

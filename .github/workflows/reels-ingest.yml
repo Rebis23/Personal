@@ -315,6 +315,7 @@ jobs:
         working-directory: reels-factory
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           # Serve in LETTURA: prima di scegliere le clip, il sistema rilegge
           # quante views hanno fatto quelle gia uscite, per non riproporre un
           # taglio gia morto. Senza token quel controllo restava fermo alla

@@ -220,7 +220,11 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
 
     # Trascrizione con Whisper: parola-per-parola, nessuna dipendenza dai
     # sottotitoli automatici di YouTube
-    words = transcribe.transcribe_words(source, model_size=cfg["whisper"]["model"])
+    words = transcribe.transcribe_words(
+        source,
+        model_size=cfg["whisper"]["model"],
+        scribe_model=cfg.get("trascrizione", {}).get("modello", "scribe_v2"),
+    )
     if len(words) < 50:
         print("   ⏭️ Trascrizione troppo scarna, salto")
         _mark(st, v, "skipped_no_transcript")

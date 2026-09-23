@@ -95,8 +95,11 @@ def find_clip(query: str, workdir: Path, *, max_seconds: int = 5) -> dict | None
         from . import transcribe
         offset = None
         try:
+            # usa_scribe=False: questo e uno spezzone di film usa e getta,
+            # spesso scartato. Non ha senso pagarne la trascrizione.
             words = transcribe.transcribe_words(path, model_size="small",
-                                                language="en")
+                                                language="en",
+                                                usa_scribe=False)
             offset = _match_offset(words, query, float(max_seconds))
         except Exception as e:  # noqa: BLE001 — il fallback è comunque valido
             print(f"  ⚠️ Trascrizione scena fallita ({e}), uso il centro")
