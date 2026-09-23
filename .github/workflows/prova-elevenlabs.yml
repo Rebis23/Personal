@@ -1,0 +1,118 @@
+# Prova: la chiave di ElevenLabs funziona davvero?
+#
+# Dal 23/09 le trascrizioni passano da Scribe. Il problema e che se la
+# chiave avesse il permesso sbagliato, o il nome del modello fosse
+# cambiato, la fabbrica NON si ferma: ripiega su Whisper e continua. E'
+# voluto — un Reel peggiore esce, un Reel che non esiste no — ma vuol dire
+# che un guasto resterebbe invisibile per giorni.
+#
+# Questa prova lo scopre in trenta secondi invece che in un run da
+# un'ora e mezza. Non tocca la fabbrica e non scrive niente: prende otto
+# secondi da un Reel gia pubblicato — voce vera di Lorenzo, non un tono
+# finto — li manda a Scribe e stampa cosa torna.
+#
+# Come si legge il risultato:
+#   200 + parole  -> tutto a posto
+#   401           -> chiave sbagliata, o senza il permesso "Speech to Text"
+#   422           -> il nome del modello in config.yaml non esiste piu
+#   nessuna parola-> risponde ma non trascrive: guardare il corpo stampato
+
+name: "Prova · ElevenLabs Scribe"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa requests
+        run: pip install --quiet requests PyYAML
+
+      - name: Otto secondi di voce vera da un Reel gia uscito
+        run: |
+          URL=$(python -u -c "
+          import json
+          d = json.load(open('reels-factory/state/queue.json'))
+          fonte = d['queue'] or []
+          print(fonte[0]['media_url'] if fonte else '')
+          ")
+          if [ -z "$URL" ]; then
+            echo '::error::Coda vuota: non ho un Reel da cui prendere la voce'
+            exit 1
+          fi
+          echo "Prendo la voce da: $URL"
+          curl -sSL --max-time 180 -o reel.mp4 "$URL"
+          ffmpeg -v error -y -ss 3 -t 8 -i reel.mp4 -vn -ac 1 -ar 16000 -b:a 32k voce.mp3
+          ls -la voce.mp3
+
+      - name: Chiedi a Scribe
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          python -u - <<'PY'
+          import os, sys, yaml, requests
+
+          chiave = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+          if not chiave:
+              print("::error::Il segreto ELEVENLABS_API_KEY non e arrivato. "
+                    "Controllare che si chiami esattamente cosi.")
+              sys.exit(1)
+          print(f"Chiave presente: {len(chiave)} caratteri, "
+                f"finisce con ...{chiave[-4:]}")
+
+          cfg = yaml.safe_load(open("reels-factory/config.yaml"))
+          modello = cfg.get("trascrizione", {}).get("modello", "scribe_v2")
+          print(f"Modello richiesto: {modello}")
+
+          with open("voce.mp3", "rb") as f:
+              r = requests.post(
+                  "https://api.elevenlabs.io/v1/speech-to-text",
+                  headers={"xi-api-key": chiave},
+                  data={"model_id": modello, "language_code": "ita",
+                        "timestamps_granularity": "word", "diarize": "false"},
+                  files={"file": ("voce.mp3", f, "audio/mpeg")},
+                  timeout=300,
+              )
+
+          print(f"\nRisposta: {r.status_code}")
+          if r.status_code != 200:
+              print(r.text[:800])
+              if r.status_code == 401:
+                  print("::error::Chiave rifiutata. O e sbagliata, o le manca "
+                        "il permesso 'Speech to Text' fra gli scope.")
+              elif r.status_code == 422:
+                  print(f"::error::Il modello '{modello}' non e accettato. "
+                        "Cambiare 'trascrizione.modello' in config.yaml.")
+              else:
+                  print(f"::error::ElevenLabs ha risposto {r.status_code}.")
+              sys.exit(1)
+
+          dati = r.json()
+          voci = dati.get("words") or []
+          parole = [w for w in voci if w.get("type") == "word"]
+          print(f"Lingua riconosciuta: {dati.get('language_code')} "
+                f"(sicurezza {dati.get('language_probability')})")
+          print(f"{len(voci)} voci nella risposta, di cui {len(parole)} parole vere")
+          print(f"\nTesto: {dati.get('text', '')[:300]}\n")
+          for w in parole[:12]:
+              print(f"  {w['start']:6.2f} - {w['end']:6.2f}   {w['text']}")
+
+          if not parole:
+              print("::error::Risponde ma non trascrive niente. "
+                    "Guardare il corpo qui sopra.")
+              sys.exit(1)
+          if any("start" not in w or "end" not in w for w in parole):
+              print("::error::Mancano i tempi parola per parola: la fabbrica "
+                    "non puo funzionare senza.")
+              sys.exit(1)
+          print("\nOK: chiave valida, modello accettato, tempi parola per "
+                "parola presenti.")
+          PY
