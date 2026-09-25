@@ -1045,12 +1045,27 @@ def cmd_shorts() -> int:
 
     saliti = 0
     with tempfile.TemporaryDirectory() as tmp:
-        for c in candidate[:quante]:
+        for c in candidate:
+            if saliti >= quante:
+                break
             cid = c["clip_id"]
+
+            # LA RICEVUTA DI INSTAGRAM NON PORTA L'INDIRIZZO DEL FILE.
+            # Quando una clip esce, quello che si salva in `published` e la
+            # ricevuta — id del Reel, permalink, quando — e non il campo
+            # media_url, che vive solo nella voce in coda. Al primo
+            # tentativo di caricare su YouTube tutte e 37 le vecchie sono
+            # state saltate per questo. La chiave su R2 pero e costruita
+            # sempre allo stesso modo, quindi si ricompone.
             url = c.get("media_url") or ""
             if not url:
-                print(f"  ⚠️ {cid} non ha un indirizzo su R2: salto")
-                continue
+                chiave = c.get("r2_key") or (
+                    f"reels/{c['video_id']}/{cid}.mp4")
+                try:
+                    url = storage.refresh_url(chiave)
+                except Exception as e:  # noqa: BLE001
+                    print(f"  ⚠️ {cid}: non ricavo l'indirizzo ({e}), salto")
+                    continue
             print(f"\n  📤 {cid} — «{c.get('hook', '')}»")
             file = Path(tmp) / f"{cid}.mp4"
             try:

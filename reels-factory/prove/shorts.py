@@ -102,5 +102,28 @@ prova("a recupero finito non resta niente",
 prova("un id sconosciuto nella lista dei fatti non fa danni",
       len(da_fare(PUB, ["z-9"])) == 3)
 
+print()
+# --- L'indirizzo del file, per le clip gia uscite su Instagram -----------
+# La ricevuta che si salva quando un Reel esce NON contiene media_url:
+# quello vive solo nella voce in coda. Al primo tentativo di caricare su
+# YouTube tutte e 37 le vecchie sono state saltate per questo. La chiave su
+# R2 pero e costruita sempre allo stesso modo, quindi si ricompone.
+def chiave_r2(c):
+    return c.get("r2_key") or f"reels/{c['video_id']}/{c['clip_id']}.mp4"
+
+
+RICEVUTA = {"clip_id": "tCyZ18Ubms4-1", "video_id": "tCyZ18Ubms4",
+            "hook": "x", "published_at": "2026-08-17T10:07:01Z"}
+IN_CODA = {"clip_id": "C5gSgm-yLsc-3", "video_id": "C5gSgm-yLsc",
+           "r2_key": "reels/C5gSgm-yLsc/C5gSgm-yLsc-3.mp4"}
+
+prova("dalla ricevuta di Instagram si ricava la chiave su R2",
+      chiave_r2(RICEVUTA) == "reels/tCyZ18Ubms4/tCyZ18Ubms4-1.mp4",
+      chiave_r2(RICEVUTA))
+prova("la forma e la stessa che usa la coda",
+      chiave_r2(IN_CODA) == IN_CODA["r2_key"], chiave_r2(IN_CODA))
+prova("se la chiave c'e gia non se ne inventa un'altra",
+      chiave_r2({**IN_CODA, "video_id": "sbagliato"}) == IN_CODA["r2_key"])
+
 print(f"\n  {verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
