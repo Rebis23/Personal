@@ -13,12 +13,14 @@ import hashlib
 import json
 import os
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+import requests
 import yaml
 
-from . import aggancio, apify, brain, chiusura, immagini, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
+from . import aggancio, apify, brain, chiusura, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -933,11 +935,75 @@ def cmd_fondi() -> int:
     return 0
 
 
+def cmd_shorts() -> int:
+    """Le clip gia montate finiscono anche su YouTube Shorts.
+
+    Lorenzo, 25/09: "puoi postare tutti i vecchi video anche su yt shorts?"
+
+    Non rimonta niente: i file sono gia su R2, si scaricano e si caricano.
+    Chi e gia salito resta segnato in `shorts_done`, cosi il comando si puo
+    rilanciare quante volte si vuole senza sdoppiare niente — che serve
+    davvero, perche la quota di YouTube e giornaliera e un recupero grosso
+    puo doversi spezzare in piu giorni.
+
+    Quante caricarne per volta si passa da riga di comando:
+        python -m src.main shorts 10
+    """
+    quante = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+    st = state_mod.load_state()
+    fatti = set(st.setdefault("shorts_done", []))
+
+    # Le gia pubblicate su Instagram per prime, in ordine di uscita: sono
+    # quelle che hanno gia fatto il loro giro e non rischiano di anticipare
+    # un Reel che deve ancora uscire.
+    candidate = [c for c in st.get("published", []) if c.get("clip_id") not in fatti]
+    if not candidate:
+        print("✅ Niente da caricare: tutte le clip sono gia su Shorts")
+        return 0
+
+    print(f"▶️ {len(candidate)} clip da portare su Shorts, ne faccio {quante}")
+    if not shorts.configurato():
+        print("⛔ Mancano i segreti di YouTube (YT_CLIENT_ID, "
+              "YT_CLIENT_SECRET, YT_REFRESH_TOKEN)")
+        return 1
+
+    saliti = 0
+    with tempfile.TemporaryDirectory() as tmp:
+        for c in candidate[:quante]:
+            cid = c["clip_id"]
+            url = c.get("media_url") or ""
+            if not url:
+                print(f"  ⚠️ {cid} non ha un indirizzo su R2: salto")
+                continue
+            print(f"\n  📤 {cid} — «{c.get('hook', '')}»")
+            file = Path(tmp) / f"{cid}.mp4"
+            try:
+                r = requests.get(url, timeout=600)
+                r.raise_for_status()
+                file.write_bytes(r.content)
+            except Exception as e:  # noqa: BLE001
+                print(f"  ⚠️ Non riesco a scaricare la clip: {e}")
+                continue
+
+            vid = shorts.carica(file, hook=c.get("hook", ""),
+                                titolo_video=c.get("video_title", ""))
+            if vid is None:
+                print("  ⛔ Mi fermo qui: lo stato di quelle salite e salvo")
+                break
+            st["shorts_done"].append(cid)
+            saliti += 1
+
+    state_mod.save_state(st)
+    resto = len(candidate) - saliti
+    print(f"\n✅ {saliti} clip su Shorts. Ne restano {resto}.")
+    return 0
+
+
 def main() -> int:
     commands = {"ingest": cmd_ingest, "publish": cmd_publish,
                 "registra": cmd_registra, "nicchia": cmd_nicchia,
                 "musica": cmd_musica, "status": cmd_status,
-                "fondi": cmd_fondi}
+                "fondi": cmd_fondi, "shorts": cmd_shorts}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1

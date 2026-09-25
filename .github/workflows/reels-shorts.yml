@@ -1,0 +1,70 @@
+# Le clip gia montate finiscono anche su YouTube Shorts.
+#
+# Non rimonta niente: i file sono gia su R2, si scaricano e si caricano.
+# Chi e gia salito resta segnato nello stato, quindi il workflow si puo
+# rilanciare senza sdoppiare niente — e serve, perche la quota di YouTube
+# e giornaliera (cento caricamenti) e un recupero grosso puo spezzarsi.
+#
+# Parte SOLO a mano. Il recupero delle vecchie e una cosa che si fa una
+# volta, e non deve mettersi in mezzo alla pubblicazione quotidiana.
+
+name: "Reels Factory · Shorts"
+
+on:
+  workflow_dispatch:
+    inputs:
+      quante:
+        description: "Quante clip caricare in questa passata"
+        required: false
+        default: "5"
+
+concurrency:
+  group: reels-factory-state
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  shorts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa dipendenze Python
+        working-directory: reels-factory
+        run: pip install --quiet requests PyYAML boto3
+
+      - name: Carica su Shorts
+        working-directory: reels-factory
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python -u -m src.main shorts "${{ inputs.quante }}"
+
+      - name: Commit dello stato aggiornato
+        run: |
+          git config user.name "reels-factory-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A reels-factory/state
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica allo stato"
+            exit 0
+          fi
+          git commit -m "Reels Factory: clip salite su Shorts [skip ci]"
+          for tentativo in 1 2 3; do
+            if git push; then
+              echo "Stato salvato al tentativo ${tentativo}"
+              exit 0
+            fi
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            sleep $((tentativo * 5))
+          done
+          echo "::error::Le clip sono su YouTube ma lo stato non e stato salvato"
+          exit 1
