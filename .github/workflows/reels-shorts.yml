@@ -5,7 +5,7 @@
 # rilanciare senza sdoppiare niente — e serve, perche la quota di YouTube
 # e giornaliera (cento caricamenti) e un recupero grosso puo spezzarsi.
 #
-Quante caricarne al giorno sta in config.yaml (shorts.al_giorno): quattro
+# Quante caricarne al giorno sta in config.yaml (shorts.al_giorno): quattro
 # finche c'e arretrato, poi la regola non cambia e diventano da sole le due
 # al giorno di Instagram, perche altre non ce ne sono.
 
