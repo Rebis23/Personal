@@ -103,5 +103,22 @@ for f in FLUSSI:
           "requirements.txt" in testo,
           "lancia src.main ma si sceglie i pacchetti da solo")
 
+print()
+# --- Chi tocca le clip deve ricevere i segreti di R2 --------------------
+# Terzo inciampo della stessa famiglia in un'ora: il passo gira, ma
+# nell'ambiente gli manca qualcosa che il codice usa. Il 25/09 il workflow
+# degli Shorts ha saltato tutte e 37 le clip con «non ricavo l'indirizzo
+# ('R2_ACCOUNT_ID')»: i file stanno su R2 e i segreti non arrivavano.
+for f in FLUSSI:
+    testo = f.read_text(encoding="utf-8")
+    tocca_clip = any(c in testo for c in ("src.main shorts",
+                                          "src.main publish",
+                                          "src.main ingest"))
+    if not tocca_clip:
+        continue
+    prova(f"{f.name}: riceve i segreti di R2",
+          "R2_ACCOUNT_ID" in testo and "R2_PUBLIC_BASE_URL" in testo,
+          "scarica o carica clip ma non ha le credenziali di R2")
+
 print(f"\n  {verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
