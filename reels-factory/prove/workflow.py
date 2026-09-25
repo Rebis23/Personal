@@ -88,5 +88,20 @@ prova("ma questa prova la riconosce come intrusa",
       bool(set(letta) - AMMESSE),
       str(sorted(str(k) for k in letta)))
 
+print()
+# --- Chi lancia la fabbrica deve installare TUTTE le dipendenze ---------
+# Il 25/09 il workflow degli Shorts installava tre pacchetti scelti a mano —
+# quelli che servono a caricare un video — ed e morto su "No module named
+# anthropic". src/main.py importa tutti i moduli in cima, anche quelli che
+# quel comando non usa: un elenco curato a mano si rompe ogni volta che
+# qualcuno aggiunge un import da un'altra parte.
+for f in FLUSSI:
+    testo = f.read_text(encoding="utf-8")
+    if "src.main" not in testo:
+        continue
+    prova(f"{f.name}: installa da requirements.txt, non a mano",
+          "requirements.txt" in testo,
+          "lancia src.main ma si sceglie i pacchetti da solo")
+
 print(f"\n  {verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)

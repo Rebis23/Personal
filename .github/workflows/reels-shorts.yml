@@ -48,7 +48,13 @@ jobs:
 
       - name: Installa dipendenze Python
         working-directory: reels-factory
-        run: pip install --quiet requests PyYAML boto3
+        # requirements.txt, non un elenco scelto a mano. Il primo tentativo
+        # installava solo requests, PyYAML e boto3 — quelli che SERVONO a
+        # caricare — ed e morto su "No module named anthropic": src/main.py
+        # importa tutti i moduli in cima, anche quelli che questo comando non
+        # usa. Un elenco curato a mano si rompe ogni volta che qualcuno
+        # aggiunge un import da un'altra parte.
+        run: pip install -r requirements.txt
 
       - name: Carica su Shorts
         working-directory: reels-factory
