@@ -130,16 +130,19 @@ archive:
   # Quando non escono video nuovi e la coda si svuota, il sistema ripesca dai
   # video passati del canale: così il profilo non resta mai fermo.
   enabled: true
-  # Quanti video d'archivio recuperare in tutto. Alzato da 5 a 12 il 25/08:
-  # con una lavorazione ogni 3 giorni, 5 video coprivano solo due settimane e
-  # poi il profilo si sarebbe fermato. Nel feed del canale ce ne sono 15.
-  max_videos: 12
+  # Quanti video d'archivio recuperare in tutto. Alzato a 60 il 25/09: fino
+  # a ieri il tetto era 12 perché si credeva che il canale avesse 15 video —
+  # ma quei 15 erano il limite del feed RSS, non il canale. Adesso si legge
+  # il catalogo vero, e il tetto non deve più essere il collo di bottiglia.
+  max_videos: 60
   # Minimo di giorni tra una lavorazione d'archivio e la successiva.
-  # 3 giorni × 3 clip per video = una pubblicazione al giorno senza buchi
-  # (richiesta di Lorenzo del 25/08, sostituisce il "max un video a settimana")
-  min_days_between: 3
-  # Si pesca dall'archivio solo se in coda restano al massimo N clip
-  queue_below: 1
+  # Sceso da 3 a 1 il 25/09: a due Reel al giorno servono ~4 clip ogni due
+  # giorni, e con un video ogni 3 giorni la coda si svuotava.
+  min_days_between: 1
+  # Si pesca dall'archivio quando in coda restano al massimo N clip.
+  # Alzato da 1 a 4 il 25/09: a due Reel al giorno, aspettare di essere a 1
+  # vuol dire accorgersene mezza giornata troppo tardi.
+  queue_below: 4
 
 instagram:
   # Profilo PERSONALE: niente hashtag di brand o promozionali. Gli hashtag
@@ -157,6 +160,20 @@ instagram:
   # nessuno. Fuori finestra la pubblicazione si ferma e il turno successivo la
   # recupera; l'esecuzione manuale con "force" ignora questo controllo.
   ore_pubblicazione: [7, 22]
+  # Quanti Reel al giorno. Portato da 1 a 2 il 25/09 su richiesta di Lorenzo.
+  al_giorno: 2
+  # Ore minime fra un Reel e il successivo. Serve perché GitHub consegna le
+  # esecuzioni con ritardi anche di ore: senza questo, due turni arretrati
+  # consegnati insieme farebbero uscire i due Reel del giorno a distanza di
+  # un minuto. Con 5 ore, nella finestra 7-22 ce ne stanno comodamente due.
+  distanza_minima_ore: 5
+
+shorts:
+  # YouTube Shorts. Quanti caricarne al giorno mentre si recupera l'arretrato
+  # dei 38 Reel già usciti su Instagram (richiesta di Lorenzo del 25/09).
+  # Finito l'arretrato la regola non cambia: si carica quello che c'è, cioè
+  # i 2 al giorno di Instagram. Non serve un interruttore, converge da sola.
+  al_giorno: 4
 
 claude:
   model: "claude-opus-5"

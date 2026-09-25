@@ -5,18 +5,28 @@
 # rilanciare senza sdoppiare niente — e serve, perche la quota di YouTube
 # e giornaliera (cento caricamenti) e un recupero grosso puo spezzarsi.
 #
-# Parte SOLO a mano. Il recupero delle vecchie e una cosa che si fa una
-# volta, e non deve mettersi in mezzo alla pubblicazione quotidiana.
+Quante caricarne al giorno sta in config.yaml (shorts.al_giorno): quattro
+# finche c'e arretrato, poi la regola non cambia e diventano da sole le due
+# al giorno di Instagram, perche altre non ce ne sono.
 
 name: "Reels Factory · Shorts"
 
 on:
+  schedule:
+    # Una passata al giorno basta: carica tutte quelle che gli spettano.
+    # 06:00 UTC, prima che Instagram pubblichi: cosi l'arretrato scala
+    # anche nei giorni in cui la pubblicazione salta.
+    - cron: "0 6 * * *"
+    # Riserva, per i ritardi di GitHub. Il tetto giornaliero e nel codice:
+    # questi turni non raddoppiano niente, recuperano solo quelli persi.
+    - cron: "0 12 * * *"
+    - cron: "0 18 * * *"
   workflow_dispatch:
     inputs:
       quante:
-        description: "Quante clip caricare in questa passata"
+        description: "Quante caricare adesso (vuoto = come da config)"
         required: false
-        default: "5"
+        default: ""
 
 concurrency:
   group: reels-factory-state

@@ -129,9 +129,25 @@ def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
     # NON viene segnato qui: si registra solo a lavoro riuscito, altrimenti un
     # download fallito brucerebbe il video e farebbe partire l'attesa di giorni
     done_ids = set(st.get("archive_done", []))
-    for v in videos:
-        if not state_mod.is_processed(st, v["video_id"]) and v["video_id"] not in done_ids:
-            return v
+
+    # IL FEED RSS SI FERMA A QUINDICI. Per i video nuovi va benissimo — uno
+    # appena uscito e sempre fra i primi quindici — ma per l'archivio no:
+    # il 25/09, facendo i conti a due Reel al giorno, e venuto fuori che la
+    # fabbrica si credeva sei video di riserva mentre il canale ne ha molti
+    # di piu. Sedici giorni di autonomia invece di mesi, per un limite che
+    # nessuno aveva scelto. Qui si chiede l'elenco vero; se non arriva si
+    # torna ai quindici del feed, che e comunque meglio di niente.
+    catalogo = yt.fetch_intero_catalogo(cfg["youtube"]["channel_id"]) or videos
+
+    minimo = cfg["youtube"].get("min_duration_seconds", 180)
+    for v in catalogo:
+        if state_mod.is_processed(st, v["video_id"]) or v["video_id"] in done_ids:
+            continue
+        # Gli Short del canale non si ritagliano: sono gia corti, e la
+        # durata arriva insieme all'elenco quando viene dal catalogo.
+        if 0 < v.get("durata", 0) < minimo:
+            continue
+        return v
     return None
 
 
@@ -642,14 +658,35 @@ def cmd_publish() -> int:
     # l'esecuzione delle 09:30 e arrivata alle 19:55, il 28/08 non e arrivata):
     # non devono trasformarsi in tre Reel nello stesso giorno.
     forzato = os.environ.get("PUBLISH_FORCE", "").strip().lower() in ("1", "true", "yes")
+    tetto = int(cfg["instagram"].get("al_giorno", 1))
+    distanza = float(cfg["instagram"].get("distanza_minima_ore", 0))
     if st["published"] and not forzato:
-        # La piu recente in assoluto, non l'ultima della lista: l'ordine
-        # dell'elenco non e garantito, e fidarsi della posizione e stato
-        # meta del guaio del 31/08.
-        ultima = max((p.get("published_at", "") for p in st["published"]))[:10]
-        if ultima == state_mod.now_iso()[:10]:
-            print(f"✅ Gia pubblicato oggi ({ultima}): non ne esce un secondo")
+        oggi = state_mod.now_iso()[:10]
+        usciti = [p.get("published_at", "") for p in st["published"]
+                  if p.get("published_at", "").startswith(oggi)]
+        if len(usciti) >= tetto:
+            print(f"✅ Oggi ne sono gia usciti {len(usciti)} su {tetto}: "
+                  f"non ne esce un altro")
             return 0
+
+        # NON DUE ATTACCATI. GitHub consegna le esecuzioni programmate con
+        # ritardi anche di otto ore: senza questo controllo, due turni
+        # arretrati consegnati insieme farebbero uscire i due Reel del
+        # giorno a un minuto di distanza. Si guarda la piu recente in
+        # assoluto, non l'ultima della lista: l'ordine dell'elenco non e
+        # garantito, e fidarsi della posizione e stato meta del guaio del
+        # 31/08.
+        if usciti and distanza > 0:
+            ultima = max(usciti)
+            try:
+                quando = datetime.fromisoformat(ultima.replace("Z", "+00:00"))
+                ore = (datetime.now(timezone.utc) - quando).total_seconds() / 3600
+            except ValueError:
+                ore = 1e9
+            if ore < distanza:
+                print(f"⏳ L'ultimo Reel e uscito {ore:.1f} ore fa, il minimo e "
+                      f"{distanza:.0f}: aspetto il turno dopo")
+                return 0
 
     # Fuori dall'orario buono non si pubblica: meglio saltare un turno che
     # bruciare una clip alle 3 di notte (successo il 29/08, con l'esecuzione
@@ -949,9 +986,34 @@ def cmd_shorts() -> int:
     Quante caricarne per volta si passa da riga di comando:
         python -m src.main shorts 10
     """
-    quante = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+    cfg = load_config()
     st = state_mod.load_state()
-    fatti = set(st.setdefault("shorts_done", []))
+    voci = st.setdefault("shorts_done", [])
+
+    # Le voci sono {clip_id, at}. Si accettano anche le stringhe nude, che e
+    # la forma che avevano prima del tetto giornaliero: cosi uno stato
+    # vecchio non fa saltare niente.
+    def _id(v):
+        return v if isinstance(v, str) else v.get("clip_id", "")
+
+    def _quando(v):
+        return "" if isinstance(v, str) else v.get("at", "")
+
+    fatti = {_id(v) for v in voci}
+
+    tetto = int(cfg.get("shorts", {}).get("al_giorno", 4))
+    a_mano = sys.argv[2].strip() if len(sys.argv) > 2 else ""
+    if a_mano:
+        quante = int(a_mano)
+    else:
+        oggi = state_mod.now_iso()[:10]
+        gia_oggi = sum(1 for v in voci if _quando(v).startswith(oggi))
+        quante = max(0, tetto - gia_oggi)
+        if quante == 0:
+            print(f"✅ Oggi ne sono gia saliti {gia_oggi} su {tetto}: basta cosi")
+            return 0
+        if gia_oggi:
+            print(f"ℹ️ Oggi ne sono gia saliti {gia_oggi}: ne restano {quante}")
 
     # Le gia pubblicate su Instagram per prime, in ordine di uscita: sono
     # quelle che hanno gia fatto il loro giro e non rischiano di anticipare
@@ -990,7 +1052,9 @@ def cmd_shorts() -> int:
             if vid is None:
                 print("  ⛔ Mi fermo qui: lo stato di quelle salite e salvo")
                 break
-            st["shorts_done"].append(cid)
+            st["shorts_done"].append({"clip_id": cid,
+                                      "at": state_mod.now_iso(),
+                                      "youtube_id": vid})
             saliti += 1
 
     state_mod.save_state(st)

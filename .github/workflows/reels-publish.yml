@@ -1,20 +1,28 @@
 # Reels Factory — PUBLISH
-# Una volta al giorno pubblica su Instagram (come Reel) la prossima clip
-# in coda. Le clip di un video escono quindi distribuite su più giorni.
+# Pubblica su Instagram le prossime clip in coda. Dal 25/09 sono DUE al
+# giorno (richiesta di Lorenzo), distanziate di almeno cinque ore.
+#
+# Quanti al giorno e quanto distanziati NON stanno qui: stanno in
+# config.yaml (instagram.al_giorno e instagram.distanza_minima_ore). Questi
+# turni sono solo occasioni — il codice decide se e il momento. Ce ne sono
+# piu del necessario apposta: GitHub consegna le esecuzioni programmate con
+# ritardi anche di otto ore, e con pochi turni un ritardo fa saltare il
+# secondo Reel della giornata.
 
 name: "Reels Factory · Publish"
 
 on:
   schedule:
-    # 09:30 UTC = 11:30 ora italiana (estate) / 10:30 (inverno)
+    # 07:30 UTC = 09:30 ora italiana (estate). Primo Reel della giornata.
+    - cron: "30 7 * * *"
     - cron: "30 9 * * *"
-    # Orari di riserva: GitHub consegna le esecuzioni programmate con ritardi
-    # anche di ore, o le salta del tutto (27/08: partita alle 19:55 invece che
-    # alle 09:30; 28/08: mai partita). Con un solo orario, un ritardo di GitHub
-    # fa saltare la giornata. Il codice pubblica UNA sola volta al giorno,
-    # quindi questi non aggiungono Reel: recuperano solo quelli persi.
+    # 13:30 UTC = 15:30 italiane: qui cade il secondo, a sei ore dal primo.
+    - cron: "30 11 * * *"
     - cron: "30 13 * * *"
+    - cron: "30 15 * * *"
     - cron: "30 17 * * *"
+    # Ultima occasione prima che si chiuda la finestra delle 22 italiane.
+    - cron: "30 19 * * *"
   workflow_dispatch:
     inputs:
       dry_run:

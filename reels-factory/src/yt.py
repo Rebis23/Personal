@@ -183,3 +183,51 @@ def download_auto_subs(video_id: str, workdir: Path, lang: str = "it") -> Path |
         print(f"  ⚠️ yt-dlp sottotitoli fallito: {proc.stderr[-500:]}")
     matches = sorted(workdir.glob(f"{video_id}.subs*.json3"))
     return matches[0] if matches else None
+
+
+def fetch_intero_catalogo(channel_id: str, *, tetto: int = 200) -> list[dict]:
+    """TUTTI i video del canale, non solo gli ultimi quindici.
+
+    Il feed RSS che usa fetch_recent_videos() e tagliato a 15 voci da
+    YouTube: non e una scelta di configurazione, e un limite del feed. Per
+    la pubblicazione quotidiana bastava — un video nuovo compare sempre fra
+    i primi quindici. Ma per pescare dall'archivio no: il 25/09, coi conti
+    a due Reel al giorno, si e visto che la fabbrica credeva di avere sei
+    video di riserva quando il canale ne ha molti di piu. Sedici giorni di
+    autonomia invece di mesi, per un limite che nessuno aveva scelto.
+
+    Qui si chiede l'elenco vero a yt-dlp, senza scaricare niente: --flat-
+    playlist legge solo i titoli e gli identificativi.
+
+    Torna la stessa forma di fetch_recent_videos(), dal piu recente. In caso
+    di guaio torna [] e chi chiama ripiega sul feed: meglio quindici video
+    che nessuno.
+    """
+    url = f"https://www.youtube.com/channel/{channel_id}/videos"
+    esito = _run(["yt-dlp", "--flat-playlist", "--dump-json",
+                  "--playlist-end", str(tetto), url], tetto=600)
+    if esito.returncode != 0:
+        print(f"  ⚠️ Catalogo intero non leggibile: {esito.stderr[-200:]}")
+        return []
+
+    fuori = []
+    for riga in esito.stdout.splitlines():
+        riga = riga.strip()
+        if not riga:
+            continue
+        try:
+            v = json.loads(riga)
+        except json.JSONDecodeError:
+            continue
+        vid = v.get("id")
+        if not vid:
+            continue
+        # --flat-playlist non da la data di pubblicazione. L'ordine pero e
+        # quello del canale, dal piu recente: chi chiama usa l'ordine, non
+        # la data, e per i video d'archivio la data non serve a niente.
+        fuori.append({"video_id": vid,
+                      "title": v.get("title") or "",
+                      "published": "",
+                      "durata": v.get("duration") or 0})
+    print(f"  📚 Catalogo del canale: {len(fuori)} video")
+    return fuori
