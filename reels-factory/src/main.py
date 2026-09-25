@@ -1029,6 +1029,20 @@ def cmd_shorts() -> int:
               "YT_CLIENT_SECRET, YT_REFRESH_TOKEN)")
         return 1
 
+    # SI CONTROLLA IL TOKEN PRIMA DI SCARICARE QUALSIASI COSA, e se e morto
+    # si esce con errore. Non e pignoleria: se il progetto su Google Cloud
+    # e rimasto in "Testing", il refresh token scade dopo sette giorni. Con
+    # un'uscita pulita il workflow resterebbe verde e i caricamenti si
+    # fermerebbero senza che nessuno se ne accorga; uscendo in errore
+    # GitHub manda una mail, e si sa subito che va rifatta
+    # l'autorizzazione.
+    if shorts._accesso() is None:
+        print("::error::Il token di YouTube non e valido. Se il progetto su "
+              "Google Cloud e in stato 'Testing', scade ogni sette giorni: "
+              "rilanciare strumenti/autorizza-youtube.py e rimettere "
+              "YT_REFRESH_TOKEN nei segreti.")
+        return 1
+
     saliti = 0
     with tempfile.TemporaryDirectory() as tmp:
         for c in candidate[:quante]:
