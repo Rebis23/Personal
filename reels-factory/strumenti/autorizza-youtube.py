@@ -119,16 +119,69 @@ def main() -> int:
               "myaccount.google.com/permissions e rilancia.")
         return 1
 
+    segreti = {"YT_CLIENT_ID": cid, "YT_CLIENT_SECRET": csec,
+               "YT_REFRESH_TOKEN": rt}
+
+    # LI SCRIVE LUI SU GITHUB, SE PUO'. La prima versione si limitava a
+    # stamparli, e Lorenzo — giustamente — ha creduto di aver finito: aveva
+    # "inserito i dati nello script", e nessuno gli aveva detto che lo
+    # script gira sul suo Mac e non parla con GitHub. Il passo a mano era
+    # il punto in cui si rompeva tutto, quindi il passo a mano si toglie.
+    #
+    # I valori non escono comunque dal suo computer: `gh` parla con GitHub
+    # direttamente, cifrando col certificato del repository.
+    if _con_gh(segreti):
+        return 0
+
     print("\n" + "=" * 62)
-    print("FATTO. Metti questi tre in GitHub, nel repo Personal:")
-    print("Settings -> Secrets and variables -> Actions -> New repository secret")
+    print("FATTO, ma questi tre devi metterli a mano su GitHub:")
+    print("github.com/Rebis23/Personal -> Settings ->")
+    print("Secrets and variables -> Actions -> New repository secret")
+    print("(tre volte, uno per valore, coi nomi esatti qui sotto)")
     print("=" * 62)
-    print(f"\nYT_CLIENT_ID\n{cid}\n")
-    print(f"YT_CLIENT_SECRET\n{csec}\n")
-    print(f"YT_REFRESH_TOKEN\n{rt}\n")
-    print("=" * 62)
+    for nome, valore in segreti.items():
+        print(f"\n{nome}\n{valore}")
+    print("\n" + "=" * 62)
     print("Poi scrivimi 'fatto' e faccio partire il recupero dei 38 Reel.")
     return 0
+
+
+def _con_gh(segreti: dict) -> bool:
+    """Prova a scrivere i segreti con `gh`. True se ce l'ha fatta."""
+    import shutil
+    import subprocess
+
+    if shutil.which("gh") is None:
+        return False
+    stato = subprocess.run(["gh", "auth", "status"],
+                           capture_output=True, text=True)
+    if stato.returncode != 0:
+        print("\nℹ️ Ho trovato `gh` ma non sei connesso. Se vuoi che li "
+              "scriva io: lancia `gh auth login` e rifai questo script.")
+        return False
+
+    print("\nHo trovato `gh` e sei connesso a GitHub.")
+    if input("Li scrivo io nei segreti del repo? [s/n] ").strip().lower() \
+            not in ("s", "si", "sì", "y", ""):
+        return False
+
+    for nome, valore in segreti.items():
+        esito = subprocess.run(
+            ["gh", "secret", "set", nome, "--repo", "Rebis23/Personal",
+             "--body", valore],
+            capture_output=True, text=True)
+        if esito.returncode != 0:
+            print(f"\n⛔ {nome} non e stato scritto: "
+                  f"{(esito.stderr or esito.stdout)[:200]}")
+            print("Te li stampo qui sotto, li metti a mano.")
+            return False
+        print(f"  ✅ {nome}")
+
+    print("\n" + "=" * 62)
+    print("FATTO davvero: i tre segreti sono su GitHub.")
+    print("Scrivimi 'fatto' e faccio partire il recupero dei 38 Reel.")
+    print("=" * 62)
+    return True
 
 
 if __name__ == "__main__":
