@@ -54,9 +54,13 @@ def cmd_ingest() -> int:
 
     archive_pick = None
     max_age_h = cfg["youtube"]["max_age_days"] * 24
+    # I Reel che carichiamo noi su Shorts finiscono nel feed del canale
+    # come video nuovi. Vanno tolti PRIMA di contare i candidati: se
+    # restano dentro, la lista non e mai vuota e l'archivio non viene mai
+    # interrogato — la fabbrica passa le giornate a scartare se stessa.
     candidates = [
         v for v in videos
-        if not state_mod.is_processed(st, v["video_id"])
+        if not state_mod.da_saltare(st, v["video_id"])
         and yt.video_age_hours(v["published"]) <= max_age_h
     ]
     if not candidates:
@@ -141,7 +145,7 @@ def _archive_candidate(videos: list[dict], cfg: dict, st: dict) -> dict | None:
 
     minimo = cfg["youtube"].get("min_duration_seconds", 180)
     for v in catalogo:
-        if state_mod.is_processed(st, v["video_id"]) or v["video_id"] in done_ids:
+        if state_mod.da_saltare(st, v["video_id"]) or v["video_id"] in done_ids:
             continue
         # Gli Short del canale non si ritagliano: sono gia corti, e la
         # durata arriva insieme all'elenco quando viene dal catalogo.
