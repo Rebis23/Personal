@@ -48,6 +48,17 @@ def cmd_ingest() -> int:
         print("❌ config.yaml: youtube.channel_id non configurato")
         return 1
 
+    # Il cervello si interroga PRIMA di spendere. Lo scarico costa Apify e
+    # la trascrizione costa ElevenLabs: il 25 e il 26/09 sei corse hanno
+    # pagato tutte e due per poi morire sul credito Anthropic a zero, sempre
+    # allo stesso punto, sette minuti dopo. La domanda che si fa qui costa
+    # un token e la risposta arriva in un secondo.
+    vivo, guasto = brain.cervello_pronto(cfg["claude"]["model"])
+    if not vivo:
+        print(f"❌ Il cervello non risponde: {guasto}")
+        print(f"::error::Ingest fermo prima di spendere — {guasto}")
+        return 1
+
     print(f"🔎 Controllo feed del canale {channel_id}...")
     videos = yt.fetch_recent_videos(channel_id)
     print(f"   {len(videos)} video nel feed")

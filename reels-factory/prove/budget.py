@@ -30,7 +30,20 @@ SRC = Path(__file__).resolve().parent.parent / "src"
 # quanto costi leggere del testo, e 600 non bastavano.
 MINIMO = 1000
 
+# UNA sola deroga, e va motivata sulla riga stessa. Esiste perche il 27/09 e
+# nata una chiamata in cui la risposta non serve davvero: cervello_pronto()
+# chiede un token al modello solo per sapere se l'API accetta le nostre
+# richieste — se torna vuota va benissimo, la si butta. Senza deroga l'unico
+# modo di far passare quella riga sarebbe stato abbassare la soglia per
+# tutti, che e il contrario di quello che serve.
+#
+# La deroga pretende un motivo scritto: `# risposta-non-usata: <perche>`.
+# Senza motivo non vale, cosi non diventa un interruttore per zittire la
+# guardia quando da fastidio.
+DEROGA = re.compile(r"#\s*risposta-non-usata:\s*\S+")
+
 trovati = 0
+derogate = 0
 colpevoli: list[str] = []
 for f in sorted(SRC.glob("*.py")):
     for n, riga in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
@@ -40,10 +53,14 @@ for f in sorted(SRC.glob("*.py")):
         if not m:
             continue
         trovati += 1
+        if DEROGA.search(riga):
+            derogate += 1
+            continue
         if int(m.group(1)) < MINIMO:
             colpevoli.append(f"{f.name}:{n}  max_tokens={m.group(1)}  {riga.strip()}")
 
-print(f"{trovati} chiamate al modello, soglia {MINIMO} token")
+print(f"{trovati} chiamate al modello, soglia {MINIMO} token"
+      + (f" ({derogate} in deroga, motivate)" if derogate else ""))
 if colpevoli:
     print("\nBUDGET TROPPO STRETTI — la risposta rischia di uscire vuota:")
     for c in colpevoli:

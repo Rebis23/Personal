@@ -567,3 +567,52 @@ def riscrivi_hooks(falliti: list[tuple[int, str, str, float, float]],
         if hook and hook.upper() != "SALTA":
             nuovi[int(pezzi[0].rstrip("."))] = hook
     return nuovi
+
+
+CREDITO_ESAURITO = "credit balance is too low"
+
+
+def leggi_guasto(errore: Exception) -> str:
+    """Traduce il rifiuto dell'API in una frase che dice cosa fare.
+
+    Serve perche i tre guasti possibili si somigliano in un traceback e
+    non si somigliano per niente in cio che va fatto: uno si risolve
+    pagando, uno cambiando una chiave, uno aspettando.
+    """
+    testo = str(errore)
+    if CREDITO_ESAURITO in testo:
+        return ("credito Anthropic esaurito — serve una ricarica su "
+                "Plans & Billing, non c'e niente da riparare nel codice")
+    if "authentication" in testo.lower() or "invalid x-api-key" in testo:
+        return "chiave ANTHROPIC_API_KEY rifiutata: va rigenerata"
+    if "rate_limit" in testo or "429" in testo:
+        return "limite di frequenza: si riprova alla corsa dopo"
+    return testo[:300]
+
+
+def cervello_pronto(model: str) -> tuple[bool, str]:
+    """Il cervello risponde? Da chiedere PRIMA di spendere per lo scarico.
+
+    Il 25 e il 26/09 sei corse di ingest hanno fatto tutte la stessa cosa:
+    scaricare il video via Apify (cinque minuti, duecento mega), trascriverlo
+    con Scribe, e morire dopo, sempre nello stesso punto, perche il credito
+    Anthropic era a zero. Sette minuti e due servizi a pagamento per
+    scoprire una cosa che si sapeva prima di cominciare — tre volte al
+    giorno.
+
+    Una domanda da un token costa una frazione di centesimo e risponde
+    esattamente a quello che conta: l'API accetta le nostre richieste? La
+    risposta viene tagliata subito e non serve a niente — qui l'unica cosa
+    che si guarda e se la porta si apre.
+    """
+    try:
+        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
+        client.messages.create(
+            model=model,
+            max_tokens=1,  # risposta-non-usata: serve solo l'ok dell'API
+            messages=[{"role": "user", "content": "ok"}])
+        return True, ""
+    except KeyError:
+        return False, "manca ANTHROPIC_API_KEY nell'ambiente"
+    except Exception as e:                       # noqa: BLE001
+        return False, leggi_guasto(e)
