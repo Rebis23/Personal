@@ -113,9 +113,73 @@
       "status": "skipped_short",
       "processed_at": "2026-09-25T23:03:20Z",
       "clips": []
+    },
+    {
+      "video_id": "6GSTLqWek5k",
+      "title": "The thesis that convinced an atheist (me) of the existence of God",
+      "status": "done",
+      "processed_at": "2026-09-27T22:08:06Z",
+      "clips": [
+        "6GSTLqWek5k-1",
+        "6GSTLqWek5k-2",
+        "6GSTLqWek5k-3",
+        "6GSTLqWek5k-4",
+        "6GSTLqWek5k-5"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "6GSTLqWek5k-1",
+      "video_id": "6GSTLqWek5k",
+      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
+      "hook": "La Chiesa è tra le peggiori istituzioni",
+      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-1.mp4",
+      "caption": "Sono cresciuto in una famiglia cristiana, ho fatto tutti i sacramenti. Poi ho iniziato a leggere.\nPer anni di una cosa ero certo: Dio non esiste.\nPoi ho capito che Dio e religione sono due cose diverse — e lì è cambiato tutto.\n\n#ateismo #religione #pensierocritico #filosofia #dio #chiesacattolica #spiritualità\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-27T21:25:10Z"
+    },
+    {
+      "clip_id": "6GSTLqWek5k-2",
+      "video_id": "6GSTLqWek5k",
+      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
+      "hook": "Credere nella scienza è una fede?",
+      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-2.mp4",
+      "caption": "Usi la parola \"credere\" anche quando parli di scienza, solo che non te ne accorgi.\nNessuno di noi ha mai fatto l'esperimento sulla gravità: ce l'hanno detto, e ci abbiamo creduto.\nDa lì parte tutto il ragionamento.\n\n#scienza #pensierocritico #filosofia #razionalità #metodoscientifico #dio #credenze\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-27T21:36:03Z"
+    },
+    {
+      "clip_id": "6GSTLqWek5k-3",
+      "video_id": "6GSTLqWek5k",
+      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
+      "hook": "Il Big Bang è antiscientifico?",
+      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-3.mp4",
+      "caption": "Tutto quello che viene dopo il Big Bang la scienza lo spiega benissimo.\nIl problema è il Big Bang stesso: dal nulla, senza tempo, senza spazio, senza materia, è nato il tutto.\nQuesta è la cosa meno scientifica che ci sia.\n\n#bigbang #universo #scienza #filosofia #dio #pensierocritico #cosmologia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-27T21:47:01Z"
+    },
+    {
+      "clip_id": "6GSTLqWek5k-4",
+      "video_id": "6GSTLqWek5k",
+      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
+      "hook": "Tommaso d'Aquino: la prova che Dio esiste",
+      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-4.mp4",
+      "caption": "L'argomento del moto: ogni cosa che cambia passa da potenziale ad attuale.\nIl forno deve essere già caldo per scaldare. Non posso darti soldi se sono ricco solo in potenza.\nÈ il ragionamento che mi ha fatto cambiare idea da ateo.\n\n#tommasodaquino #filosofia #dio #ateismo #pensierocritico #metafisica #religione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-27T21:58:00Z"
+    },
+    {
+      "clip_id": "6GSTLqWek5k-5",
+      "video_id": "6GSTLqWek5k",
+      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
+      "hook": "L'argomento cosmologico: da ateo non l'ho smontato",
+      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-5.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-5.mp4",
+      "caption": "Cercavo argomenti per controbattere, non per convincermi: volevo vincere i dibattiti.\nQualcuno ci ha provato, ma sono tutte fallacie logiche.\nPer me questa resta la prova che una forma di Dio esista.\n\n#ateismo #dio #filosofia #logica #dibattito #pensierocritico #religione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-27T22:08:06Z"
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -426,7 +490,8 @@
   "archive_done": [
     "Enp0wWhaP8M",
     "flUlQn4_vuo",
-    "KBOAz2kzvNw"
+    "KBOAz2kzvNw",
+    "6GSTLqWek5k"
   ],
   "sospese": [
     {
@@ -466,7 +531,7 @@
       "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
     }
   ],
-  "last_archive_at": "2026-09-11T09:45:17Z",
+  "last_archive_at": "2026-09-27T22:08:06Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
