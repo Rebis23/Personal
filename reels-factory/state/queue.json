@@ -126,6 +126,18 @@
         "6GSTLqWek5k-4",
         "6GSTLqWek5k-5"
       ]
+    },
+    {
+      "video_id": "r-K7-JYixSc",
+      "title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
+      "status": "done",
+      "processed_at": "2026-09-28T13:36:32Z",
+      "clips": [
+        "r-K7-JYixSc-1",
+        "r-K7-JYixSc-2",
+        "r-K7-JYixSc-3",
+        "r-K7-JYixSc-4"
+      ]
     }
   ],
   "queue": [
@@ -168,6 +180,46 @@
       "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-5.mp4",
       "caption": "Cercavo argomenti per controbattere, non per convincermi: volevo vincere i dibattiti.\nQualcuno ci ha provato, ma sono tutte fallacie logiche.\nPer me questa resta la prova che una forma di Dio esista.\n\n#ateismo #dio #filosofia #logica #dibattito #pensierocritico #religione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
       "created_at": "2026-09-27T22:08:06Z"
+    },
+    {
+      "clip_id": "r-K7-JYixSc-1",
+      "video_id": "r-K7-JYixSc",
+      "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
+      "hook": "Cos'è un archetipo? Guarda Gandalf e Yoda",
+      "r2_key": "reels/r-K7-JYixSc/r-K7-JYixSc-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/r-K7-JYixSc/r-K7-JYixSc-1.mp4",
+      "caption": "Gandalf, Silente e Yoda: tre universi diversi, un solo modello.\nSi chiama archetipo, ed è il motivo per cui certe storie ti colpiscono sempre allo stesso modo.\nRiconoscere il modello ti permette di riconoscere te stesso.\n\n#archetipi #psicologia #carljung #crescitapersonale #storytelling #cinema\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-28T13:25:11Z"
+    },
+    {
+      "clip_id": "r-K7-JYixSc-2",
+      "video_id": "r-K7-JYixSc",
+      "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
+      "hook": "Esistono 12 archetipi, tu ne hai due",
+      "r2_key": "reels/r-K7-JYixSc/r-K7-JYixSc-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/r-K7-JYixSc/r-K7-JYixSc-2.mp4",
+      "caption": "Sono 12: il sovrano, il saggio, l'eroe, il ribelle, il giullare, l'amante.\nOgnuno si muove per una motivazione diversa, e tu ne hai due che ti guidano senza che te ne accorga.\nSapere quali sono cambia il modo in cui prendi decisioni.\n\n#archetipi #psicologia #crescitapersonale #personalita #carljung #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-28T13:28:34Z"
+    },
+    {
+      "clip_id": "r-K7-JYixSc-3",
+      "video_id": "r-K7-JYixSc",
+      "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
+      "hook": "Perché Mary Poppins è l'archetipo del mago",
+      "r2_key": "reels/r-K7-JYixSc/r-K7-JYixSc-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/r-K7-JYixSc/r-K7-JYixSc-3.mp4",
+      "caption": "Mary Poppins è l'archetipo del mago. Sul serio.\nEntra in una famiglia bloccata e la trasforma: è esattamente quello che fanno Gandalf e Morpheus.\nIl mago non serve la magia: serve la conoscenza per plasmare la realtà.\n\n#archetipi #psicologia #carljung #crescitapersonale #cinema #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-28T13:33:40Z"
+    },
+    {
+      "clip_id": "r-K7-JYixSc-4",
+      "video_id": "r-K7-JYixSc",
+      "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
+      "hook": "L'ombra del caregiver: aiuti per farti notare?",
+      "r2_key": "reels/r-K7-JYixSc/r-K7-JYixSc-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/r-K7-JYixSc/r-K7-JYixSc-4.mp4",
+      "caption": "Se ti arrabbi quando gli altri non si fanno aiutare da te, non stai aiutando: ti stai facendo notare.\nÈ l'ombra dell'archetipo del caregiver.\nNon c'è niente di sbagliato, ma finché non la vedi ti comanda lei.\n\n#psicologia #ombra #crescitapersonale #relazioni #carljung #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-09-28T13:36:32Z"
     }
   ],
   "published": [
