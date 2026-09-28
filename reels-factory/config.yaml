@@ -27,11 +27,25 @@ trascrizione:
   modello: "scribe_v2"
 
 whisper:
-  # La rete di sicurezza. Gira sul runner, gratis ma impreciso: stacca gli
-  # apostrofi e smette di mettere la punteggiatura per minuti interi.
-  # "small" = veloce (~5-10 min per un video da 20'), "medium" = più preciso
-  # ma ~2-3x più lento
-  model: "small"
+  # LA STRADA PRINCIPALE dal 28/09, non più la rete di sicurezza.
+  #
+  # Gira sul runner, e da quando il repo è pubblico i minuti del runner sono
+  # gratis e illimitati: quello che rendeva attraente un servizio a
+  # pagamento — la velocità — non è più una valuta.
+  #
+  # "small" non è un modello che non punteggia — misurato il 28/09 su 68s di
+  # audio vero, fa 10,6 punti fermi al minuto. Il difetto è l'intermittenza,
+  # già annotata qui in agosto: "smette di mettere la punteggiatura per
+  # minuti interi". Nel tratto del Reel dell'11 settembre c'erano zero segni
+  # su 94 parole, e senza segni si taglia sui respiri.
+  #
+  # "large-v3" misurato sullo stesso audio: 11,5 punti/min, e più preciso
+  # sulle parole ("La Chiesa Cattolica", "cristiano" — small perdeva
+  # l'articolo e scriveva "cristiana"). Ma non basta fidarsi: il codice misura
+  # densità E tratto muto più lungo, e paga Scribe solo se una delle due è
+  # fuori (src/punteggiatura.py). Pesa ~3 GB: la cache del workflow ha una
+  # chiave sua, altrimenti lo riscarica ogni volta.
+  model: "large-v3"
 
 clips:
   # Quante clip estrarre da ogni video
