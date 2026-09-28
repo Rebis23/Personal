@@ -142,16 +142,6 @@
   ],
   "queue": [
     {
-      "clip_id": "6GSTLqWek5k-2",
-      "video_id": "6GSTLqWek5k",
-      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
-      "hook": "Credere nella scienza è una fede?",
-      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-2.mp4",
-      "caption": "Usi la parola \"credere\" anche quando parli di scienza, solo che non te ne accorgi.\nNessuno di noi ha mai fatto l'esperimento sulla gravità: ce l'hanno detto, e ci abbiamo creduto.\nDa lì parte tutto il ragionamento.\n\n#scienza #pensierocritico #filosofia #razionalità #metodoscientifico #dio #credenze\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-27T21:36:03Z"
-    },
-    {
       "clip_id": "6GSTLqWek5k-3",
       "video_id": "6GSTLqWek5k",
       "video_title": "The thesis that convinced an atheist (me) of the existence of God",
@@ -535,6 +525,14 @@
       "ig_media_id": "17916533007452593",
       "permalink": "https://www.instagram.com/reel/Dd1FGpOjl7o/",
       "published_at": "2026-09-28T11:30:23Z"
+    },
+    {
+      "clip_id": "6GSTLqWek5k-2",
+      "video_id": "6GSTLqWek5k",
+      "hook": "Credere nella scienza è una fede?",
+      "ig_media_id": "18084597071315556",
+      "permalink": "https://www.instagram.com/reel/Dd12fCllSk_/",
+      "published_at": "2026-09-28T18:41:51Z"
     }
   ],
   "archive_done": [
