@@ -142,16 +142,6 @@
   ],
   "queue": [
     {
-      "clip_id": "6GSTLqWek5k-5",
-      "video_id": "6GSTLqWek5k",
-      "video_title": "The thesis that convinced an atheist (me) of the existence of God",
-      "hook": "L'argomento cosmologico: da ateo non l'ho smontato",
-      "r2_key": "reels/6GSTLqWek5k/6GSTLqWek5k-5.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/6GSTLqWek5k/6GSTLqWek5k-5.mp4",
-      "caption": "Cercavo argomenti per controbattere, non per convincermi: volevo vincere i dibattiti.\nQualcuno ci ha provato, ma sono tutte fallacie logiche.\nPer me questa resta la prova che una forma di Dio esista.\n\n#ateismo #dio #filosofia #logica #dibattito #pensierocritico #religione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-27T22:08:06Z"
-    },
-    {
       "clip_id": "r-K7-JYixSc-1",
       "video_id": "r-K7-JYixSc",
       "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
@@ -529,6 +519,14 @@
       "ig_media_id": "18167216281466959",
       "permalink": "https://www.instagram.com/reel/Dd6tnWFjbt0/",
       "published_at": "2026-09-30T16:00:42Z"
+    },
+    {
+      "clip_id": "6GSTLqWek5k-5",
+      "video_id": "6GSTLqWek5k",
+      "hook": "L'argomento cosmologico: da ateo non l'ho smontato",
+      "ig_media_id": "17999106461812691",
+      "permalink": "https://www.instagram.com/reel/Dd67rJPAZ9q/",
+      "published_at": "2026-09-30T18:03:49Z"
     }
   ],
   "archive_done": [
