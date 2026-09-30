@@ -20,7 +20,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import aggancio, apify, brain, chiusura, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
+from . import aggancio, apify, brain, chiusura, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -698,9 +698,21 @@ def cmd_publish() -> int:
                 ore = (datetime.now(timezone.utc) - quando).total_seconds() / 3600
             except ValueError:
                 ore = 1e9
-            if ore < distanza:
-                print(f"⏳ L'ultimo Reel e uscito {ore:.1f} ore fa, il minimo e "
-                      f"{distanza:.0f}: aspetto il turno dopo")
+            # La distanza non e un numero fisso: si calcola da quanto tempo
+            # resta nella finestra. Il 29/09 il primo turno utile e arrivato
+            # alle 20:49 italiane (undici ore di ritardo di GitHub) e i tre
+            # dopo sono caduti fuori finestra: con 5 ore fisse il secondo Reel
+            # era impossibile, e ne e uscito uno solo. Vedi ritmo_giorno.py.
+            fin = (cfg["instagram"].get("ore_pubblicazione") or [0, 24])[1]
+            richiesta = ritmo_giorno.distanza_richiesta(
+                distanza_piena=distanza, ora_adesso=_ora_italiana(),
+                fine_finestra=int(fin), gia_usciti=len(usciti), tetto=tetto)
+            if ore < richiesta:
+                print(f"⏳ L'ultimo Reel e uscito {ore:.1f} ore fa, adesso "
+                      f"serve almeno {richiesta:.1f} (il tetto e "
+                      f"{distanza:.0f}, ma restano "
+                      f"{max(0, int(fin) - _ora_italiana())}h di finestra per "
+                      f"{tetto - len(usciti)} Reel): aspetto il turno dopo")
                 return 0
 
     # Fuori dall'orario buono non si pubblica: meglio saltare un turno che

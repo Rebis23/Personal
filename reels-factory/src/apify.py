@@ -44,7 +44,22 @@ EPCTEX = (
     lambda url, q: {"startUrls": [url], "quality": q.rstrip("p"), "storageType": "apify"},
 )
 
-PROVIDERS = [STREAMERS, MEMO23, EPCTEX]
+# L'ORDINE CONTA, E CAMBIA. Il 18/08 memo23 falliva e streamers salvava la
+# giornata, quindi streamers stava primo. Il 28/09 si e girato di nuovo:
+#
+#     ⚠️ Apify fallito (actor 1/4, streamers, 1080p): 402 Payment Required
+#     ⚠️ Apify fallito (actor 2/4, streamers, 720p): 402 Payment Required
+#     ☁️ Apify run 1OS8gaL5CeQiB0iYX avviato (memo23)...  -> scaricato
+#
+# Non e il credito Apify esaurito: memo23 ha scaricato subito dopo con lo
+# stesso token. E' streamers che ora vuole un abbonamento a parte. Restando
+# primo, bruciava due tentativi e novanta secondi di pausa a ogni corsa per
+# arrivare sempre allo stesso terzo actor.
+#
+# Adesso primo e quello che funziona. Streamers resta in fila: se un domani
+# il suo abbonamento ci sara, o se memo23 si rompe come in agosto, la fila
+# fa il suo lavoro senza che nessuno debba ricordarsi di questa storia.
+PROVIDERS = [MEMO23, STREAMERS, EPCTEX]
 
 
 class ApifyError(RuntimeError):
@@ -197,9 +212,13 @@ def _attempts(quality: str) -> list[tuple]:
     Il primo actor ha due chance: la qualita richiesta e poi 720p, che e la
     combinazione gia vista funzionare. Solo dopo si cambia fornitore.
     """
-    plan = [(STREAMERS, quality)]
+    # Il primo della fila, non un actor scritto a mano qui: cosi cambiare
+    # l'ordine in PROVIDERS basta, e non si finisce con la fila che dice una
+    # cosa e il piano che ne fa un'altra.
+    primo = PROVIDERS[0]
+    plan = [(primo, quality)]
     if quality != "720p":
-        plan.append((STREAMERS, "720p"))
+        plan.append((primo, "720p"))
     plan += [(p, quality) for p in PROVIDERS[1:]]
     return plan
 
