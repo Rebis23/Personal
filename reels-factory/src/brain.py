@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 import anthropic
 
-from . import aggancio, prestazioni
+from . import conto, aggancio, prestazioni
 
 
 class Punteggi(BaseModel):
@@ -330,6 +330,7 @@ def select_clips(
         messages=[{"role": "user", "content": user}],
         output_format=ClipSelection,
     )
+    conto.segna('scelta clip', response.usage)
 
     if response.stop_reason == "refusal":
         raise RuntimeError("Claude ha rifiutato la richiesta (stop_reason=refusal)")
@@ -468,6 +469,7 @@ def prova_a_freddo(hooks: list[str], *, model: str) -> dict[int, tuple[bool, str
             model=model, max_tokens=4000, system=LETTORE_FREDDO,
             messages=[{"role": "user", "content": elenco}],
         )
+        conto.segna('lettore a freddo', r.usage)
         testo = "".join(b.text for b in r.content
                         if getattr(b, "type", "") == "text")
     except Exception as e:                      # noqa: BLE001
@@ -553,6 +555,7 @@ def riscrivi_hooks(falliti: list[tuple[int, str, str, float, float]],
                        "CLIP DA RISCRIVERE:\n" + "\n".join(righe)
                        + f"\n\nTRASCRIZIONE:\n{timed_transcript}"}],
         )
+        conto.segna('riscrittura banner', r.usage)
         testo = "".join(b.text for b in r.content
                         if getattr(b, "type", "") == "text")
     except Exception as e:                      # noqa: BLE001

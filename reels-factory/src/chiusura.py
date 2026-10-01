@@ -30,7 +30,7 @@ in una raccomandazione dentro un prompt.
 
 import re
 
-from . import aggancio
+from . import aggancio, conto
 
 # Una pausa piu corta di quella che Whisper considera fine frase: qui non si
 # cerca "la fine di una frase", si cerca un punto in cui la voce si ferma
@@ -170,6 +170,7 @@ def scegli_finale(words: list[dict], start: float, *, argomento: str,
                 model=model, max_tokens=3000,
                 messages=[{"role": "user", "content": prompt}],
             )
+            conto.segna('scelta finale', r.usage)
         except Exception as e:                       # noqa: BLE001
             print(f"      ⚠️ Scelta del finale, tentativo {tentativo}: {e}")
             continue

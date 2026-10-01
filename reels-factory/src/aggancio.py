@@ -32,6 +32,8 @@ import time
 
 import anthropic
 
+from . import conto
+
 
 # Il segreto va SEMPRE passato con .strip(). Quando si incolla una chiave nei
 # GitHub Secrets ci resta attaccato un a-capo, e un a-capo dentro un header
@@ -357,6 +359,7 @@ def scegli_tratto(intero: str, *, model: str,
                 messages=[{"role": "user", "content": SCELTA.format(
                     intero=intero, elenco=elenco)}],
             )
+            conto.segna('scelta tratto', r.usage)
             testo = "".join(b.text for b in r.content if b.type == "text")
             numeri = re.findall(r"\d+", testo)
             if not numeri:
@@ -439,6 +442,7 @@ def accorcia(hooks: dict[int, str], *, model: str,
                 messages=[{"role": "user", "content": PROMPT.format(
                     max_parole=max_parole, elenco=elenco)}],
             )
+            conto.segna('accorcia banner', risposta.usage)
             break
         except Exception as e:                  # noqa: BLE001
             print(f"      ⚠️ Accorciamento, tentativo {tentativo}/3 fallito ({e})")
@@ -640,33 +644,56 @@ NESSUNA: meglio niente che una riga che non vuol dire niente.
 Rispondi SOLO col numero, oppure NESSUNA. Nessun'altra parola."""
 
 
+# I budget da provare, in ordine, per la scelta della riga parlata.
+#
+# 3000 e nato dopo due tentativi sbagliati nella stessa serata. Prima 16,
+# pensando "tanto deve dire solo un numero": risposta vuota su cinque clip su
+# cinque (run 101). Poi 200: ancora vuota su quattro su cinque (run 104), e
+# stavolta lo stop_reason l'ha detto — max_tokens. Il modello non veniva
+# tagliato mentre scriveva la risposta: veniva tagliato mentre RAGIONAVA,
+# prima di arrivare a scriverla. Il budget non e la lunghezza della risposta,
+# e tutto cio che serve per produrla.
+#
+# E 3000 non basta sempre. Il 27/09 la clip 3 del video sull'ateismo e uscita
+# con questa riga nel log:
+#
+#     ⚠️ Scelta dal parlato: risposta vuota (stop_reason=max_tokens)
+#     ▶️ Nessuna riga d'apertura scelta: la clip parte dove l'ha tagliata Claude
+#
+# Tre tentativi c'erano gia, ma li consumavano solo le ECCEZIONI: una
+# risposta vuota tornava None al primo colpo. Quindi il codice sapeva dal
+# stop_reason che il budget era corto, e si arrendeva invece di allargarlo —
+# l'informazione c'era e non veniva usata. Adesso ogni tentativo e piu largo
+# del precedente.
+BUDGET_PARLATO = (3000, 8000, 20000)
+
+
 def scegli_parlato(tratti: list[dict], *, tema: str, model: str) -> dict | None:
     """Fa scegliere al modello quale riga pronunciata diventa il banner."""
     if not tratti:
         return None
     elenco = "\n".join(f"{i}. {t['testo']}" for i, t in enumerate(tratti))
-    for tentativo in (1, 2, 3):
+    for tentativo, budget in enumerate(BUDGET_PARLATO, start=1):
         try:
-            # 3000, dopo due tentativi sbagliati nella stessa serata.
-            # Prima 16, pensando "tanto deve dire solo un numero": risposta
-            # vuota su cinque clip su cinque (run 101). Poi 200: ancora
-            # vuota su quattro su cinque (run 104), e stavolta lo
-            # stop_reason l'ha detto — max_tokens. Il modello non veniva
-            # tagliato mentre scriveva la risposta: veniva tagliato mentre
-            # RAGIONAVA, prima di arrivare a scriverla. Il budget non e la
-            # lunghezza della risposta, e tutto cio che serve per produrla.
             r = _cliente().messages.create(
-                model=model, max_tokens=3000,
+                model=model, max_tokens=budget,
                 messages=[{"role": "user", "content": DAL_PARLATO.format(
                     tema=tema, elenco=elenco)}],
             )
+            conto.segna('riga parlata', r.usage)
             testo = "".join(b.text for b in r.content if b.type == "text").strip()
             if not testo:
                 # Il motivo dello stop e l'unica cosa che distingue "il
                 # modello non ha risposto" da "l'ho tagliato io": senza,
-                # si ricomincia a indovinare.
+                # si ricomincia a indovinare. E se e stato il budget, si
+                # riprova piu larghi invece di rinunciare alla clip.
                 print(f"      ⚠️ Scelta dal parlato: risposta vuota "
-                      f"(stop_reason={r.stop_reason})")
+                      f"(stop_reason={r.stop_reason}, budget={budget})")
+                if (r.stop_reason == "max_tokens"
+                        and tentativo < len(BUDGET_PARLATO)):
+                    print(f"      ↗️ Riprovo con {BUDGET_PARLATO[tentativo]} "
+                          f"token: il ragionamento non ci stava")
+                    continue
                 return None
             if "NESSUN" in testo.upper():
                 print("      ▶️ Nessuna riga pronunciata regge da sola: "
@@ -678,8 +705,9 @@ def scegli_parlato(tratti: list[dict], *, tema: str, model: str) -> dict | None:
             print(f"      ⚠️ Scelta dal parlato illeggibile ({testo[:40]!r})")
             return None
         except Exception as e:                  # noqa: BLE001
-            print(f"      ⚠️ Scelta dal parlato, tentativo {tentativo}/3 ({e})")
-            if tentativo < 3:
+            print(f"      ⚠️ Scelta dal parlato, tentativo "
+                  f"{tentativo}/{len(BUDGET_PARLATO)} ({e})")
+            if tentativo < len(BUDGET_PARLATO):
                 time.sleep(tentativo * 4)
     return None
 

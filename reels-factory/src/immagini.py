@@ -34,6 +34,8 @@ from pathlib import Path
 
 import anthropic
 
+from . import conto
+
 # Il segreto va SEMPRE passato con .strip(). Quando si incolla una chiave nei
 # GitHub Secrets ci resta attaccato un a-capo, e un a-capo dentro un header
 # HTTP e illegale: la richiesta non parte nemmeno, e la libreria lo riporta
@@ -210,6 +212,7 @@ def scegli(candidate: list[Path], *, quante: int, tema: str,
                 model=model, max_tokens=3000,
                 messages=[{"role": "user", "content": blocchi}],
             )
+            conto.segna('giudizio foto', risposta.usage)
             break
         except Exception as e:                          # noqa: BLE001
             print(f"      ⚠️ Giudizio sulle foto, tentativo {tentativo}/3 ({e})")

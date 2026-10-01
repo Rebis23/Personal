@@ -13,6 +13,11 @@ youtube:
   max_age_days: 14
   # Sotto questa durata il video è considerato uno Short e viene ignorato
   min_duration_seconds: 180
+  # Oltre questi minuti la lavorazione rischia il tetto dei 150 minuti della
+  # corsa (Whisper grande macina a ~1x, Remotion a 3,9x — misurati il 28/09).
+  # Non blocca niente: mette un avviso nel log, cosi se la corsa si
+  # interrompe si sa perche invece di indovinarlo.
+  avvisa_oltre_minuti: 40
 
 apify:
   # Qualità del video scaricato via Apify (il download diretto da YouTube è

@@ -20,7 +20,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import aggancio, apify, brain, chiusura, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
+from . import aggancio, apify, brain, chiusura, conto, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -186,6 +186,9 @@ def _mark(st: dict, v: dict, status: str, clips: list | None = None) -> None:
 
 def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     """Ritorna True se il video è stato processato (in qualsiasi esito definitivo)."""
+    # Un video, un conto: i token di questa lavorazione e non di
+    # quella prima. Vedi conto.py per il perche.
+    conto.azzera()
     vid = v["video_id"]
     print(f"\n🎬 Video: {v['title']} ({vid})")
 
@@ -199,6 +202,48 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         print(f"   ⏭️ Troppo corto ({duration}s): probabilmente uno Short, salto")
         _mark(st, v, "skipped_short")
         return True
+
+    # I VIDEO MOLTO LUNGHI RISCHIANO IL MURO DEI 150 MINUTI.
+    #
+    # L'avviso e nato il 28/09 per un altro motivo: con Scribe a pagamento, un
+    # video da 79 minuti costava 26.000 crediti, un quinto della quota
+    # mensile in un colpo. Quel motivo e scaduto il 28/09 stesso — la
+    # trascrizione e tornata in casa con Whisper grande e non costa piu
+    # niente in denaro.
+    #
+    # Il rischio pero non e sparito, ha cambiato valuta: adesso si paga in
+    # tempo, e il tempo ha un tetto — timeout-minutes: 150 nel workflow. Una
+    # corsa tagliata a meta lascia le clip su R2 e la coda non salvata.
+    #
+    # IL FATTORE E MISURATO, non sommato a pezzi. La prima versione di questo
+    # avviso stimava trascrizione + montaggio e dava ~2x la durata del video:
+    # ottimista, perche lasciava fuori lo scarico da Apify (5-7 minuti), le
+    # chiamate al modello e la ricerca delle foto. La corsa vera del 28/09 e
+    # durata 52 minuti per un video da ~13: QUATTRO volte. Una stima
+    # ottimista dentro un avviso e peggio di nessun avviso, perche fa
+    # sembrare sicuro cio che non lo e.
+    #
+    # A 4x, il tetto di 150 minuti si raggiunge intorno ai 37 minuti di
+    # video. L'archivio di Lorenzo ne ha parecchi oltre: la piu lunga, «Come
+    # trovare LA TUA Passione», dura 79 minuti e stimerebbe cinque ore.
+    #
+    # Non si salta: si avvisa. Un video lungo puo valere la pena, e il tetto
+    # non e una legge di natura — ma se la corsa si interrompe, nel log ci
+    # sara scritto che lo sapevamo prima di cominciare, invece di farlo
+    # dedurre da un traceback.
+    FATTORE = 4.0                       # misurato: 52 min di corsa / 13 di video
+    TETTO_CORSA = 150
+    lungo = int(cfg["youtube"].get("avvisa_oltre_minuti", 40)) * 60
+    if duration > lungo:
+        minuti = duration / 60
+        stima = minuti * FATTORE
+        print(f"   ⏳ Video lungo: {minuti:.0f} minuti. Stima {stima:.0f} min "
+              f"di lavorazione (fattore {FATTORE:.0f}x misurato il 28/09); "
+              f"il tetto della corsa e {TETTO_CORSA}.")
+        if stima > TETTO_CORSA:
+            print(f"::warning::Video da {minuti:.0f} minuti: stimati "
+                  f"{stima:.0f} min di lavorazione contro un tetto di "
+                  f"{TETTO_CORSA}. Se la corsa si interrompe, e per questo.")
 
     # Download del video, a cascata: yt-dlp gratis → Apify → cartella Google
     # Drive (il file master caricato dal team: la via che funziona sempre)
@@ -616,6 +661,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
 
     _mark(st, v, "done", queued)
     print(f"   ✅ {len(queued)} clip in coda di pubblicazione")
+    print(conto.scheda_corrente(cfg["claude"]["model"]))
     return True
 
 
