@@ -142,16 +142,6 @@
   ],
   "queue": [
     {
-      "clip_id": "r-K7-JYixSc-3",
-      "video_id": "r-K7-JYixSc",
-      "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
-      "hook": "Perché Mary Poppins è l'archetipo del mago",
-      "r2_key": "reels/r-K7-JYixSc/r-K7-JYixSc-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/r-K7-JYixSc/r-K7-JYixSc-3.mp4",
-      "caption": "Mary Poppins è l'archetipo del mago. Sul serio.\nEntra in una famiglia bloccata e la trasforma: è esattamente quello che fanno Gandalf e Morpheus.\nIl mago non serve la magia: serve la conoscenza per plasmare la realtà.\n\n#archetipi #psicologia #carljung #crescitapersonale #cinema #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-28T13:33:40Z"
-    },
-    {
       "clip_id": "r-K7-JYixSc-4",
       "video_id": "r-K7-JYixSc",
       "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
@@ -523,6 +513,14 @@
       "ig_media_id": "18115296086045108",
       "permalink": "https://www.instagram.com/reel/Dd9WH31DxFS/",
       "published_at": "2026-10-01T16:32:42Z"
+    },
+    {
+      "clip_id": "r-K7-JYixSc-3",
+      "video_id": "r-K7-JYixSc",
+      "hook": "Perché Mary Poppins è l'archetipo del mago",
+      "ig_media_id": "18353831578173345",
+      "permalink": "https://www.instagram.com/reel/Dd_VxKMlIaH/",
+      "published_at": "2026-10-02T11:08:07Z"
     }
   ],
   "archive_done": [
