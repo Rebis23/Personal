@@ -140,18 +140,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "r-K7-JYixSc-4",
-      "video_id": "r-K7-JYixSc",
-      "video_title": "Dimmi il tuo Personaggio Preferito e ti dirò chi sei",
-      "hook": "L'ombra del caregiver: aiuti per farti notare?",
-      "r2_key": "reels/r-K7-JYixSc/r-K7-JYixSc-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/r-K7-JYixSc/r-K7-JYixSc-4.mp4",
-      "caption": "Se ti arrabbi quando gli altri non si fanno aiutare da te, non stai aiutando: ti stai facendo notare.\nÈ l'ombra dell'archetipo del caregiver.\nNon c'è niente di sbagliato, ma finché non la vedi ti comanda lei.\n\n#psicologia #ombra #crescitapersonale #relazioni #carljung #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-09-28T13:36:32Z"
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -521,6 +510,14 @@
       "ig_media_id": "18353831578173345",
       "permalink": "https://www.instagram.com/reel/Dd_VxKMlIaH/",
       "published_at": "2026-10-02T11:08:07Z"
+    },
+    {
+      "clip_id": "r-K7-JYixSc-4",
+      "video_id": "r-K7-JYixSc",
+      "hook": "L'ombra del caregiver: aiuti per farti notare?",
+      "ig_media_id": "18013770329957318",
+      "permalink": "https://www.instagram.com/reel/Dd_5UPKDF_j/",
+      "published_at": "2026-10-02T16:18:47Z"
     }
   ],
   "archive_done": [
