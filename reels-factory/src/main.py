@@ -20,7 +20,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import aggancio, apify, brain, chiusura, conto, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
+from . import aggancio, apify, brain, chiusura, conto, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, sentinella, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -1165,11 +1165,26 @@ def cmd_shorts() -> int:
     return 0
 
 
+def cmd_chiavi() -> int:
+    """Prova tutte le chiavi e dice quale sta per morire.
+
+    Non scarica, non monta, non pubblica: fa a ogni servizio la sua domanda
+    piu economica. Serve perche in sei giorni si sono rotti Anthropic, i
+    minuti di GitHub e Apify, e ogni volta l'abbiamo scoperto dal fatto che
+    non uscivano Reel. Vedi sentinella.py.
+    """
+    cfg = load_config()
+    testo, codice = sentinella.controlla(cfg["claude"]["model"])
+    print(testo)
+    return codice
+
+
 def main() -> int:
     commands = {"ingest": cmd_ingest, "publish": cmd_publish,
                 "registra": cmd_registra, "nicchia": cmd_nicchia,
                 "musica": cmd_musica, "status": cmd_status,
-                "fondi": cmd_fondi, "shorts": cmd_shorts}
+                "fondi": cmd_fondi, "shorts": cmd_shorts,
+                "chiavi": cmd_chiavi}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1

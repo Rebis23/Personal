@@ -1,0 +1,65 @@
+# LA SENTINELLA DELLE CHIAVI.
+#
+# Sei giorni, tre blocchi, tutti e tre scoperti dal fatto che non uscivano
+# Reel: credito Anthropic a zero il 25/09, minuti GitHub esauriti il 27/09,
+# Apify 403 dal 30/09 (e la coda a zero il 3 ottobre). Nessuno dei tre
+# fornitori avvisa prima, e ogni diagnosi e arrivata leggendo i log DOPO,
+# cioe nel momento peggiore.
+#
+# Questo passo fa a ogni servizio la sua domanda piu economica — niente
+# scarichi, niente montaggi, niente pubblicazioni — e esce 1 solo se cio che
+# serve davvero e rotto. Costa una ventina di secondi, e sui repo pubblici i
+# minuti non si pagano.
+#
+# Ogni mattina alle 06:11 UTC, prima del controllo che fa Claude alle 08:15:
+# cosi quando lui guarda, la risposta e gia nel log.
+name: Reels Factory · Chiavi
+
+on:
+  schedule:
+    - cron: "11 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: reels-chiavi
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  chiavi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Da requirements.txt, non da un elenco scelto a mano: il 25/09 il
+      # workflow degli Shorts si e rotto con "No module named anthropic"
+      # proprio per aver indovinato i pacchetti che servivano.
+      - name: Installa dipendenze Python
+        run: pip install -r reels-factory/requirements.txt
+
+      # -u: senza, Python tiene il log in pancia e un run interrotto non
+      # lascia una riga di cosa stesse facendo.
+      - name: Prova le chiavi
+        working-directory: reels-factory
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python -u -m src.main chiavi
