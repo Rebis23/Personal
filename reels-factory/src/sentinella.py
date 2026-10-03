@@ -105,7 +105,42 @@ def apify() -> Esito:
         return Esito("Apify", False, f"HTTP {r.status_code}: {r.text[:120]}")
     dati = (r.json() or {}).get("data") or {}
     piano = (dati.get("plan") or {}).get("id") or "?"
-    return Esito("Apify", True, f"piano {piano}")
+
+    # IL TOKEN VALIDO NON BASTA, e il 3/10 l'ho imparato male.
+    # Il 2/10 avevo detto a Lorenzo che il 403 su tutti gli actor voleva dire
+    # "token o account rifiutato". Alla prima corsa di questa sentinella
+    # /users/me ha risposto 200, piano FREE: il token era vivo. Quindi il 403
+    # non arrivava dall'autenticazione — arrivava dal permesso di AVVIARE un
+    # actor, che e un'altra cosa e si esaurisce con la quota del mese.
+    #
+    # Leggere il profilo non costa niente e riesce sempre: e proprio per
+    # questo non dice se la fabbrica puo lavorare. La domanda utile e quanta
+    # quota resta.
+    resto = _quota_apify(token)
+    if resto is None:
+        return Esito("Apify", True, f"piano {piano}, quota non leggibile")
+    if resto <= 0:
+        return Esito("Apify", False,
+                     f"piano {piano}: quota del mese esaurita — gli actor "
+                     f"rispondono 403 anche col token valido")
+    return Esito("Apify", True, f"piano {piano}, ${resto:.2f} di quota")
+
+
+def _quota_apify(token: str) -> float | None:
+    """Dollari di quota che restano nel mese, o None se non si sa leggere."""
+    try:
+        r = requests.get("https://api.apify.com/v2/users/me/limits",
+                         params={"token": token}, timeout=20)
+        if r.status_code != 200:
+            return None
+        d = (r.json() or {}).get("data") or {}
+        usato = d.get("current", {}).get("monthlyUsageUsd")
+        tetto = d.get("limits", {}).get("maxMonthlyUsageUsd")
+        if usato is None or tetto is None:
+            return None
+        return float(tetto) - float(usato)
+    except Exception:                                   # noqa: BLE001
+        return None
 
 
 def elevenlabs() -> Esito:
@@ -121,6 +156,20 @@ def elevenlabs() -> Esito:
     except Exception as e:                              # noqa: BLE001
         return Esito("ElevenLabs", False, f"non raggiungibile: {e}",
                      serve=False)
+    # UNA CHIAVE A SCOPO RISTRETTO NON E UNA CHIAVE ROTTA.
+    # Alla prima corsa questa verifica ha segnato ElevenLabs come ROTTO con
+    # 401 "The API key you used is missing the permission". Ma quella chiave
+    # e ristretta al solo Speech to Text — gliel'ho fatta creare cosi io, per
+    # non dare a un segreto su GitHub piu potere del necessario. Leggere
+    # l'abbonamento non le e permesso, e giusto che non le sia permesso: il
+    # guasto era nella domanda, non nella chiave.
+    #
+    # E' il falso allarme che questa sentinella esiste per non fare: tre
+    # righe rosse che non vogliono dire niente e nessuno la guarda piu.
+    if r.status_code in (401, 403) and "permission" in r.text.lower():
+        return Esito("ElevenLabs", True,
+                     "chiave a scopo ristretto (solo trascrizione): "
+                     "crediti non leggibili", serve=False)
     if r.status_code != 200:
         return Esito("ElevenLabs", False,
                      f"HTTP {r.status_code}: {r.text[:120]}", serve=False)

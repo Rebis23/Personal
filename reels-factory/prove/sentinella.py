@@ -113,5 +113,61 @@ check("non configurato: mai grave",
       Esito("x", None, serve=True).grave is False)
 check("vivo: mai grave", Esito("x", True, serve=True).grave is False)
 
+print("\n— i due errori trovati dalla sentinella alla sua prima corsa —")
+# Non sono casi inventati: sono le due righe sbagliate del 3/10 alle 08:20.
+import src.sentinella as S                                    # noqa: E402
+
+
+class FintaRisposta:
+    def __init__(self, codice, testo):
+        self.status_code = codice
+        self.text = testo
+
+    def json(self):
+        import json as _j
+        try:
+            return _j.loads(self.text)
+        except Exception:                                      # noqa: BLE001
+            return {}
+
+
+# (a) ElevenLabs: chiave ristretta al solo Speech to Text. Gliel'ho fatta
+# creare cosi io: leggere l'abbonamento NON le e permesso, ed e giusto.
+VERO_401 = ('{"detail":{"type":"authentication_error","code":"unauthorized",'
+            '"message":"The API key you used is missing the permission '
+            'user_read to execute this operation."}}')
+import os                                                      # noqa: E402
+os.environ["ELEVENLABS_API_KEY"] = "finta"
+S.requests.get = lambda *a, **k: FintaRisposta(401, VERO_401)
+e = S.elevenlabs()
+check(f"una chiave ristretta NON e rotta: {e.dettaglio[:40]}", e.vivo is True)
+check("e non fa gridare la sentinella", e.grave is False)
+
+# Una chiave davvero invalida invece deve risultare rotta.
+S.requests.get = lambda *a, **k: FintaRisposta(401, '{"detail":"invalid api key"}')
+check("ma una chiave invalida resta rotta", S.elevenlabs().vivo is False)
+
+# (b) Apify: il 2/10 ho detto "token rifiutato". Era valido, piano FREE — il
+# 403 veniva dalla quota per avviare gli actor. Il token vivo non basta.
+os.environ["APIFY_TOKEN"] = "finta"
+S.requests.get = lambda *a, **k: FintaRisposta(
+    200, '{"data":{"plan":{"id":"FREE"}}}')
+S._quota_apify = lambda t: 0.0
+e = S.apify()
+check("token valido + quota a zero = ROTTO", e.vivo is False)
+check("e dice che gli actor danno 403 anche col token buono",
+      "403" in e.dettaglio and "token valido" in e.dettaglio)
+check("ed e grave: senza scarico non si lavora", e.grave is True)
+
+S._quota_apify = lambda t: 4.2
+e = S.apify()
+check("con quota residua e vivo", e.vivo is True)
+check("e la quota si legge nel dettaglio", "4.2" in e.dettaglio)
+
+S._quota_apify = lambda t: None
+e = S.apify()
+check("quota non leggibile non e un guasto", e.vivo is True)
+check("ma viene detto", "non leggibile" in e.dettaglio)
+
 print(f"\n{ok} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
