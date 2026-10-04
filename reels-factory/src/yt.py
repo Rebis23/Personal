@@ -56,16 +56,42 @@ def _proxy_args() -> list[str]:
 # Servono tutti e tre insieme. Tolto uno qualsiasi si torna a "Sign in to
 # confirm you're not a bot", e ci sono voluti cinque giri per capirlo
 # perche ogni giro ne provava due su tre.
+# DUE COSE DIVERSE, TENUTE SEPARATE DAL 4/10.
+#
+# Stavano in un elenco solo, e il 4/10 Lorenzo ha messo i cookie: il blocco
+# anti-bot e sparito davvero — nel log si vede `yt-dlp --cookies /tmp/...` e
+# nessun "Sign in to confirm you're not a bot" — ma lo scarico e fallito
+# cosi:
+#
+#     WARNING: n challenge solving failed: ... Ensure you have a supported
+#              JavaScript runtime and challenge solver script installed
+#     ERROR:   The page needs to be reloaded.
+#
+# Perche con i cookie _net_args() smetteva di passare TUTTO l'elenco, e
+# dentro c'era anche il risolutore JavaScript. I due pezzi hanno ragioni
+# opposte di esistere:
+#
+#   il risolutore JS  serve SEMPRE — YouTube firma gli indirizzi dei file
+#                     con del codice da eseguire, e senza eseguirlo non si
+#                     scarica niente, con o senza cookie
+#   i client alternativi  servono SOLO senza cookie — autenticano in un modo
+#                     che coi cookie va in conflitto e invalida la sessione
+#
+# Messi nella stessa lista si escludevano a vicenda sbagliando: i cookie
+# risolvevano un problema e ne riaprivano un altro. Il difetto era latente
+# da sempre e si e visto solo adesso, perche YT_COOKIES non era mai stato
+# impostato: un ramo che nessuno ha mai percorso non e codice funzionante,
+# e solo codice non ancora smentito.
+RISOLUTORE_JS = ["--remote-components", "ejs:github"]
 CLIENT_ARGS = [
-    "--remote-components", "ejs:github",
     "--extractor-args", "youtube:player_client=web,tv,mweb,web_safari",
 ]
 
 
 def _net_args() -> list[str]:
-    args = _cookie_args() + _proxy_args()
-    # I cookie autenticano diversamente dal client tv: accostarli invalida la
-    # sessione, quindi si scelgono i client alternativi solo senza cookie
+    args = _cookie_args() + _proxy_args() + RISOLUTORE_JS
+    # I client alternativi autenticano diversamente dai cookie: accostarli
+    # invalida la sessione, quindi si usano solo quando i cookie non ci sono.
     if not os.environ.get("YT_COOKIES", "").strip():
         args += CLIENT_ARGS
     return args
