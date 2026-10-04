@@ -154,16 +154,6 @@
   ],
   "queue": [
     {
-      "clip_id": "z_7ypj7qWyk-1",
-      "video_id": "z_7ypj7qWyk",
-      "video_title": "Me and the Bro talk about Goals (2026) without Filters",
-      "hook": "Video che guardi apre una tab mentale",
-      "r2_key": "reels/z_7ypj7qWyk/z_7ypj7qWyk-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/z_7ypj7qWyk/z_7ypj7qWyk-1.mp4",
-      "caption": "Apri YouTube per staccare, esci con tre podcast da ascoltare, un modo di allenarti nuovo e due idee su cui agire.\nSono tab aperte nel cervello. E la mental fatigue arriva da lì, non dal lavoro.\nIl problema non è il contenuto: è che ogni stimolo diventa una cosa da fare.\n\n#focus #produttivita #abitudini #socialmedia #crescitapersonale #mentalita #concentrazione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-04T12:27:32Z"
-    },
-    {
       "clip_id": "z_7ypj7qWyk-2",
       "video_id": "z_7ypj7qWyk",
       "video_title": "Me and the Bro talk about Goals (2026) without Filters",
@@ -571,6 +561,14 @@
       "ig_media_id": "18013770329957318",
       "permalink": "https://www.instagram.com/reel/Dd_5UPKDF_j/",
       "published_at": "2026-10-02T16:18:47Z"
+    },
+    {
+      "clip_id": "z_7ypj7qWyk-1",
+      "video_id": "z_7ypj7qWyk",
+      "hook": "Video che guardi apre una tab mentale",
+      "ig_media_id": "17905045533663664",
+      "permalink": "https://www.instagram.com/reel/DeEt1VRE5Wn/",
+      "published_at": "2026-10-04T13:14:44Z"
     }
   ],
   "archive_done": [
