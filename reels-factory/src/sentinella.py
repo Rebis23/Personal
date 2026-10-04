@@ -106,6 +106,18 @@ def apify() -> Esito:
     dati = (r.json() or {}).get("data") or {}
     piano = (dati.get("plan") or {}).get("id") or "?"
 
+    # CHI E' QUESTO ACCOUNT. Il 4/10 Lorenzo ha chiesto con quale account
+    # siamo collegati ad Apify, e la risposta non c'era da nessuna parte: il
+    # token sta in un segreto di GitHub, che si scrive e non si rilegge. Un
+    # segreto giusto da proteggere e il token; sapere A CHI appartiene e
+    # un'altra cosa, e serve per andare sulla pagina giusta a ricaricare.
+    #
+    # Si stampa il nome utente e NON la mail: da quando il repo e pubblico
+    # anche i log delle corse sono pubblici, e una mail personale in un log
+    # pubblico e un regalo agli spammer. Il nome utente identifica l'account
+    # per chi deve entrarci e non serve a nessun altro.
+    chi = dati.get("username") or "?"
+
     # IL TOKEN VALIDO NON BASTA, e il 3/10 l'ho imparato male.
     # Il 2/10 avevo detto a Lorenzo che il 403 su tutti gli actor voleva dire
     # "token o account rifiutato". Alla prima corsa di questa sentinella
@@ -118,12 +130,13 @@ def apify() -> Esito:
     # quota resta.
     resto = _quota_apify(token)
     if resto is None:
-        return Esito("Apify", True, f"piano {piano}, quota non leggibile")
+        return Esito("Apify", True, f"@{chi}, piano {piano}, quota non leggibile")
     if resto <= 0:
         return Esito("Apify", False,
-                     f"piano {piano}: quota del mese esaurita — gli actor "
-                     f"rispondono 403 anche col token valido")
-    return Esito("Apify", True, f"piano {piano}, ${resto:.2f} di quota")
+                     f"account @{chi}, piano {piano}: quota del mese "
+                     f"esaurita — gli actor rispondono 403 anche col token "
+                     f"valido")
+    return Esito("Apify", True, f"@{chi}, piano {piano}, ${resto:.2f} di quota")
 
 
 def _quota_apify(token: str) -> float | None:
