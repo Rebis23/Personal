@@ -138,9 +138,62 @@
         "r-K7-JYixSc-3",
         "r-K7-JYixSc-4"
       ]
+    },
+    {
+      "video_id": "z_7ypj7qWyk",
+      "title": "Me and the Bro talk about Goals (2026) without Filters",
+      "status": "done",
+      "processed_at": "2026-10-04T12:38:25Z",
+      "clips": [
+        "z_7ypj7qWyk-1",
+        "z_7ypj7qWyk-2",
+        "z_7ypj7qWyk-3",
+        "z_7ypj7qWyk-4"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "z_7ypj7qWyk-1",
+      "video_id": "z_7ypj7qWyk",
+      "video_title": "Me and the Bro talk about Goals (2026) without Filters",
+      "hook": "Video che guardi apre una tab mentale",
+      "r2_key": "reels/z_7ypj7qWyk/z_7ypj7qWyk-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/z_7ypj7qWyk/z_7ypj7qWyk-1.mp4",
+      "caption": "Apri YouTube per staccare, esci con tre podcast da ascoltare, un modo di allenarti nuovo e due idee su cui agire.\nSono tab aperte nel cervello. E la mental fatigue arriva da lì, non dal lavoro.\nIl problema non è il contenuto: è che ogni stimolo diventa una cosa da fare.\n\n#focus #produttivita #abitudini #socialmedia #crescitapersonale #mentalita #concentrazione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-04T12:27:32Z"
+    },
+    {
+      "clip_id": "z_7ypj7qWyk-2",
+      "video_id": "z_7ypj7qWyk",
+      "video_title": "Me and the Bro talk about Goals (2026) without Filters",
+      "hook": "Se deleghi, il 70% fatto bene basta",
+      "r2_key": "reels/z_7ypj7qWyk/z_7ypj7qWyk-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/z_7ypj7qWyk/z_7ypj7qWyk-2.mp4",
+      "caption": "Se chi assumi fa il 70% di quello che faresti tu, va bene così.\nLo sforzo per portarlo dal 70 al 100 è enorme: lo paghi tu, con le tue task che non fai più.\nO la persona giusta ci arriva da sola, o non è la persona giusta.\n\n#delega #leadership #lavoro #imprenditoria #crescitapersonale #team #produttivita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-04T12:32:12Z"
+    },
+    {
+      "clip_id": "z_7ypj7qWyk-3",
+      "video_id": "z_7ypj7qWyk",
+      "video_title": "Me and the Bro talk about Goals (2026) without Filters",
+      "hook": "Perché vietarti un'abitudine non funziona mai",
+      "r2_key": "reels/z_7ypj7qWyk/z_7ypj7qWyk-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/z_7ypj7qWyk/z_7ypj7qWyk-3.mp4",
+      "caption": "Scrivere non fare questa cosa funziona come dirlo a un bambino: la farà subito.\nIo l'ho ribaltata: niente stimoli disallineati alla mia persona. Non è solo identità, è disprezzo per quella roba lì.\nCambia la frase e cambia il comportamento.\n\n#abitudini #disciplina #identita #crescitapersonale #psicologia #cambiamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-04T12:34:59Z"
+    },
+    {
+      "clip_id": "z_7ypj7qWyk-4",
+      "video_id": "z_7ypj7qWyk",
+      "video_title": "Me and the Bro talk about Goals (2026) without Filters",
+      "hook": "Se pianifichi tutto, dove incontri tua moglie?",
+      "r2_key": "reels/z_7ypj7qWyk/z_7ypj7qWyk-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/z_7ypj7qWyk/z_7ypj7qWyk-4.mp4",
+      "caption": "Quanto impatto ha la persona con cui costruisci la vita, rispetto a quanto patrimonio hai?\nEnorme. E quella persona la incontri in una situazione random, non dentro il tuo piano trimestrale.\nSe pianifichi ogni ora, togli spazio proprio alle cose che cambiano la vita.\n\n#obiettivi #vitapersonale #relazioni #crescitapersonale #equilibrio #scelte\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-04T12:38:25Z"
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -524,7 +577,8 @@
     "Enp0wWhaP8M",
     "flUlQn4_vuo",
     "KBOAz2kzvNw",
-    "6GSTLqWek5k"
+    "6GSTLqWek5k",
+    "z_7ypj7qWyk"
   ],
   "sospese": [
     {
@@ -564,7 +618,7 @@
       "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
     }
   ],
-  "last_archive_at": "2026-09-27T22:08:06Z",
+  "last_archive_at": "2026-10-04T12:38:26Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",

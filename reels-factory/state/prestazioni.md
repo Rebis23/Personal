@@ -1,33 +1,33 @@
 Risultati veri dei Reel gia usciti su questo profilo, dal piu visto al meno visto.
-Mediana delle views: 750. I salvataggi contano piu dei like: sono il segnale che il contenuto valeva la pena di essere ritrovato.
+Mediana delle views: 778. I salvataggi contano piu dei like: sono il segnale che il contenuto valeva la pena di essere ritrovato.
 
 | views | salv | like | hook |
 |------:|-----:|-----:|------|
-| 2378 | 11 | 40 | Destra o sinistra? Stai ragionando da tifoso |
-| 1939 | 9 | 19 | Lavaggio del cervello per credere in Dio |
-| 1861 | 6 | 17 | In Cina nessuno vede Gesù |
-| 1585 | 2 | 11 | Zanzara che depone le uova negli occhi |
-| 1487 | 7 | 13 | Credi alla resurrezione solo perché è Gesù? |
-| 1363 | 8 | 34 | Il porno ti rimpicciolisce il cervello |
-| 1072 | 0 | 16 | Perché chi si converte sogna Cristo? |
-| 951 | 0 | 7 | I dati dicono che uno dei modi più efficaci per uscire da una dipendenza è convertirsi, ma non puoi decidere di credere in Dio per smettere di fumare |
-| 893 | 3 | 7 | Stavo centrando tutti gli obiettivi economici che mi ero prefissato e la soddisfazione durava due giorni: effimera, sbiadita, poi spariva |
-| 855 | 0 | 6 | Quella connessione che senti non è Dio |
-| 843 | 5 | 6 | I primi 30 giorni senza porno |
-| 768 | 0 | 12 | La preghiera funziona anche senza Dio |
-| 750 | 4 | 8 | Cervello si sviluppa fino a 25 anni |
-| 746 | 2 | 8 | I contenuti per adulti servono a controllarti |
-| 742 | 2 | 7 | La Bibbia prova che Dio esiste? |
-| 737 | 1 | 9 | Perché paghi le tasse per la pensione? |
-| 676 | 3 | 7 | Perché la religione batte la meditazione? |
-| 668 | 0 | 11 | I valori cristiani sono oggettivamente i migliori |
-| 666 | 0 | 6 | Questa non è ancora una prova |
-| 644 | 0 | 10 | Perché nei dibattiti non cambi mai idea |
-| 616 | 1 | 9 | La resurrezione è la prova più forte |
-| 577 | 2 | 4 | Credi in Dio per paura della morte? |
-| 505 | 1 | 9 | Se tieni aperti dieci obiettivi perché non vuoi rinunciare a nessuno, ne otterrai zero: scegline uno e sacrifica gli altri |
-| 476 | 0 | 4 | Anche la scienza è una religione |
-| 464 | 0 | 5 | La Chiesa è tra le peggiori istituzioni |
+| 2507 | 11 | 45 | Destra o sinistra? Stai ragionando da tifoso |
+| 2386 | 11 | 15 | La Chiesa è tra le peggiori istituzioni |
+| 1950 | 9 | 19 | Lavaggio del cervello per credere in Dio |
+| 1912 | 8 | 18 | In Cina nessuno vede Gesù |
+| 1908 | 15 | 27 | L'argomento cosmologico: da ateo non l'ho smontato |
+| 1552 | 7 | 13 | Credi alla resurrezione solo perché è Gesù? |
+| 1374 | 8 | 34 | Il porno ti rimpicciolisce il cervello |
+| 1283 | 4 | 11 | Credere nella scienza è una fede? |
+| 1086 | 0 | 16 | Perché chi si converte sogna Cristo? |
+| 913 | 9 | 15 | Cos'è un archetipo? Guarda Gandalf e Yoda |
+| 856 | 5 | 6 | I primi 30 giorni senza porno |
+| 793 | 1 | 10 | Perché paghi le tasse per la pensione? |
+| 778 | 0 | 12 | La preghiera funziona anche senza Dio |
+| 768 | 2 | 7 | La Bibbia prova che Dio esiste? |
+| 767 | 2 | 8 | I contenuti per adulti servono a controllarti |
+| 760 | 4 | 8 | Cervello si sviluppa fino a 25 anni |
+| 728 | 0 | 11 | Perché nei dibattiti non cambi mai idea |
+| 727 | 4 | 9 | Tommaso d'Aquino: la prova che Dio esiste |
+| 685 | 3 | 7 | Perché la religione batte la meditazione? |
+| 662 | 1 | 9 | La resurrezione è la prova più forte |
+| 649 | 3 | 7 | Esistono 12 archetipi, tu ne hai due |
+| 635 | 4 | 14 | Il Big Bang è antiscientifico? |
+| 601 | 2 | 4 | Credi in Dio per paura della morte? |
+| 520 | 3 | 8 | Perché Mary Poppins è l'archetipo del mago |
+| 466 | 0 | 2 | L'ombra del caregiver: aiuti per farti notare? |
 
-I 8 migliori hanno fatto in media 1580 views, i 8 peggiori 577.
+I 8 migliori hanno fatto in media 1859 views, i 8 peggiori 618.
 Studia cosa distingue i primi dagli ultimi PRIMA di scegliere: quella differenza vale piu di qualunque regola generale.
