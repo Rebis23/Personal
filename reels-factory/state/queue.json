@@ -154,16 +154,6 @@
   ],
   "queue": [
     {
-      "clip_id": "z_7ypj7qWyk-3",
-      "video_id": "z_7ypj7qWyk",
-      "video_title": "Me and the Bro talk about Goals (2026) without Filters",
-      "hook": "Perché vietarti un'abitudine non funziona mai",
-      "r2_key": "reels/z_7ypj7qWyk/z_7ypj7qWyk-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/z_7ypj7qWyk/z_7ypj7qWyk-3.mp4",
-      "caption": "Scrivere non fare questa cosa funziona come dirlo a un bambino: la farà subito.\nIo l'ho ribaltata: niente stimoli disallineati alla mia persona. Non è solo identità, è disprezzo per quella roba lì.\nCambia la frase e cambia il comportamento.\n\n#abitudini #disciplina #identita #crescitapersonale #psicologia #cambiamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-04T12:34:59Z"
-    },
-    {
       "clip_id": "z_7ypj7qWyk-4",
       "video_id": "z_7ypj7qWyk",
       "video_title": "Me and the Bro talk about Goals (2026) without Filters",
@@ -567,6 +557,14 @@
       "ig_media_id": "17864986767675441",
       "permalink": "https://www.instagram.com/reel/DeFMNPrlFKp/",
       "published_at": "2026-10-04T17:40:12Z"
+    },
+    {
+      "clip_id": "z_7ypj7qWyk-3",
+      "video_id": "z_7ypj7qWyk",
+      "hook": "Perché vietarti un'abitudine non funziona mai",
+      "ig_media_id": "18192627292398838",
+      "permalink": "https://www.instagram.com/reel/DeHMPnVgpGb/",
+      "published_at": "2026-10-05T12:18:51Z"
     }
   ],
   "archive_done": [
