@@ -193,16 +193,6 @@
   ],
   "queue": [
     {
-      "clip_id": "KJjqkkpThVQ-1",
-      "video_id": "KJjqkkpThVQ",
-      "video_title": "This video is for my future wife",
-      "hook": "Ho 22 anni e voglio 4 figli",
-      "r2_key": "reels/KJjqkkpThVQ/KJjqkkpThVQ-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/KJjqkkpThVQ/KJjqkkpThVQ-1.mp4",
-      "caption": "Ho fatto i conti all'indietro: se vuoi 4 figli, a 26 anni devi già aver trovato la persona giusta.\nIo ne ho 22. Restano 4 anni.\nE i primi 2 di una relazione non valgono, perché la dopamina ti nasconde i difetti.\n\n#relazioni #famiglia #crescitapersonale #sceltedivita #amore #valori #ventenni\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-08T13:56:57Z"
-    },
-    {
       "clip_id": "KJjqkkpThVQ-2",
       "video_id": "KJjqkkpThVQ",
       "video_title": "This video is for my future wife",
@@ -734,6 +724,14 @@
       "ig_media_id": "18629536549050385",
       "permalink": "https://www.instagram.com/reel/DeT8nDegZfu/",
       "published_at": "2026-10-10T11:12:15Z"
+    },
+    {
+      "clip_id": "KJjqkkpThVQ-1",
+      "video_id": "KJjqkkpThVQ",
+      "hook": "Ho 22 anni e voglio 4 figli",
+      "ig_media_id": "18134287453658903",
+      "permalink": "https://www.instagram.com/reel/DeUfdTjir8v/",
+      "published_at": "2026-10-10T16:17:14Z"
     }
   ],
   "archive_done": [
