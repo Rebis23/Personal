@@ -1,0 +1,154 @@
+"""Il riscontro settimanale deve dire qualcosa su cui si possa agire.
+
+I numeri veri dei Reel la fabbrica li legge da settembre, ma li vedeva solo
+Claude: finivano nella scheda che il prompt di selezione si rilegge prima di
+scegliere le clip. A Lorenzo arrivavano la coda, i banner e i guasti — mai
+un risultato. Per tre settimane la domanda «questo Reel ha girato?» aveva
+una risposta dentro la fabbrica che nessuna persona leggeva.
+
+Un riscontro che elenca views e si ferma li non serve: quelle le vede anche
+su Instagram. Serve la cosa che Instagram non mostra — da quale video LUNGO
+sono nati i Reel migliori — perche e la sola di queste informazioni che
+cambia una decisione: cosa girare la settimana dopo.
+
+    python prove/riscontro.py
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from src import prestazioni as P
+
+ok = rotti = 0
+
+
+def check(nome, cond):
+    global ok, rotti
+    if cond:
+        print(f"  ok   {nome}")
+        ok += 1
+    else:
+        print(f"  ROTTO {nome}")
+        rotti += 1
+
+
+def r(views, salv, giorni, hook, video="AAA"):
+    return {"hook": hook, "views": views, "salvataggi": salv, "like": 9,
+            "condivisioni": 1, "giorni": giorni, "video_id": video,
+            "data": "2026-10-01"}
+
+
+print("— quando non c'e niente da dire —")
+testo = P.riassunto([r(700, 2, 5, "uno"), r(500, 1, 6, "due")])
+check("due Reel non fanno una tendenza, e lo dice", "troppo pochi" in testo)
+check("non inventa una mediana su due numeri", "Mediana" not in testo)
+
+print("— il riscontro vero —")
+RIGHE = [
+    r(3815, 26, 26, "Si può diventare più belli senza chirurgia?", "look1"),
+    r(2431, 12, 25, "Se sei simmetrico al 100% sei spaventoso", "look1"),
+    r(508, 0, 24, "I report di lookmaxxing valgono 200 euro?", "look1"),
+    r(2409, 11, 20, "La Chiesa è tra le peggiori istituzioni", "fede1"),
+    r(1929, 8, 19, "In Cina nessuno vede Gesù", "fede1"),
+    r(1553, 7, 18, "Credi alla resurrezione solo perché è Gesù?", "fede1"),
+    r(803, 1, 5, "Perché paghi le tasse per la pensione?", "soldi1"),
+    r(652, 0, 4, "Se deleghi, il 70% fatto bene basta", "soldi1"),
+    r(336, 0, 11, "Estetica o personalità: chi vince davvero?", "look1"),
+    r(185, 1, 10, "Hai notato che tutto è in abbonamento?", "soldi1"),
+]
+testo = P.riassunto(RIGHE, titoli={"look1": "Lookmaxxing: quanto conta l'aspetto",
+                                   "fede1": "Dio esiste? Il dibattito",
+                                   "soldi1": "Soldi e libertà"})
+print("\n" + testo + "\n")
+
+check("dice quanti Reel ha letto", "10 usciti e maturi" in testo)
+check("dice che i Reel di oggi non ci sono", "ultime 24 ore" in testo)
+check("il piu visto e in cima ai tre che hanno girato",
+      testo.index("senza chirurgia") < testo.index("Sono morti:"))
+check("il meno visto e tra i morti",
+      testo.index("in abbonamento") > testo.index("Sono morti:"))
+
+print("— i salvataggi, non i like —")
+# 26 salvataggi su 3815 views fanno 6.8‰; 12 su 2431 ne fanno 4.9. Un Reel
+# molto visto non e automaticamente il piu utile.
+check("la classifica dei salvataggi e pesata sulle views",
+      "6.8 ‰" in testo)
+check("un Reel con zero salvataggi non ci finisce",
+      "lookmaxxing valgono 200 euro" not in testo.split("Per video")[0]
+      .split("Piu salvati")[1])
+
+print("— la settimana contro quella prima —")
+check("confronta gli ultimi 7 giorni con i 7 prima", "Ultimi 7 giorni" in testo)
+# ultimi 7gg: 803, 652 → mediana 727,5. Sette prima: 336, 185 → 260,5.
+check("728 contro 260: in salita", "Siamo in salita" in testo)
+magri = P.riassunto([r(900, 2, 1, "solo uno di questa settimana"),
+                     r(500, 1, 8, "a"), r(400, 1, 9, "b"), r(300, 1, 20, "c")])
+check("con un solo Reel nella settimana non azzarda il confronto",
+      "Ultimi 7 giorni" not in magri)
+
+print("— la domanda che cambia una decisione —")
+check("raggruppa per video di partenza", "Per video di partenza" in testo)
+check("il video della fede ha la mediana migliore e sta in cima",
+      testo.index("Dio esiste?") < testo.index("Lookmaxxing"))
+check("usa il titolo del video, non l'id",
+      "fede1" not in testo and "Dio esiste?" in testo)
+check("se il titolo manca resta l'id, non una riga vuota",
+      "soldi1" in P.riassunto(RIGHE, titoli={}))
+uno = [r(900, 2, 3, "a", "solo"), r(800, 2, 4, "b", "altro"),
+       r(700, 2, 5, "c", "terzo")]
+check("un Reel per video non e un raggruppamento: la sezione non appare",
+      "Per video di partenza" not in P.riassunto(uno))
+
+print("— niente divisioni per zero —")
+check("un Reel a zero views non fa saltare il riscontro",
+      "Mediana" in P.riassunto(RIGHE + [r(0, 0, 3, "mai partito")]))
+
+print("— Instagram muto non e 'pochi Reel' —")
+# Il token Instagram e scaduto due volte da quando la fabbrica esiste. Se
+# scade di nuovo, raccogli() torna una lista vuota e il riassunto, da solo,
+# direbbe «troppo pochi Reel per dire cosa funziona»: una frase tranquilla
+# al posto di un guasto. E il modo piu sicuro di non accorgersi di niente.
+import io
+import contextlib
+from datetime import datetime, timedelta, timezone
+
+from src import main as M
+from src import state as S
+
+VECCHIO = (datetime.now(timezone.utc) - timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
+FINTO_STATO = {
+    "published": [{"clip_id": f"a-{i}", "video_id": "vid", "hook": f"hook {i}",
+                   "ig_media_id": f"m{i}", "published_at": VECCHIO}
+                  for i in range(5)],
+    "processed_videos": [{"video_id": "vid", "title": "Un video"}],
+}
+S_load = S.load_state
+S.load_state = lambda: FINTO_STATO
+M.state_mod.load_state = lambda: FINTO_STATO
+
+P._insights = lambda media_id: {}          # Instagram risponde con errore
+fuori = io.StringIO()
+with contextlib.redirect_stdout(fuori):
+    codice = M.cmd_riscontro()
+muto = fuori.getvalue()
+check("il job esce rosso quando nessun Reel da numeri", codice == 1)
+check("e dice la causa vera: token o permesso", "token scaduto" in muto)
+check("non dice 'troppo pochi Reel'", "troppo pochi" not in muto)
+check("nomina quanti Reel avrebbero dovuto rispondere", "5 Reel maturi" in muto)
+
+# Meta risponde a tratti: tre Reel su cinque e un riscontro parziale, non un
+# guasto. Deve uscire il riscontro, con l'avviso di cosa manca.
+P._insights = lambda media_id: ({} if media_id in ("m0", "m1")
+                                else {"views": 700, "saved": 3, "likes": 9,
+                                      "shares": 1, "reach": 600})
+fuori = io.StringIO()
+with contextlib.redirect_stdout(fuori):
+    codice = M.cmd_riscontro()
+parziale = fuori.getvalue()
+check("una risposta parziale non fa cadere il report", codice == 0)
+check("ma avvisa quanti Reel sono rimasti fuori", "2 Reel su 5" in parziale)
+check("e il riscontro c'e comunque", "Mediana" in parziale)
+S.load_state = S_load
+
+print(f"\n{ok} verdi, {rotti} rotti")
+sys.exit(1 if rotti else 0)

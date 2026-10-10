@@ -1179,12 +1179,44 @@ def cmd_chiavi() -> int:
     return codice
 
 
+def cmd_riscontro() -> int:
+    """Come stanno andando i Reel usciti. Per Lorenzo, non per il prompt.
+
+    I numeri veri li leggiamo da settimane — ma solo Claude li vedeva, dentro
+    la scheda che legge prima di scegliere le clip. Lorenzo no: a lui
+    arrivavano il conto della coda e i banner, mai un risultato. Questo
+    comando gira una volta a settimana e dice cosa ha girato, cosa e morto e
+    da quale video lungo sono nati i Reel migliori.
+    """
+    st = state_mod.load_state()
+    attesi = prestazioni.maturi(st["published"], limite=40)
+    righe = prestazioni.raccogli(st["published"], limite=40)
+
+    # Un token scaduto e un profilo senza Reel maturi finirebbero entrambi in
+    # una lista vuota, e il riassunto direbbe "troppo pochi Reel": una frase
+    # rassicurante al posto di un guasto. Qui si separano, e il job esce rosso
+    # solo quando c'e davvero qualcosa da riparare.
+    if attesi and not righe:
+        print(f"::error::Instagram non ha risposto per nessuno dei "
+              f"{len(attesi)} Reel maturi: token scaduto o permesso "
+              f"insights revocato. Nessun riscontro da leggere.")
+        return 1
+    if len(righe) < len(attesi):
+        print(f"⚠️ {len(attesi) - len(righe)} Reel su {len(attesi)} non hanno "
+              f"dato numeri: il riscontro qui sotto e sul resto.")
+
+    titoli = {v["video_id"]: v.get("title", "")
+              for v in st.get("processed_videos") or []}
+    print(prestazioni.riassunto(righe, titoli=titoli))
+    return 0
+
+
 def main() -> int:
     commands = {"ingest": cmd_ingest, "publish": cmd_publish,
                 "registra": cmd_registra, "nicchia": cmd_nicchia,
                 "musica": cmd_musica, "status": cmd_status,
                 "fondi": cmd_fondi, "shorts": cmd_shorts,
-                "chiavi": cmd_chiavi}
+                "chiavi": cmd_chiavi, "riscontro": cmd_riscontro}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1

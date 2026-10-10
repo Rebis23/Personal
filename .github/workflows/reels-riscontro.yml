@@ -1,0 +1,58 @@
+# IL RISCONTRO SETTIMANALE.
+#
+# I numeri veri dei Reel la fabbrica li legge da settembre: prestazioni.py
+# chiede a Instagram views, salvataggi e like di ogni Reel uscito e ne fa la
+# scheda che il prompt di selezione rilegge prima di scegliere le clip.
+#
+# Solo che quei numeri li vedeva solo Claude. A Lorenzo arrivavano la coda, i
+# banner e i guasti — mai un risultato. Per settimane la domanda «questo Reel
+# ha girato?» aveva una risposta dentro la fabbrica, e nessuna persona la
+# leggeva.
+#
+# Questo passo non monta e non pubblica niente: legge lo stato, interroga
+# Instagram e stampa una pagina. Un paio di minuti, e sui repo pubblici i
+# minuti non si pagano.
+#
+# Lunedi mattina presto, cosi la settimana comincia sapendo cosa ha funzionato
+# in quella prima. GitHub consegna i cron anche con ore di ritardo (l'11 ore
+# del 29/09 e misurato): per un report settimanale non e un problema, ma e il
+# motivo per cui non sta alle 8 in punto.
+name: Reels Factory · Riscontro
+
+on:
+  schedule:
+    - cron: "41 5 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: reels-riscontro
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  riscontro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Da requirements.txt, non da un elenco scelto a mano: il 25/09 il
+      # workflow degli Shorts si e rotto con "No module named anthropic"
+      # proprio per aver indovinato i pacchetti che servivano.
+      - name: Installa dipendenze Python
+        run: pip install -r reels-factory/requirements.txt
+
+      # -u: senza, Python tiene il log in pancia e un run interrotto non
+      # lascia una riga di cosa stesse facendo.
+      - name: Leggi come sono andati i Reel
+        working-directory: reels-factory
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: python -u -m src.main riscontro
