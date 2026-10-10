@@ -77,14 +77,35 @@ check("un Reel con zero salvataggi non ci finisce",
       "lookmaxxing valgono 200 euro" not in testo.split("Per video")[0]
       .split("Piu salvati")[1])
 
-print("— la settimana contro quella prima —")
-check("confronta gli ultimi 7 giorni con i 7 prima", "Ultimi 7 giorni" in testo)
-# ultimi 7gg: 803, 652 → mediana 727,5. Sette prima: 336, 185 → 260,5.
-check("728 contro 260: in salita", "Siamo in salita" in testo)
-magri = P.riassunto([r(900, 2, 1, "solo uno di questa settimana"),
-                     r(500, 1, 8, "a"), r(400, 1, 9, "b"), r(300, 1, 20, "c")])
+print("— due settimane entrambe finite —")
+# La prima versione confrontava gli ultimi 7 giorni con i 7 prima, e alla
+# prima corsa vera ha detto «604 contro 750, siamo in discesa». Falso per
+# costruzione: le views di un Reel di due giorni non sono ancora arrivate,
+# quelle di uno di dieci si. Misurava l'eta delle settimane, e la settimana
+# in corso perde sempre. Ora il confronto e fra la settimana scorsa (7-13gg)
+# e quella prima (14-20gg), entrambe ferme.
+SETTIMANE = [r(900, 3, 8, "scorsa alta"), r(700, 2, 9, "scorsa bassa"),
+             r(500, 1, 15, "prima alta"), r(300, 1, 16, "prima bassa"),
+             r(2000, 9, 1, "uscito ieri, ancora in corsa"),
+             r(1800, 8, 2, "uscito due giorni fa")]
+sett = P.riassunto(SETTIMANE)
+check("confronta la settimana scorsa con quella prima",
+      "Settimana scorsa" in sett and "Quella prima" in sett)
+check("800 contro 400: in salita", "Siamo in salita" in sett)
+check("i Reel di questi giorni restano fuori dal confronto",
+      "su 2 Reel" in sett)
+check("e la pagina dice perche", "stanno ancora salendo" in sett)
+# Il caso che sbagliava: due Reel giovani e deboli non devono bastare a
+# dichiarare una discesa.
+GIOVANI_DEBOLI = [r(200, 1, 1, "ieri"), r(260, 1, 2, "due giorni"),
+                  r(900, 3, 8, "a"), r(950, 3, 10, "b"),
+                  r(800, 3, 15, "c"), r(820, 3, 17, "d")]
+check("due Reel giovani e bassi non ribaltano una settimana in salita",
+      "Siamo in salita" in P.riassunto(GIOVANI_DEBOLI))
+magri = P.riassunto([r(900, 2, 8, "uno solo della settimana scorsa"),
+                     r(500, 1, 15, "a"), r(400, 1, 16, "b"), r(300, 1, 30, "c")])
 check("con un solo Reel nella settimana non azzarda il confronto",
-      "Ultimi 7 giorni" not in magri)
+      "Settimana scorsa" not in magri)
 
 print("— la domanda che cambia una decisione —")
 check("raggruppa per video di partenza", "Per video di partenza" in testo)

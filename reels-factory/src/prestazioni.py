@@ -201,16 +201,27 @@ def riassunto(righe: list[dict], *, titoli: dict[str, str] | None = None) -> str
              "",
              f"Mediana: {mediana:.0f} views."]
 
-    # La settimana contro quella prima: una mediana da sola non dice se il
-    # profilo sta crescendo o si sta spegnendo.
+    # Il profilo sta crescendo o si sta spegnendo. La prima versione di questa
+    # riga confrontava gli ultimi 7 giorni con i 7 prima, e la prima corsa
+    # vera ha risposto «mediana 604 contro 750, siamo in discesa»: falso per
+    # costruzione. Le views di un Reel di due giorni non sono ancora arrivate,
+    # quelle di uno di dieci si: il confronto misurava l'eta delle due
+    # settimane, non il loro contenuto, e la settimana in corso perde sempre.
+    #
+    # Si confrontano quindi due settimane entrambe finite — la scorsa e quella
+    # prima. La tendenza arriva con una settimana di ritardo; sbagliata subito
+    # non servirebbe a niente.
     datati = [r for r in righe if r["giorni"] is not None]
-    ultima = [r["views"] for r in datati if r["giorni"] < 7]
-    prima = [r["views"] for r in datati if 7 <= r["giorni"] < 14]
-    if len(ultima) >= 2 and len(prima) >= 2:
-        a, b = statistics.median(ultima), statistics.median(prima)
+    scorsa = [r["views"] for r in datati if GIORNI_VERDETTO <= r["giorni"] < 14]
+    prima = [r["views"] for r in datati if 14 <= r["giorni"] < 21]
+    if len(scorsa) >= 2 and len(prima) >= 2:
+        a, b = statistics.median(scorsa), statistics.median(prima)
         verso = "in salita" if a > b else ("in discesa" if a < b else "fermi")
-        parti.append(f"Ultimi 7 giorni: mediana {a:.0f} su {len(ultima)} Reel. "
-                     f"I 7 giorni prima: {b:.0f} su {len(prima)}. Siamo {verso}.")
+        parti.append(f"Settimana scorsa: mediana {a:.0f} su {len(scorsa)} Reel. "
+                     f"Quella prima: {b:.0f} su {len(prima)}. Siamo {verso}. "
+                     f"(I Reel di questi giorni non ci sono: le loro views "
+                     f"stanno ancora salendo e li farebbero sembrare peggiori "
+                     f"di quello che sono.)")
 
     def riga(r):
         gg = "?" if r["giorni"] is None else f"{r['giorni']}gg"
