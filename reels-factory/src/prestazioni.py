@@ -31,6 +31,14 @@ SCHEDA = Path(__file__).resolve().parent.parent / "state" / "prestazioni.md"
 # correggeva da sola il giorno dopo senza che nessuno vedesse l'errore.
 ORE_MINIME = 24
 
+# Perche due soglie e non una: ORE_MINIME decide chi ENTRA nei numeri (24 ore,
+# oltre le quali un Reel ha dei dati), GIORNI_VERDETTO decide su chi si
+# PRONUNCIA un giudizio. Alla prima corsa del riscontro, con la sola soglia
+# delle 24 ore, sotto "Sono morti" e finito un Reel di un giorno a 385 views:
+# nessuno sa ancora se sia morto. Entrare in tabella e essere condannati non
+# richiedono la stessa pazienza.
+GIORNI_VERDETTO = 7
+
 
 def _eta_ore(quando: str, adesso: datetime) -> float | None:
     """Ore passate dalla pubblicazione. None se la data non si legge.
@@ -209,17 +217,38 @@ def riassunto(righe: list[dict], *, titoli: dict[str, str] | None = None) -> str
         return (f"  {r['views']:>5} views · {r['salvataggi']:>2} salv · "
                 f"{gg:>4}  {r['hook']}")
 
-    parti += ["", "Hanno girato:"] + [riga(r) for r in ordinate[:3]]
-    parti += ["", "Sono morti:"] + [riga(r) for r in ordinate[-3:]]
+    # 24 ore bastano per mettere un Reel in tabella accanto alla sua eta, non
+    # per dire "questo e morto". Alla prima corsa vera il verdetto suonava
+    # cosi: «Sono morti: 385 views, 1gg» — un Reel di un giorno. Le due
+    # classifiche con un giudizio dentro guardano solo i Reel che hanno avuto
+    # il loro tempo; la tabella del prompt, che mostra i giorni, no.
+    giudicabili = [r for r in righe
+                   if r["giorni"] is None or r["giorni"] >= GIORNI_VERDETTO]
+    if len(giudicabili) >= 3:
+        classifica = sorted(giudicabili, key=lambda r: r["views"], reverse=True)
+        nota = f" (almeno {GIORNI_VERDETTO} giorni online)"
+    else:
+        classifica = ordinate
+        nota = " (nessuno ha ancora una settimana: numeri ancora in corsa)"
+    # Tre e tre solo se ce n'e abbastanza: con cinque Reel giudicabili, due
+    # liste da tre si sovrapporrebbero e lo stesso Reel comparirebbe fra
+    # quelli che hanno girato E fra i morti.
+    quanti = max(1, min(3, len(classifica) // 2))
+    parti += ["", f"Hanno girato{nota}:"] + [riga(r) for r in classifica[:quanti]]
+    parti += ["", "Sono morti:"] + [riga(r) for r in classifica[-quanti:]]
 
+    # I salvataggi per mille views crescono insieme alle views, quindi questa
+    # classifica regge anche sui Reel giovani: ci stanno tutti.
     salvati = sorted(righe, key=_per_mille, reverse=True)[:3]
     parti += ["", "Piu salvati (per mille views): contano piu delle views:"]
     parti += [f"  {_per_mille(r):>4.1f} ‰  {r['hook']}" for r in salvati]
 
     # Il raggruppamento che su Instagram non si vede: quale video lungo ha
     # prodotto i Reel migliori. E la domanda che decide cosa girare.
+    # Anche qui solo i Reel giudicabili: l'ultimo video girato avrebbe tutte
+    # le clip giovani e sembrerebbe il peggiore ogni volta.
     per_video: dict[str, list[int]] = {}
-    for r in righe:
+    for r in giudicabili:
         if r.get("video_id"):
             per_video.setdefault(r["video_id"], []).append(r["views"])
     grossi = {v: n for v, n in per_video.items() if len(n) >= 2}

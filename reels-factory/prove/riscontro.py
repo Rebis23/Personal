@@ -93,11 +93,74 @@ check("il video della fede ha la mediana migliore e sta in cima",
 check("usa il titolo del video, non l'id",
       "fede1" not in testo and "Dio esiste?" in testo)
 check("se il titolo manca resta l'id, non una riga vuota",
-      "soldi1" in P.riassunto(RIGHE, titoli={}))
+      "look1" in P.riassunto(RIGHE, titoli={}))
 uno = [r(900, 2, 3, "a", "solo"), r(800, 2, 4, "b", "altro"),
        r(700, 2, 5, "c", "terzo")]
 check("un Reel per video non e un raggruppamento: la sezione non appare",
       "Per video di partenza" not in P.riassunto(uno))
+
+print("— un Reel di un giorno non e un Reel morto —")
+# Alla prima corsa vera, 10/10 ore 00:25, il riscontro diceva questo:
+#
+#     Sono morti:
+#         468 views ·  1 salv ·  4gg  Perché vietarti un'abitudine...
+#         385 views ·  1 salv ·  1gg  Hai notato che tutto è in abbonamento?
+#         366 views ·  0 salv ·  2gg  Estetica o personalità: chi vince?
+#
+# Due dei tre "morti" avevano uno e due giorni, e in cima alla stessa pagina
+# c'era un Reel di 3 giorni a 3885 views: la classifica per views crude,
+# applicata a Reel di eta diversa, finisce per misurare l'eta. 24 ore bastano
+# per entrare in tabella accanto al proprio numero di giorni; per una
+# condanna no.
+GIOVANI = [
+    r(3885, 27, 3, "Si può diventare più belli senza chirurgia?", "look1"),
+    r(2544, 11, 14, "Destra o sinistra? Stai ragionando da tifoso", "fede1"),
+    r(1553, 7, 18, "Credi alla resurrezione solo perché è Gesù?", "fede1"),
+    r(965, 9, 20, "Cos'è un archetipo? Guarda Gandalf e Yoda", "arche1"),
+    r(803, 1, 12, "Perché paghi le tasse per la pensione?", "soldi1"),
+    r(694, 3, 22, "Esistono 12 archetipi, tu ne hai due", "arche1"),
+    r(468, 1, 4, "Perché vietarti un'abitudine non funziona mai", "soldi1"),
+    r(385, 1, 1, "Hai notato che tutto è in abbonamento?", "soldi1"),
+    r(366, 0, 2, "Estetica o personalità: chi vince davvero?", "look1"),
+]
+testo_g = P.riassunto(GIOVANI)
+morti = testo_g.split("Sono morti:")[1].split("Piu salvati")[0]
+check("il Reel di ieri non viene dichiarato morto",
+      "in abbonamento" not in morti)
+check("nemmeno quello di due giorni", "Estetica o personalità" not in morti)
+check("nemmeno quello di quattro", "vietarti un'abitudine" not in morti)
+check("il peggiore dichiarato ha almeno una settimana",
+      "Esistono 12 archetipi" in morti)
+check("e la pagina dice su cosa si sta pronunciando",
+      "almeno 7 giorni online" in testo_g)
+girati = testo_g.split("Hanno girato")[1].split("Sono morti")[0]
+check("sul Reel di 3 giorni non si pronuncia ne in un senso ne nell'altro: "
+      "3885 views sono molte, ma e presto per chiamarlo un successo",
+      "senza chirurgia" not in girati and "senza chirurgia" not in morti)
+check("ma i suoi numeri contano nella mediana e fra i piu salvati",
+      "senza chirurgia" in testo_g)
+check("con cinque Reel giudicabili le due liste non si sovrappongono: "
+      "nessun Reel e insieme fra quelli che hanno girato e fra i morti",
+      not set(girati.split("\n")) & set(morti.split("\n")) - {""})
+
+print("— un profilo appena partito —")
+NUOVI = [r(900, 3, 2, "a"), r(700, 2, 3, "b"), r(500, 1, 1, "c"),
+         r(300, 1, 2, "d"), r(200, 0, 3, "e"), r(100, 0, 1, "f")]
+nuovo = P.riassunto(NUOVI)
+check("senza Reel maturi non tace: dice che i numeri sono in corsa",
+      "ancora una settimana" in nuovo)
+check("e la classifica la fa comunque, perche e tutto cio che c'e",
+      "a" in nuovo and "Mediana" in nuovo)
+
+print("— l'ultimo video girato non deve sembrare il peggiore —")
+# soldi1 ha tre Reel: 803 (12gg), 468 (4gg), 385 (1gg). Contando i giovani
+# la sua mediana e 468 e finisce in fondo; sui soli Reel giudicabili ha un
+# Reel solo e non entra in classifica — che e la risposta onesta.
+gruppi = testo_g.split("Per video di partenza")[1]
+check("un video con un solo Reel maturo non viene classificato",
+      "soldi1" not in gruppi)
+check("i video con abbastanza Reel maturi ci sono",
+      "fede1" in gruppi and "arche1" in gruppi)
 
 print("— niente divisioni per zero —")
 check("un Reel a zero views non fa saltare il riscontro",
