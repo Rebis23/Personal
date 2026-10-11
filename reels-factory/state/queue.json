@@ -189,6 +189,17 @@
         "KJjqkkpThVQ-5",
         "KJjqkkpThVQ-6"
       ]
+    },
+    {
+      "video_id": "nhjqfCOAEEE",
+      "title": "How to Make 2026 the BEST Year of Your Life",
+      "status": "done",
+      "processed_at": "2026-10-11T13:14:48Z",
+      "clips": [
+        "nhjqfCOAEEE-1",
+        "nhjqfCOAEEE-2",
+        "nhjqfCOAEEE-3"
+      ]
     }
   ],
   "queue": [
@@ -231,6 +242,36 @@
       "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/KJjqkkpThVQ/KJjqkkpThVQ-6.mp4",
       "caption": "Un giorno i piatti li lavo io, un giorno tu: sembra giusto, ma è il modo più veloce per far soffrire entrambi.\nNon si divide a metà: si divide per quello che pesa meno a ciascuno.\nIo le tasse e l'avvocato, tu la casa.\n\n#coppia #relazioni #famiglia #ruoli #convivenza #crescitapersonale\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
       "created_at": "2026-10-08T14:19:32Z"
+    },
+    {
+      "clip_id": "nhjqfCOAEEE-1",
+      "video_id": "nhjqfCOAEEE",
+      "video_title": "How to Make 2026 the BEST Year of Your Life",
+      "hook": "Perché i buoni propositi non funzionano mai",
+      "r2_key": "reels/nhjqfCOAEEE/nhjqfCOAEEE-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/nhjqfCOAEEE/nhjqfCOAEEE-1.mp4",
+      "caption": "Due anni fa mi sono dato 20 obiettivi per l'anno. Ho raggiunto tutti quelli secondari e quasi nessuno dei principali.\nNon è questione di volontà: è questione di come li imposti.\nNel video completo spiego il sistema che uso adesso.\n\n#obiettivi #buonipropositi #crescitapersonale #produttività #disciplina #abitudini #mentalita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-11T13:03:27Z"
+    },
+    {
+      "clip_id": "nhjqfCOAEEE-2",
+      "video_id": "nhjqfCOAEEE",
+      "video_title": "How to Make 2026 the BEST Year of Your Life",
+      "hook": "Gli obiettivi annuali non funzionano mai",
+      "r2_key": "reels/nhjqfCOAEEE/nhjqfCOAEEE-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/nhjqfCOAEEE/nhjqfCOAEEE-2.mp4",
+      "caption": "L'obiettivo annuale non regge: è troppo lontano perché la mente lo tenga come priorità.\nL'anno serve solo a darti una direzione. Il resto si gioca su finestre molto più corte.\nNel video spiego su quale orizzonte vanno messi davvero gli obiettivi.\n\n#obiettivi #pianificazione #produttività #crescitapersonale #abitudini #mentalita #tempo\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-11T13:09:08Z"
+    },
+    {
+      "clip_id": "nhjqfCOAEEE-3",
+      "video_id": "nhjqfCOAEEE",
+      "video_title": "How to Make 2026 the BEST Year of Your Life",
+      "hook": "Ho disinstallato Instagram: così elimino le distrazioni",
+      "r2_key": "reels/nhjqfCOAEEE/nhjqfCOAEEE-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/nhjqfCOAEEE/nhjqfCOAEEE-3.mp4",
+      "caption": "Ho bloccato Instagram da telefono e da PC. Disinstallata l'app. YouTube idem.\nNon è forza di volontà: è rendere difficile ciò che non voglio fare e facile ciò che voglio fare.\nSul tavolo tengo sempre due libri, così quando mi distraggo leggo.\n\n#abitudini #disciplina #focus #distrazioni #produttività #crescitapersonale #socialmedia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-11T13:14:48Z"
     }
   ],
   "published": [
@@ -739,7 +780,8 @@
     "6GSTLqWek5k",
     "z_7ypj7qWyk",
     "2cZss5ApeOQ",
-    "KJjqkkpThVQ"
+    "KJjqkkpThVQ",
+    "nhjqfCOAEEE"
   ],
   "sospese": [
     {
@@ -779,7 +821,7 @@
       "motivo": "hook fuori contesto (bocciato da Lorenzo il 29/08 e dalla prova a freddo)"
     }
   ],
-  "last_archive_at": "2026-10-08T14:19:32Z",
+  "last_archive_at": "2026-10-11T13:14:48Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
