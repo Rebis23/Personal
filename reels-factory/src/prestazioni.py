@@ -223,11 +223,22 @@ def riassunto(righe: list[dict], *, titoli: dict[str, str] | None = None) -> str
                      f"Quella prima: {len(prima)} Reel, mediana {b:.0f}, "
                      f"in tutto {mille(sum(prima))}.")
         # Due numeri e non uno, perche quando cambia il RITMO di pubblicazione
-        # la mediana per Reel e il pubblico raggiunto si muovono in direzioni
-        # opposte: passando da uno a due Reel al giorno le views per Reel
-        # scendono (lo stesso pubblico diviso per piu video) mentre il totale
-        # sale. Con la sola mediana la risposta sarebbe «siamo in discesa,
-        # pubblica meno» — cioe la decisione sbagliata.
+        # la mediana per Reel non dice piu da sola come sta andando il
+        # profilo: con piu Reel lo stesso pubblico si divide, e le views per
+        # Reel scendono anche quando non e peggiorato niente.
+        #
+        # Quanto incida lo dice solo la misura. Prima corsa con entrambe le
+        # cifre, 12/10, passando da 7 a 11 Reel per settimana:
+        #
+        #     mediana per Reel   806 → 708   (-12%)
+        #     pubblico in tutto  9.715 → 9.433  (-3%)
+        #
+        # Avevo previsto che il totale salisse del 38%, stimandolo come
+        # mediana × numero di Reel. Sbagliato: la settimana da 7 Reel
+        # conteneva i tre Reel grossi (2546, 2418, 1976) e la sua mediana la
+        # descriveva male. Il totale e rimasto fermo. Cioe: raddoppiare il
+        # ritmo ha diviso lo stesso pubblico su piu video invece di
+        # allargarlo — un conto che mediana × Reel non avrebbe mai mostrato.
         parti.append(f"Per Reel siamo {verso} ({(a - b) / b * 100:+.0f}%), "
                      f"come pubblico raggiunto "
                      f"{(sum(scorsa) - sum(prima)) / sum(prima) * 100:+.0f}%. "
