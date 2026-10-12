@@ -91,9 +91,26 @@ SETTIMANE = [r(900, 3, 8, "scorsa alta"), r(700, 2, 9, "scorsa bassa"),
 sett = P.riassunto(SETTIMANE)
 check("confronta la settimana scorsa con quella prima",
       "Settimana scorsa" in sett and "Quella prima" in sett)
-check("800 contro 400: in salita", "Siamo in salita" in sett)
+check("800 contro 400: in salita", "Per Reel siamo in salita" in sett)
 check("i Reel di questi giorni restano fuori dal confronto",
-      "su 2 Reel" in sett)
+      "2 Reel, mediana" in sett)
+
+# Il numero che mancava. Il 12/10 il riscontro diceva «mediana 707 su 11 Reel
+# contro 806 su 7: siamo in discesa» — vero per Reel, e falso come conclusione:
+# in quelle due settimane il ritmo era passato da uno a due Reel al giorno, e
+# il pubblico raggiunto in tutto era SALITO. Con la sola mediana la risposta
+# sarebbe stata «pubblica meno», cioe il contrario di quello che i numeri
+# dicevano.
+RITMO = [r(700, 2, 8, "a"), r(700, 2, 8, "b"), r(700, 2, 9, "c"),
+         r(700, 2, 10, "d"),                       # 4 Reel, 2800 in tutto
+         r(900, 3, 15, "e"), r(900, 3, 16, "f")]   # 2 Reel, 1800 in tutto
+ritmo = P.riassunto(RITMO)
+check("dice quante views ha fatto in tutto ogni settimana",
+      "in tutto 2.800" in ritmo and "in tutto 1.800" in ritmo)
+check("per Reel in discesa", "Per Reel siamo in discesa (-22%)" in ritmo)
+check("ma il pubblico raggiunto in salita", "raggiunto +56%" in ritmo)
+check("e spiega che la differenza e il ritmo di pubblicazione",
+      "si spartiscono lo stesso pubblico" in ritmo)
 check("e la pagina dice perche", "stanno ancora salendo" in sett)
 # Il caso che sbagliava: due Reel giovani e deboli non devono bastare a
 # dichiarare una discesa.
@@ -101,7 +118,7 @@ GIOVANI_DEBOLI = [r(200, 1, 1, "ieri"), r(260, 1, 2, "due giorni"),
                   r(900, 3, 8, "a"), r(950, 3, 10, "b"),
                   r(800, 3, 15, "c"), r(820, 3, 17, "d")]
 check("due Reel giovani e bassi non ribaltano una settimana in salita",
-      "Siamo in salita" in P.riassunto(GIOVANI_DEBOLI))
+      "Per Reel siamo in salita" in P.riassunto(GIOVANI_DEBOLI))
 magri = P.riassunto([r(900, 2, 8, "uno solo della settimana scorsa"),
                      r(500, 1, 15, "a"), r(400, 1, 16, "b"), r(300, 1, 30, "c")])
 check("con un solo Reel nella settimana non azzarda il confronto",

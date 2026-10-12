@@ -217,11 +217,26 @@ def riassunto(righe: list[dict], *, titoli: dict[str, str] | None = None) -> str
     if len(scorsa) >= 2 and len(prima) >= 2:
         a, b = statistics.median(scorsa), statistics.median(prima)
         verso = "in salita" if a > b else ("in discesa" if a < b else "fermi")
-        parti.append(f"Settimana scorsa: mediana {a:.0f} su {len(scorsa)} Reel. "
-                     f"Quella prima: {b:.0f} su {len(prima)}. Siamo {verso}. "
-                     f"(I Reel di questi giorni non ci sono: le loro views "
-                     f"stanno ancora salendo e li farebbero sembrare peggiori "
-                     f"di quello che sono.)")
+        mille = lambda n: f"{n:,}".replace(",", ".")   # 7777 → 7.777
+        parti.append(f"Settimana scorsa: {len(scorsa)} Reel, mediana {a:.0f} "
+                     f"views, in tutto {mille(sum(scorsa))}. "
+                     f"Quella prima: {len(prima)} Reel, mediana {b:.0f}, "
+                     f"in tutto {mille(sum(prima))}.")
+        # Due numeri e non uno, perche quando cambia il RITMO di pubblicazione
+        # la mediana per Reel e il pubblico raggiunto si muovono in direzioni
+        # opposte: passando da uno a due Reel al giorno le views per Reel
+        # scendono (lo stesso pubblico diviso per piu video) mentre il totale
+        # sale. Con la sola mediana la risposta sarebbe «siamo in discesa,
+        # pubblica meno» — cioe la decisione sbagliata.
+        parti.append(f"Per Reel siamo {verso} ({(a - b) / b * 100:+.0f}%), "
+                     f"come pubblico raggiunto "
+                     f"{(sum(scorsa) - sum(prima)) / sum(prima) * 100:+.0f}%. "
+                     f"Quando le due cifre vanno in direzioni opposte e il "
+                     f"ritmo di pubblicazione: piu Reel si spartiscono lo "
+                     f"stesso pubblico.")
+        parti.append("(I Reel di questi giorni non ci sono: le loro views "
+                     "stanno ancora salendo e li farebbero sembrare peggiori "
+                     "di quello che sono.)")
 
     def riga(r):
         gg = "?" if r["giorni"] is None else f"{r['giorni']}gg"
