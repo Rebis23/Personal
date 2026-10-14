@@ -362,6 +362,20 @@ jobs:
           # smonta comunque, anche se python muore per un'altra ragione.
           trap 'sudo timeout 60 wg-quick down warp >/dev/null 2>&1 || true' EXIT
 
+          # IL CERVELLO SI PROVA PRIMA DEL TUNNEL. Il 12/10 alle 15:07:
+          #
+          #     Tunnel su, esco da            ← l'IP d'uscita era VUOTO
+          #     ❌ Il cervello non risponde: Request timed out
+          #
+          # Mezzo tunnel su, e la domanda ad Anthropic — che con YouTube non
+          # c'entra niente — e morta dentro. La chiave era viva: cinque
+          # minuti dopo la sentinella ha risposto "Anthropic vivo" sulla rete
+          # normale. Una corsa persa per un tunnel che serve solo a scaricare.
+          # Qui la domanda si fa sulla rete buona, e se il credito e finito si
+          # esce prima di pagare Apify e la trascrizione.
+          python -u -m src.main cervello || exit 1
+          export CERVELLO_PROVATO=1
+
           if [ "${WARP_PRONTO:-0}" = "1" ]; then
             sudo timeout 60 wg-quick up warp \
               && echo "Tunnel su, esco da $(curl -s --max-time 15 https://api.ipify.org)" \

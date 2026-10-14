@@ -548,25 +548,126 @@ VIRGOLE = ","
 # Nel parlato la punteggiatura di Whisper salta; il silenzio no.
 PAUSA = 0.45
 # Parole con cui una riga NON puo cominciare: sono legature, e chi le legge
-# da sole sente che manca qualcosa prima. Tutto il resto va bene, anche in
-# mezzo a un periodo — la riga che Lorenzo voleva, "pensare diventa roba da
-# stupidi", sta esattamente in mezzo a un periodo senza virgole ne pause.
-LEGATURE = {"e", "ed", "che", "di", "del", "della", "dei", "delle", "a", "al",
-            "alla", "ai", "alle", "da", "dal", "dalla", "in", "nel", "nella",
-            "con", "su", "sul", "sulla", "per", "come", "se", "o", "oppure",
-            "cioe", "cioè", "ecco", "poi", "anche", "gia", "già", "li", "lì",
-            "ci", "ne", "lo", "la", "le", "gli", "mi", "ti", "si", "vi"}
+# da sole sente che manca qualcosa prima.
+#
+# Mancavano gli articoli. Il 13/10 Lorenzo ha guardato i Reel e ha detto che
+# «la conversazione spesso parte a metà, quindi il Reel non parte in un
+# momento interessante». Nel log della lavorazione di sabato, due clip su tre:
+#
+#     ▶️ «i buoni propositi non funzionano»            manca "il motivo per cui"
+#     ▶️ «prossimi 90 giorni sono fuori da Instagram»  manca "i"
+#
+# "i" e "prossimi" non erano in questa lista, quindi passavano.
+LEGATURE = {"e", "ed", "che", "di", "del", "della", "dello", "dei", "delle",
+            "degli", "a", "al", "allo", "alla", "ai", "alle", "agli",
+            "da", "dal", "dallo", "dalla", "dai", "dalle", "dagli",
+            "in", "nel", "nello", "nella", "nei", "nelle", "negli",
+            "con", "col", "coi", "su", "sul", "sullo", "sulla", "sui",
+            "sulle", "sugli", "per", "tra", "fra", "come", "se", "o",
+            "oppure", "cioe", "cioè", "ecco", "poi", "anche", "pure",
+            "appunto", "gia", "già", "li", "lì", "ci", "ne", "il", "lo",
+            "la", "i", "le", "gli", "un", "uno", "una", "mi", "ti", "si", "vi"}
+
+# Perche una lista di parole non basta. «prossimi 90 giorni sono fuori da
+# Instagram» comincia con un aggettivo: nessuna lista di legature lo fermera
+# mai, perche il difetto non e la parola, e il POSTO. Serviva una prova che
+# li cominci qualcosa, e le prove possibili sono tre:
+#
+#     muro     la parola prima finisce con . : ; ? !  → proposizione nuova
+#     virgola  la parola prima finisce con una virgola
+#     pausa    fra le due parole c'e silenzio (>= PAUSA secondi)
+#
+# Chi non ne ha nessuna non viene offerto. Questo e l'opposto di come stava
+# scritto prima — «si taglia dappertutto e si scarta solo cio che comincia
+# con una legatura» — e il motivo per cui si puo cambiare adesso e che il
+# mestiere di questa riga e cambiato: il banner lo scrive un altro pezzo di
+# codice da settembre, qui resta SOLO da dove parte la clip. Una riga che fa
+# da titolo puo stare in mezzo a un periodo («pensare diventa roba da
+# stupidi»); un punto da cui far partire l'audio, no.
+#
+# Il prezzo: dove Whisper non mette punteggiatura per minuti e non ci sono
+# pause, non si offre niente e la clip parte dove l'ha tagliata la selezione,
+# che segue le frasi. E' il prezzo giusto: nel Reel dell'11/09 la prima cosa
+# che si sentiva era «a credere fermamente nel dio cristiano» — una "a"
+# appesa a una frase che chi guarda non ha sentito. Meglio nessuna riga.
+PROVE_APERTURA = ("muro", "pausa_forte", "svolta", "virgola", "pausa")
+
+# Un secondo di silenzio vale un punto. La prima versione di questa regola
+# metteva tutte le pause nello stesso mazzo, e cosi «il problema e un altro»
+# dopo SEI secondi di silenzio veniva scartato perche comincia con "il":
+# prova debole + legatura in testa. Ma dopo sei secondi li comincia una frase
+# quanto dopo un punto.
+PAUSA_FORTE = 1.0
+
+# Le parole che aprono una proposizione da sole, senza bisogno che prima ci
+# sia un segno o un silenzio: segnano una svolta nel discorso. Era nel
+# disegno originale («dopo un ma») e serve ancora — «Ma i clienti non
+# arrivano lo stesso» e un buon punto da cui far partire un Reel.
+SVOLTE = {"ma", "pero", "però", "invece", "anzi", "eppure", "tuttavia"}
+
+# Le prove che bastano a giustificare una legatura in testa: dopo di loro
+# comincia una frase nuova, e un articolo e il suo inizio naturale.
+PROVE_FORTI = ("muro", "pausa_forte")
+
+# Dopo un punto, un articolo o una preposizione in testa non e un troncone:
+# e l'inizio di una frase. «Gli obiettivi annuali non funzionano mai» e «In
+# Cina nessuno vede Gesù» — il secondo e fra i Reel piu visti del profilo —
+# comincerebbero entrambi con una legatura, e scartarli sarebbe sbagliato.
+# La prima versione di questa regola lo faceva: la prova la trovava e poi la
+# legatura la buttava via. Le congiunzioni e i pronomi atoni invece restano
+# fuori anche dopo un punto, perche «E quindi...» o «Gli ho detto...» suonano
+# come una continuazione comunque.
+AMMESSE_DOPO_MURO = {"il", "lo", "la", "i", "le", "gli", "un", "uno", "una",
+                     "di", "del", "dello", "della", "dei", "delle", "degli",
+                     "a", "al", "allo", "alla", "ai", "alle", "agli",
+                     "da", "dal", "dallo", "dalla", "dai", "dalle", "dagli",
+                     "in", "nel", "nello", "nella", "nei", "nelle", "negli",
+                     "con", "col", "coi", "su", "sul", "sullo", "sulla",
+                     "sui", "sulle", "sugli", "per", "tra", "fra"}
+
+
+def _attacco(dentro: list[dict], i: int, *, pausa: float) -> str:
+    """Che prova c'e che a `dentro[i]` cominci qualcosa. Stringa vuota = nessuna.
+
+    La prima parola della finestra non vale come inizio: la finestra comincia
+    dove l'ha tagliata la selezione, non dove comincia una frase. Era proprio
+    la rete di sicurezza che l'11/09 ha fatto passare la "a" sospesa.
+    """
+    if i == 0:
+        return ""
+    prima = dentro[i - 1]
+    testo = prima["word"].strip()
+    silenzio = dentro[i]["start"] - prima["end"]
+    if testo.endswith(tuple(MURI)):
+        return "muro"
+    if silenzio >= PAUSA_FORTE:
+        return "pausa_forte"
+    mia = parole(dentro[i]["word"])
+    if mia and mia[0] in SVOLTE:
+        return "svolta"
+    if testo.endswith(tuple(VIRGOLE)):
+        return "virgola"
+    if silenzio >= pausa:
+        return "pausa"
+    return ""
 
 
 def tratti_parlati(words: list[dict], da: float, a: float, *,
                    max_parole: int = MAX_PAROLE, minimo: int = 4,
+                   pausa: float = PAUSA,
                    gia_usati: frozenset[str] = frozenset()) -> list[dict]:
     """Le righe da 4-7 parole realmente pronunciate fra `da` e `a`.
 
-    Ognuna comincia dove comincia una proposizione — inizio frase, dopo una
-    virgola o un due punti, dopo una pausa, dopo un "ma" — perche una riga
-    che parte a meta sintagma, letta o sentita, suona monca. E ognuna porta
-    il secondo in cui parte: e quello il punto da cui far partire la clip.
+    Ognuna comincia dove c'e una PROVA che cominci una proposizione — un
+    muro di punteggiatura, una virgola, o una pausa misurata fra le parole —
+    e non comincia con una legatura. E ognuna porta il secondo in cui parte:
+    e quello il punto da cui far partire la clip.
+
+    Questa riga di docstring ha detto il falso per un mese: diceva "inizio
+    frase, dopo una virgola, dopo una pausa" mentre il codice sotto offriva
+    ogni singola parola che non fosse una legatura. Misurato sul parlato vero
+    dell'11/09: 255 righe offerte in 26 secondi, tutte frammenti a meta
+    frase. Chi rileggeva il file credeva che il caso fosse coperto.
     """
     dentro = [w for w in words if da - 0.5 <= w["start"] <= a]
     if len(dentro) < minimo:
@@ -574,29 +675,25 @@ def tratti_parlati(words: list[dict], da: float, a: float, *,
 
     testi = [w["word"].strip() for w in dentro]
     muro = [bool(set(t) & set(MURI)) for t in testi]
-    virgola = [t.endswith(tuple(VIRGOLE)) for t in testi]
 
-    # Una riga puo cominciare quasi ovunque. Il primo tentativo la faceva
-    # partire solo dopo una virgola, una pausa o un "ma", e su
-    # «...ed e li che pensare diventa roba da stupidi» offriva quattro sole
-    # opzioni, tutte dentro la premessa: la riga che Lorenzo aveva indicato
-    # come quella giusta non era nemmeno fra le scelte. Il parlato continuo
-    # non ha punteggiatura, e legare i tagli alla punteggiatura significava
-    # non trovarli mai. Si taglia dappertutto e si scarta solo cio che
-    # comincia con una legatura.
-    inizi = [i for i, t in enumerate(testi)
-             if not (parole(t) and parole(t)[0] in LEGATURE)]
-    # Qui prima si rimetteva dentro d'ufficio la prima parola della finestra
-    # anche quando era una legatura, come rete di sicurezza. Ma la rete
-    # faceva passare proprio quello che doveva fermare: il Reel dell'11/09
-    # si apre su «a credere fermamente nel dio cristiano» — la prima parola
-    # che si sente e "a", appesa a una frase che chi guarda non ha sentito.
-    # Se in tutta la finestra non c'e un attacco pulito, e giusto non
-    # offrirne nessuno: chi chiama tiene la partenza che aveva.
+    # Due filtri che fanno due lavori diversi: la PROVA dice che li comincia
+    # qualcosa, la legatura dice che quella parola non puo stare in testa.
+    # Servono entrambi — dopo una virgola puo esserci «e poi», che una prova
+    # ce l'ha ma in testa non si regge.
+    inizi = []
+    for i, t in enumerate(testi):
+        prova = _attacco(dentro, i, pausa=pausa)
+        if not prova:
+            continue
+        primo = parole(t)[0] if parole(t) else ""
+        if primo in LEGATURE and not (prova in PROVE_FORTI
+                                      and primo in AMMESSE_DOPO_MURO):
+            continue
+        inizi.append((i, prova))
 
     fuori: list[dict] = []
     visti: set[str] = set()
-    for i in inizi:
+    for i, prova in inizi:
         for n in range(minimo, max_parole + 1):
             if i + n > len(testi):
                 break
@@ -609,7 +706,8 @@ def tratti_parlati(words: list[dict], da: float, a: float, *,
             if chiave in visti or chiave in gia_usati:
                 continue
             visti.add(chiave)
-            fuori.append({"testo": testo, "start": dentro[i]["start"]})
+            fuori.append({"testo": testo, "start": dentro[i]["start"],
+                          "attacco": prova})
     return fuori
 
 
@@ -727,8 +825,25 @@ def dal_parlato(words: list[dict], da: float, a: float, *, tema: str,
     # di fila con lo stesso titolo in cima sembrano un errore, e lo sono.
     tratti = tratti_parlati(words, da, a, max_parole=max_parole,
                             gia_usati=gia_usati)
-    if not tratti:
-        print("      ⚠️ Nessuna riga pronunciata abbastanza corta da fare banner")
+
+    # Da quale prova nascono le candidate. Serve perche la soglia PAUSA non
+    # l'ho scelta su dati veri: nella trascrizione di prova che abbiamo in
+    # archivio TUTTI gli stacchi fra parole sono 0.00s e non c'e un segno di
+    # punteggiatura in 94 parole, ma quel file viene da un percorso vecchio.
+    # Whisper large oggi gira con word_timestamps=True, che i tempi veri li
+    # da: questa riga dice quanto valgono i tre segnali sul parlato di
+    # Lorenzo, e la soglia si aggiusta su quei numeri invece che a intuito.
+    if tratti:
+        conto: dict[str, int] = {}
+        for t in tratti:
+            conto[t["attacco"]] = conto.get(t["attacco"], 0) + 1
+        pezzi = " · ".join(f"{p}:{conto.get(p, 0)}" for p in PROVE_APERTURA)
+        print(f"      🔎 Attacchi offerti: {len(tratti)} ({pezzi})")
+    else:
+        # Non e un guasto: in questo tratto non c'e nessuna prova che
+        # cominci una frase, e offrire una partenza a caso e' peggio.
+        print("      ⚠️ Nessun attacco pulito qui: niente punteggiatura e "
+              "niente pause. La clip resta dove l'ha tagliata la selezione")
         return None
     return scegli_parlato(tratti, tema=tema, model=model)
 

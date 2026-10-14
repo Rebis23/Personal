@@ -53,11 +53,26 @@ def cmd_ingest() -> int:
     # pagato tutte e due per poi morire sul credito Anthropic a zero, sempre
     # allo stesso punto, sette minuti dopo. La domanda che si fa qui costa
     # un token e la risposta arriva in un secondo.
-    vivo, guasto = brain.cervello_pronto(cfg["claude"]["model"])
-    if not vivo:
-        print(f"❌ Il cervello non risponde: {guasto}")
-        print(f"::error::Ingest fermo prima di spendere — {guasto}")
-        return 1
+    #
+    # Ma non si fa due volte, e soprattutto non si fa da dentro il tunnel.
+    # Il 12/10 alle 15:07 la corsa e morta cosi:
+    #
+    #     Tunnel su, esco da            ← l'IP d'uscita era VUOTO
+    #     ❌ Il cervello non risponde: Request timed out
+    #
+    # Il tunnel WARP serve solo a scaricare da YouTube, e quando parte male
+    # si porta dietro anche questa domanda, che con YouTube non c'entra
+    # niente: la corsa muore su Anthropic con una chiave perfettamente
+    # viva. Adesso il workflow la fa prima di alzare il tunnel e lo dice
+    # qui con CERVELLO_PROVATO; chi lancia a mano la fa comunque.
+    if os.environ.get("CERVELLO_PROVATO") == "1":
+        print("🧠 Cervello gia provato prima del tunnel")
+    else:
+        vivo, guasto = brain.cervello_pronto(cfg["claude"]["model"])
+        if not vivo:
+            print(f"❌ Il cervello non risponde: {guasto}")
+            print(f"::error::Ingest fermo prima di spendere — {guasto}")
+            return 1
 
     print(f"🔎 Controllo feed del canale {channel_id}...")
     videos = yt.fetch_recent_videos(channel_id)
@@ -1179,6 +1194,22 @@ def cmd_chiavi() -> int:
     return codice
 
 
+def cmd_cervello() -> int:
+    """Solo la domanda al cervello: risponde o no. Esce 1 se no.
+
+    Serve al workflow per farla PRIMA di alzare il tunnel WARP — vedi il
+    commento in cmd_ingest. Non scarica, non monta, non pubblica: un token.
+    """
+    cfg = load_config()
+    vivo, guasto = brain.cervello_pronto(cfg["claude"]["model"])
+    if vivo:
+        print("🧠 Il cervello risponde")
+        return 0
+    print(f"❌ Il cervello non risponde: {guasto}")
+    print(f"::error::Ingest fermo prima di spendere — {guasto}")
+    return 1
+
+
 def cmd_riscontro() -> int:
     """Come stanno andando i Reel usciti. Per Lorenzo, non per il prompt.
 
@@ -1216,7 +1247,8 @@ def main() -> int:
                 "registra": cmd_registra, "nicchia": cmd_nicchia,
                 "musica": cmd_musica, "status": cmd_status,
                 "fondi": cmd_fondi, "shorts": cmd_shorts,
-                "chiavi": cmd_chiavi, "riscontro": cmd_riscontro}
+                "chiavi": cmd_chiavi, "riscontro": cmd_riscontro,
+                "cervello": cmd_cervello}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1

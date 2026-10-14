@@ -1,13 +1,19 @@
-"""Le righe del banner devono uscire dalle parole pronunciate.
+"""Le righe d'apertura devono uscire dalle parole pronunciate.
 
 Il 5/09 il log diceva, su cinque clip su cinque, "L'aggancio non si ritrova
 nel parlato". Era garantito: il banner nasceva come frase scritta dal modello
 e la si cercava nel sonoro. Adesso nasce dal sonoro.
 
+Da settembre queste righe non fanno piu il banner — quello lo scrive un
+altro pezzo di codice — e servono a una cosa sola: dire DA DOVE PARTE LA
+CLIP. E' un mestiere diverso, con un metro diverso, e il 13/10 e stato
+Lorenzo a dirlo: «non tracci bene il momento in cui parte, la conversazione
+spesso parte a metà». Vedi prove/attacco.py per il perche e la misura.
+
 Questa prova non chiama nessun modello: verifica la parte meccanica, cioe
-che i tratti proposti siano davvero pezzi di parlato, comincino dove
-comincia una proposizione, non scavalchino un punto, e portino con se il
-secondo giusto.
+che i tratti proposti siano davvero pezzi di parlato, comincino dove c'e una
+prova che cominci una proposizione, non scavalchino un punto, e portino con
+se il secondo giusto.
 
     python prove/parlato.py
 """
@@ -46,17 +52,32 @@ w = parla(LORENZO)
 t = a.tratti_parlati(w, 0, 99)
 testi = [x["testo"] for x in t]
 
-prova("da una frase sola escono dei tratti", len(t) > 0, f"{len(t)}")
-
-# LA PROVA CHE CONTA. Lorenzo ha indicato lui quale doveva essere la riga:
-# «pensare diventa roba da stupidi». Sta in mezzo a un periodo, senza virgole
-# e senza pause. Il primo tentativo tagliava solo sulla punteggiatura e
-# offriva quattro opzioni, tutte dentro la premessa — cioe proprio il difetto
-# che lui aveva segnalato. Se questa prova torna rossa, il meccanismo non sa
-# fare la cosa per cui e stato scritto.
-prova("la riga indicata da Lorenzo e fra le opzioni",
-      any("pensare diventa roba da stupidi" in x.lower() for x in testi),
-      str(testi[:5]))
+# UNA SCELTA, NON UNA DIMENTICANZA — e la piu discutibile di questo file.
+#
+# Dentro questo periodo non c'e un solo segno di punteggiatura, non c'e una
+# pausa e non c'e una svolta: parlato di fila. Quindi non si offre niente, e
+# la clip resta dove l'ha tagliata la selezione.
+#
+# Fino al 13/10 qui c'era il contrario, e c'era per una ragione seria: il
+# 4/09 Lorenzo aveva indicato LUI quale doveva essere la riga — «pensare
+# diventa roba da stupidi» — e sta esattamente in mezzo a questo periodo. La
+# prova diceva "se torna rossa, il meccanismo non sa fare la cosa per cui e
+# stato scritto".
+#
+# Cosa e cambiato: allora quella riga faceva due mestieri in uno, il titolo
+# sopra la testa E il punto di partenza dell'audio. Il titolo oggi lo scrive
+# un altro pezzo di codice, e per un titolo «pensare diventa roba da stupidi»
+# va benissimo: letto, si regge. Per l'audio no — chi guarda sente una frase
+# che era gia cominciata. E' il difetto che lo stesso Lorenzo ha segnalato il
+# 13/10 sui Reel usciti, e fra le due sue richieste questa e la piu recente e
+# la piu precisa.
+#
+# Se vuole indietro la vecchia regola basta allargare le prove: la scelta sta
+# in PROVE_APERTURA, non sparsa nel codice. Non e una porta chiusa.
+prova("in mezzo a un periodo senza segni e senza pause non si offre niente",
+      len(t) == 0, f"{len(t)}: {testi[:4]}")
+prova("compresa la riga del 4/09, che per l'audio partirebbe a meta",
+      not any("pensare diventa roba da stupidi" in x.lower() for x in testi))
 prova("ogni tratto sta nel limite delle 7 parole",
       all(a.quante(x) <= 7 for x in testi))
 prova("ogni tratto e un pezzo consecutivo del parlato",
@@ -122,7 +143,9 @@ prova("nessun tratto proposto ha l'apostrofo staccato",
 
 # NIENTE DUE REEL COL TITOLO IDENTICO. Il 6/09 le clip 3 e 4 sono uscite con
 # lo stesso banner perche le finestre si sovrapponevano.
-w_dup = parla("perdi la voglia di fare letteralmente tutto e non ti alzi piu")
+# Serve un attacco, altrimenti non ci sono righe su cui provare gia_usati:
+# il punto fermo in testa fa da muro.
+w_dup = parla("succede questo. perdi la voglia di fare letteralmente tutto")
 primo = a.tratti_parlati(w_dup, 0, 99)
 scelto = " ".join(a.parole(primo[0]["testo"]))
 dopo = a.tratti_parlati(w_dup, 0, 99, gia_usati=frozenset({scelto}))

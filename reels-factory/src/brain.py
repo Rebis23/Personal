@@ -293,6 +293,25 @@ def load_nicchia() -> str:
     return "" if "STATO: DA COMPILARE" in testo else testo
 
 
+# Sotto questo voto un hook non ferma lo scroll.
+FORZA_MINIMA = 7
+
+
+def piu_forti(usable: list, quante: int, *, soglia: int = FORZA_MINIMA) -> list:
+    """Le clip da tenere: quelle sopra soglia se bastano, altrimenti le piu forti.
+
+    Sta qui fuori, e non dentro select_clips, per una ragione sola: dentro
+    non si poteva provare. La versione precedente — una riga sola — quando le
+    clip sopra soglia non bastavano a riempire la quota prendeva le prime n
+    della lista, che e in ordine di tempo nel video. Quindi la forza non
+    contava piu niente, e nessuna prova lo diceva. Vedi prove/forza.py.
+    """
+    sopra = [c for c in usable if c.hook_strength >= soglia]
+    if len(sopra) >= quante:
+        return sopra[:quante]
+    return sorted(usable, key=lambda c: c.hook_strength, reverse=True)[:quante]
+
+
 def select_clips(
     timed_transcript: str,
     video_title: str,
@@ -403,9 +422,31 @@ def select_clips(
         usable = [c for i, c in enumerate(usable)
                   if i in salvati or i not in esiti or esiti[i][0]]
 
-    # A parità di clip disponibili si preferiscono gli hook più forti
-    strong = [c for c in usable if c.hook_strength >= 7]
-    picked = (strong if len(strong) >= clips_per_video else usable)[:clips_per_video]
+    # A parità di clip disponibili si preferiscono gli hook più forti.
+    #
+    # Prima qui c'era:
+    #
+    #     picked = (strong if len(strong) >= clips_per_video else usable)[:n]
+    #
+    # e quando le clip forti non bastavano a riempire la quota la soglia non
+    # si abbassava: si spegneva. `usable` e in ordine di tempo nel video,
+    # quindi il ramo di scorta prendeva le prime n — con dieci spezzoni di
+    # forza [4, 5, 9, 8, 3, …] teneva il 4 e il 5 e buttava il 9 e l'8, solo
+    # perche venivano prima. Lorenzo, 13/10: «non prendi gli spezzoni
+    # migliori del video, li prendi un pochino a caso». Il criterio diventava
+    # davvero "dove capita", e il commento in config.yaml — «se un video non
+    # ne ha 6 sopra soglia, ne escono meno» — descriveva un codice che non
+    # c'era: ne uscivano sempre 6.
+    #
+    # Adesso la forza ordina sempre. Quante ne escono resta una scelta di
+    # Lorenzo (quota piena con qualche hook debole, oppure meno Reel ma tutti
+    # sopra soglia): finche non la fa, la quota si riempie coi piu forti.
+    strong = [c for c in usable if c.hook_strength >= FORZA_MINIMA]
+    picked = piu_forti(usable, clips_per_video)
+    if usable and len(strong) < clips_per_video:
+        print(f"      ⚖️ Solo {len(strong)} hook sopra {FORZA_MINIMA}/10 su "
+              f"{len(usable)}: la quota si riempie coi piu forti "
+              f"({', '.join(str(c.hook_strength) for c in picked)})")
 
     # UNA RIGA SOLA. Lorenzo, guardando il Reel del 3/09: "l'hook scritto e
     # lunghissimo e non attrae, perche quando ti trovi una sbrodolata di testo
