@@ -202,18 +202,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "nhjqfCOAEEE-3",
-      "video_id": "nhjqfCOAEEE",
-      "video_title": "How to Make 2026 the BEST Year of Your Life",
-      "hook": "Ho disinstallato Instagram: così elimino le distrazioni",
-      "r2_key": "reels/nhjqfCOAEEE/nhjqfCOAEEE-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/nhjqfCOAEEE/nhjqfCOAEEE-3.mp4",
-      "caption": "Ho bloccato Instagram da telefono e da PC. Disinstallata l'app. YouTube idem.\nNon è forza di volontà: è rendere difficile ciò che non voglio fare e facile ciò che voglio fare.\nSul tavolo tengo sempre due libri, così quando mi distraggo leggo.\n\n#abitudini #disciplina #focus #distrazioni #produttività #crescitapersonale #socialmedia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-11T13:14:48Z"
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -759,6 +748,14 @@
       "ig_media_id": "17907334179590655",
       "permalink": "https://www.instagram.com/reel/DeeJONokzGq/",
       "published_at": "2026-10-14T10:15:08Z"
+    },
+    {
+      "clip_id": "nhjqfCOAEEE-3",
+      "video_id": "nhjqfCOAEEE",
+      "hook": "Ho disinstallato Instagram: così elimino le distrazioni",
+      "ig_media_id": "18071413430743090",
+      "permalink": "https://www.instagram.com/reel/Deev1m0gRA-/",
+      "published_at": "2026-10-14T15:52:33Z"
     }
   ],
   "archive_done": [
