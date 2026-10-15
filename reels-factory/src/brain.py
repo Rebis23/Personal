@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 import anthropic
 
-from . import conto, aggancio, prestazioni
+from . import conto, aggancio, prestazioni, transcript
 
 
 class Punteggi(BaseModel):
@@ -588,13 +588,24 @@ def riscrivi_hooks(falliti: list[tuple[int, str, str, float, float]],
         return {}
     righe = [f"{i}| minuto {inizio:.0f}-{fine:.0f}s | bocciato: «{hook}» | perche: {motivo}"
              for i, hook, motivo, inizio, fine in falliti]
+
+    # Solo il parlato delle clip bocciate, non tutto il video. Per riscrivere
+    # il banner di una clip servono le parole di QUELLA clip: la trascrizione
+    # intera qui viaggiava una seconda volta per niente — ~6.300 token sul
+    # video dell'11/10, ~19.000 su uno da 40 minuti. Vedi transcript.finestra.
+    finestre = []
+    for i, _hook, _motivo, inizio, fine in falliti:
+        testo = transcript.finestra(timed_transcript, inizio, fine)
+        if testo:
+            finestre.append(f"--- clip {i} ({inizio:.0f}-{fine:.0f}s) ---\n{testo}")
+    parlato = "\n\n".join(finestre) or timed_transcript
     try:
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
         r = client.messages.create(
             model=model, max_tokens=4000, system=RISCRITTURA,
             messages=[{"role": "user", "content":
                        "CLIP DA RISCRIVERE:\n" + "\n".join(righe)
-                       + f"\n\nTRASCRIZIONE:\n{timed_transcript}"}],
+                       + f"\n\nPARLATO DELLE CLIP:\n{parlato}"}],
         )
         conto.segna('riscrittura banner', r.usage)
         testo = "".join(b.text for b in r.content

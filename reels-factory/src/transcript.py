@@ -1,5 +1,6 @@
 """Parsing dei sottotitoli automatici YouTube (formato json3) in parole temporizzate."""
 
+import re
 import json
 from pathlib import Path
 
@@ -280,3 +281,35 @@ def inizio_pulito(words: list[dict], t: float, margine: float = 0.15) -> float:
     """
     prima = [w["end"] for w in words if w["end"] <= t + 0.01]
     return max(0.0, max(prima) if prima else 0.0, t - margine)
+
+
+# Quanto parlato tenere prima e dopo la finestra chiesta. Serve contesto per
+# capire di cosa si parla, non tutto il video.
+CONTORNO = 20.0
+
+
+def finestra(timed: str, da: float, a: float, contorno: float = CONTORNO) -> str:
+    """Il pezzo di trascrizione fra `da` e `a`, con un po' di contorno.
+
+    Nasce da un conto: la trascrizione intera viaggiava DUE volte verso il
+    modello a ogni lavorazione — una per scegliere le clip e una per
+    riscrivere i banner bocciati. Ma per riscrivere il banner di una clip
+    servono le parole di QUELLA clip, non i quaranta minuti attorno. Sul
+    video dell'11/10 erano ~6.300 token rispediti per niente; su un video da
+    40 minuti sono ~19.000.
+
+    Si taglia sui marcatori [mm:ss] che to_timed_text() mette ogni 10s: sono
+    gia li e non serve ripassare dalle parole.
+    """
+    if not timed:
+        return ""
+    pezzi = re.split(r"\n(\[\d{2}:\d{2}\])", "\n" + timed)
+    # pezzi = ['', '[00:00]', ' testo', '[00:10]', ' testo', ...]
+    fuori: list[str] = []
+    for i in range(1, len(pezzi) - 1, 2):
+        marcatore, testo = pezzi[i], pezzi[i + 1]
+        m, s = int(marcatore[1:3]), int(marcatore[4:6])
+        quando = m * 60 + s
+        if da - contorno <= quando <= a + contorno:
+            fuori.append(marcatore + testo)
+    return "\n".join(fuori).strip()
