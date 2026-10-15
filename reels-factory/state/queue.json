@@ -200,9 +200,62 @@
         "nhjqfCOAEEE-2",
         "nhjqfCOAEEE-3"
       ]
+    },
+    {
+      "video_id": "f9sp7rl0kw4",
+      "title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "status": "done",
+      "processed_at": "2026-10-15T16:33:02Z",
+      "clips": [
+        "f9sp7rl0kw4-1",
+        "f9sp7rl0kw4-2",
+        "f9sp7rl0kw4-3",
+        "f9sp7rl0kw4-4"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "f9sp7rl0kw4-1",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perché i più competenti restano invisibili?",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-1.mp4",
+      "caption": "Il tratto che ti blocca non è la pigrizia: è che sei troppo compiacente.\nNegli studi, chi ottiene grandi risultati economici ha un livello di accondiscendenza bassissimo. Non è cattiveria: è saper dire no.\n\n#crescitapersonale #psicologia #mentalita #obiettivi #abitudini #dirediNo #lavoro\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-15T16:20:34Z"
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-2",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Ci metti settimane a prendere una decisione?",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-2.mp4",
+      "caption": "Tra tre generazioni chiunque tu abbia mai conosciuto sarà morto. Comprese le persone di cui temi il giudizio.\nQuando smetti di soffrire il giudizio degli altri, sei libero. È letteralmente uno dei tratti più predittivi del successo.\n\n#crescitapersonale #psicologia #giudiziodeglialtri #mentalita #liberta #autostima #obiettivi\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-15T16:24:58Z"
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-3",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Essere competitivi è davvero una cosa brutta?",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-3.mp4",
+      "caption": "Essere bravi e farsi pagare per quanto sei bravo sono due mestieri diversi.\nConosco persone straordinariamente competenti che restano invisibili: manca l'assertività, non il talento.\n\n#crescitapersonale #lavoro #carriera #psicologia #assertivita #mentalita #competenze\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-15T16:31:06Z"
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-4",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perdere 4 ore sui reel",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-4.mp4",
+      "caption": "Puoi avere disciplina, agency e ambizione e comunque bruciare quattro ore al giorno sui reel.\nChi ottiene risultati non usa la forza di volontà: cambia l'ambiente. Il telefono non è sulla scrivania, è in un'altra stanza.\n\n#crescitapersonale #abitudini #produttivita #distrazioni #focus #psicologia #disciplina\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-15T16:33:02Z"
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
