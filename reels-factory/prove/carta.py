@@ -73,6 +73,50 @@ check("e anche 'square' ce l'ha, dalla stessa formula",
       "zoompan" in V._vertical_filter("square", 60.0, 0.06))
 check("senza zoom non c'e", "zoompan" not in carta and "zoompan" not in square)
 
+print("— il montaggio deve FINIRE —")
+# La prova che conta, e quella che mancava. La maschera entra con -loop 1,
+# cioe un flusso infinito: senza shortest=1 alphamerge continua a produrre
+# fotogrammi dopo la fine del video. Il 15/10 la prima corsa vera e rimasta
+# un'ora e 56 su una clip sola finche il tetto dei 150 minuti ha ucciso il
+# job, e la coda e rimasta vuota per un altro giorno.
+#
+# La prima versione di questa prova passava lo stesso, perche la rendevo con
+# -t 20: misuravo una cosa che in produzione non esiste. Qui NON si impone
+# nessuna durata — e l'unico modo di accorgersene.
+import subprocess
+import tempfile
+import time
+
+lavoro = Path(tempfile.mkdtemp(prefix="prove-carta-render-"))
+sorgente = lavoro / "sorgente.mp4"
+subprocess.run(["ffmpeg", "-y", "-f", "lavfi",
+                "-i", "testsrc2=size=1920x1080:rate=30:duration=6",
+                "-pix_fmt", "yuv420p", str(sorgente)],
+               check=True, capture_output=True)
+maschera = V._mask_carta(48, lavoro / "m.png")
+grafo = V._vertical_filter("carta", 6.0, 0.0, src="[0:v]", mask="1:v")
+inizio = time.time()
+try:
+    reso = subprocess.run(
+        ["ffmpeg", "-y", "-i", str(sorgente), "-loop", "1", "-i", str(maschera),
+         "-filter_complex", grafo, "-map", "[vmain]",
+         "-c:v", "libx264", "-preset", "ultrafast", str(lavoro / "out.mp4")],
+        capture_output=True, timeout=120)
+    finito, codice = True, reso.returncode
+except subprocess.TimeoutExpired:
+    finito, codice = False, -1
+check(f"sei secondi di clip si montano e FINISCONO ({time.time()-inizio:.0f}s)",
+      finito and codice == 0)
+if finito and codice == 0:
+    durata = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+         "-of", "csv=p=0", str(lavoro / "out.mp4")],
+        capture_output=True, text=True).stdout.strip()
+    check(f"e durano quanto la sorgente, non all'infinito ({durata}s)",
+          abs(float(durata) - 6.0) < 0.5)
+check("shortest=1 e nel grafo, non solo nei commenti",
+      "alphamerge=shortest=1" in grafo)
+
 print("\n— la maschera —")
 import tempfile
 fuori = Path(tempfile.mkdtemp(prefix="prove-carta-")) / "m.png"

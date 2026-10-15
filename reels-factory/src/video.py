@@ -47,7 +47,19 @@ def _vertical_filter(mode: str, duration: float, zoom: float,
         # nero; qui sotto c'e lo sfocato, e quattro tacche nere si vedrebbero
         # tutte. Serve l'alpha: la maschera entra come canale di trasparenza
         # del quadrato (alphamerge) PRIMA di posarlo sullo sfondo.
-        tondo = f"[quad][{mask}]alphamerge[carta];" if mask else ""
+        # shortest=1 NON e un dettaglio. La maschera entra con -loop 1, cioe
+        # un flusso infinito: senza questo, alphamerge continua a produrre
+        # fotogrammi dopo la fine del video e il montaggio non termina mai.
+        # Successo il 15/10 alla prima corsa vera: la clip 1 e rimasta sotto
+        # ffmpeg per un'ora e cinquantasei, finche il tetto dei 150 minuti
+        # non ha ucciso il job. 'square' ce l'aveva gia (overlay shortest=1)
+        # e io non l'ho riportato.
+        #
+        # La prova che avevo fatto qui prima di spedire passava, e passava
+        # perche le avevo dato -t 20: avevo misurato una cosa che in
+        # produzione non esiste. Adesso prove/carta.py rende SENZA durata e
+        # pretende che finisca.
+        tondo = f"[quad][{mask}]alphamerge=shortest=1[carta];" if mask else ""
         posa = "[carta]" if mask else "[quad]"
         return (
             f"{src}split=2[bg][fg];"
