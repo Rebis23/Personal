@@ -67,7 +67,7 @@ clips:
   #            (stile Modern Wisdom — scelto da Lorenzo il 15/08)
   # "blur"   = video originale centrato su sfondo sfocato
   # "crop"   = ritaglio centrale 9:16 a pieno schermo
-  vertical_mode: "square"
+  vertical_mode: "carta"
   # Raggio degli angoli arrotondati del riquadro video (0 = spigoli vivi)
   corner_radius: 96
   # Lento zoom-in progressivo (0 = disattivato — scelta di Lorenzo)

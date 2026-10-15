@@ -13,25 +13,49 @@ from pathlib import Path
 SQUARE_Y = 700
 
 
+def _spinta(zoom: float, duration: float) -> str:
+    """Il push-in lento sul quadrato. Stessa formula per 'square' e 'carta'."""
+    if zoom <= 0:
+        return ""
+    rate = zoom / max(1.0, duration * 30)
+    return (f",zoompan=z='1+{rate:.7f}*in'"
+            ":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+            ":d=1:s=1080x1080:fps=30")
+
+
 def _vertical_filter(mode: str, duration: float, zoom: float,
-                     src: str = "[0:v]") -> str:
+                     src: str = "[0:v]", mask: str | None = None) -> str:
     if mode == "crop":
         # Ritaglio centrale 9:16 a piena altezza
         return f"{src}crop=ih*9/16:ih,scale=1080:1920,setsar=1[vmain]"
     if mode == "square":
         # Stile Modern Wisdom: video ritagliato quadrato (persona al centro)
         # su tela nera 9:16, con un lento push-in per dare vita all'inquadratura
-        push = ""
-        if zoom > 0:
-            rate = zoom / max(1.0, duration * 30)
-            push = (
-                f",zoompan=z='1+{rate:.7f}*in'"
-                ":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
-                ":d=1:s=1080x1080:fps=30"
-            )
         return (
-            f"{src}crop=ih:ih,scale=1080:1080,setsar=1{push},"
+            f"{src}crop=ih:ih,scale=1080:1080,setsar=1{_spinta(zoom, duration)},"
             f"pad=1080:1920:0:{SQUARE_Y}:black[vmain]"
+        )
+    if mode == "carta":
+        # Il quadrato di "square" sopra lo sfondo sfocato di "blur", invece
+        # che sopra il nero. Lorenzo, 15/10, mandando uno Short di Tom Youngs:
+        # «bello questo stile di editing». Le due parti c'erano gia da
+        # settembre, ma in due modalita che si escludevano a vicenda: o il
+        # quadrato su fondo nero, o il video intero sul fondo sfocato.
+        #
+        # Gli angoli NON si possono arrotondare come in 'square'. Li la
+        # maschera dipinge gli angoli di nero e funziona perche sotto c'e il
+        # nero; qui sotto c'e lo sfocato, e quattro tacche nere si vedrebbero
+        # tutte. Serve l'alpha: la maschera entra come canale di trasparenza
+        # del quadrato (alphamerge) PRIMA di posarlo sullo sfondo.
+        tondo = f"[quad][{mask}]alphamerge[carta];" if mask else ""
+        posa = "[carta]" if mask else "[quad]"
+        return (
+            f"{src}split=2[bg][fg];"
+            "[bg]scale=1080:1920:force_original_aspect_ratio=increase,"
+            "crop=1080:1920,gblur=sigma=24,eq=brightness=-0.08[bgb];"
+            f"[fg]crop=ih:ih,scale=1080:1080,setsar=1{_spinta(zoom, duration)}[quad];"
+            f"{tondo}"
+            f"[bgb]{posa}overlay=0:{SQUARE_Y},setsar=1[vmain]"
         )
     # Default "blur": video intero centrato su sfondo sfocato
     return (
@@ -41,6 +65,25 @@ def _vertical_filter(mode: str, duration: float, zoom: float,
         "[fg]scale=1080:-2[fgs];"
         "[bgb][fgs]overlay=(W-w)/2:(H-h)/2,setsar=1[vmain]"
     )
+
+
+def _mask_carta(radius: int, out_path: Path) -> Path:
+    """PNG 1080x1080 in scala di grigi: bianco dentro il rettangolo tondo,
+    nero fuori. Diventa il canale alpha del quadrato (alphamerge), cosi agli
+    angoli si vede lo sfondo sfocato invece del nero.
+
+    Disegnata a 4x e rimpicciolita, come la maschera di 'square': gli angoli
+    disegnati alla dimensione finale vengono seghettati.
+    """
+    from PIL import Image, ImageDraw
+
+    s = 4
+    grande = Image.new("L", (1080 * s, 1080 * s), 0)
+    ImageDraw.Draw(grande).rounded_rectangle(
+        [0, 0, 1080 * s - 1, 1080 * s - 1], radius=radius * s, fill=255,
+    )
+    grande.resize((1080, 1080), Image.LANCZOS).save(out_path)
+    return out_path
 
 
 def _corner_mask(radius: int, out_path: Path) -> Path:
@@ -141,7 +184,18 @@ def render_clip(
     else:
         vsrc, asrc = "[0:v]", "[0:a]"
 
-    parts.append(_vertical_filter(vertical_mode, total, zoom, src=vsrc))
+    # La maschera della 'carta' entra PRIMA del filtro, non dopo: serve dentro
+    # il grafo (alphamerge sul quadrato), non come velo sopra il risultato.
+    mask_label = None
+    if vertical_mode == "carta" and corner_radius > 0:
+        aux_dir = ass_file.parent if ass_file is not None else out_path.parent
+        mask_png = _mask_carta(corner_radius, aux_dir / "carta-mask.png")
+        inputs += ["-loop", "1", "-i", str(mask_png)]
+        mask_label = f"{n_inputs}:v"
+        n_inputs += 1
+
+    parts.append(_vertical_filter(vertical_mode, total, zoom, src=vsrc,
+                                  mask=mask_label))
     last = "[vmain]"
 
     if cutaway is not None and cutaway_duration > 0.25:
