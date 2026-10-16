@@ -68,9 +68,40 @@ def ricuci(testo: str) -> str:
     return re.sub(r"\s{2,}", " ", testo).strip()
 
 
+# Un numero scritto all'italiana e UNA parola: «2.000» si legge "duemila" e
+# occupa lo spazio di una parola sul banner. Il separatore va riconosciuto,
+# altrimenti il punto spezza il numero in due.
+#
+# Il 15/10 e uscito in coda «Perché per un ricco 2.000 euro sono pochi»: otto
+# parole, contate nove. Non e solo un conteggio sbagliato nel rapporto — e il
+# motivo per cui quel banner NON e stato accorciato. Il taglio giusto esisteva
+# ed era «Per un ricco 2.000 euro sono pochi», sette parole; per il conteggio
+# vecchio ne erano otto, quindi non e mai stato offerto. Al modello sono
+# arrivate solo mutilazioni («Perché per un ricco», «per un ricco 2.000») e ha
+# fatto bene a rifiutarle tutte. Un errore di misura non resta nella misura:
+# si propaga a chi decide.
+NUMERO = r"[0-9]+(?:[.,][0-9]+)*"
+LETTERE = r"[a-zàèéìòóùç'][a-zàèéìòóùç'0-9]*"
+
+
 def parole(testo: str) -> list[str]:
     """Solo le parole, senza punteggiatura e senza accenti di comodo."""
-    return [p for p in re.findall(r"[0-9a-zàèéìòóùç']+", testo.lower()) if p]
+    return [p for p in re.findall(f"{NUMERO}|{LETTERE}", testo.lower()) if p]
+
+
+# Un muro non si attraversa e apre una proposizione nuova.
+MURI = ".:;?!—–"
+# Il separatore delle migliaia NON e un muro. Stesso banner del 15/10: il
+# punto di «2.000» veniva letto come punto fermo, quindi nessun tratto poteva
+# attraversarlo e l'unico taglio buono — «Per un ricco 2.000 euro sono pochi»
+# — non e mai nato. Le mutilazioni offerte al modello finivano tutte li:
+# «Perché per un ricco», «Perché per un ricco 2.000», «per un ricco 2.000».
+_SEPARATORE = re.compile(r"(?<=[0-9])[.,](?=[0-9])")
+
+
+def ha_muro(pezzo: str) -> bool:
+    """C'e punteggiatura forte in questa parola? «2.000» non conta."""
+    return bool(set(_SEPARATORE.sub("", pezzo)) & set(MURI))
 
 
 def quante(testo: str) -> int:
@@ -296,8 +327,7 @@ def candidati(intero: str, max_parole: int = MAX_PAROLE,
     # significa dare al modello la possibilita di sceglierne una. La virgola
     # invece si attraversa: «nebbia mentale, ansia, libido a zero» e una
     # riga sola e funziona.
-    MURI = set(".:;?!—–")
-    muro_dopo = [bool(MURI & set(w)) for w in pezzi]
+    muro_dopo = [ha_muro(w) for w in pezzi]
     fuori: list[str] = []
     visti: set[str] = set()
     for i in range(len(pezzi)):
@@ -541,8 +571,7 @@ def accorcia(hooks: dict[int, str], *, model: str,
 # partire». Quella frase lui l'ha presa dal video, non l'ha inventata.
 # ---------------------------------------------------------------------------
 
-# Un muro non si attraversa e apre una proposizione nuova.
-MURI = ".:;?!—–"
+# (MURI e ha_muro() stanno in cima al file: servono gia a candidati().)
 # Dopo una virgola si puo tirare dritto, ma li comincia anche una riga buona.
 VIRGOLE = ","
 # Nel parlato la punteggiatura di Whisper salta; il silenzio no.
@@ -674,7 +703,7 @@ def tratti_parlati(words: list[dict], da: float, a: float, *,
         return []
 
     testi = [w["word"].strip() for w in dentro]
-    muro = [bool(set(t) & set(MURI)) for t in testi]
+    muro = [ha_muro(t) for t in testi]
 
     # Due filtri che fanno due lavori diversi: la PROVA dice che li comincia
     # qualcosa, la legatura dice che quella parola non puo stare in testa.

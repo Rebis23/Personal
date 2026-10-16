@@ -398,11 +398,23 @@ def select_clips(
                      c.start_seconds, c.end_seconds)
                     for i, c in enumerate(usable)
                     if i in fuori_tema or (i in esiti and not esiti[i][0])]
+        # UNA LISTA SOLA DI BOCCIATI, ed e il punto di tutta questa parte.
+        # Fino al 15/10 il filtro in fondo riguardava solo la prova a freddo:
+        # «i in salvati or i not in esiti or esiti[i][0]». Una clip bocciata
+        # soltanto dal controllo sul tema non compare in `esiti`, quindi
+        # «i not in esiti» era vero e la clip restava — con l'hook di prima,
+        # o peggio con la riscrittura appena giudicata insufficiente.
+        # Successo davvero: «Essere competitivi è davvero una cosa brutta?»
+        # ha fatto cadere la riscrittura, il log ha scritto «❄️ anche la
+        # riscrittura cade», e il Reel e in coda con quel banner.
+        # Due controlli che parlano e un filtro che ne ascolta uno solo.
+        respinti = {i for i, *_ in bocciati}
         for _, hook, motivo, _, _ in bocciati:
             print(f"   ❄️ hook bocciato «{hook[:52]}» — {motivo}")
 
         # Il momento puo essere ottimo e l'hook no: si riscrive solo la frase
         # di apertura, la clip resta dov'e.
+        prima = {i: usable[i].hook for i in respinti}
         nuovi = riscrivi_hooks(bocciati, timed_transcript, model=model)
         for i, hook in nuovi.items():
             print(f"   ✍️ riscritto → «{hook[:60]}»")
@@ -417,10 +429,18 @@ def select_clips(
                 if ricontrollo and not ricontrollo.get(pos, (True, ""))[0]:
                     nuovi.pop(i, None)
                     print(f"   ❄️ anche la riscrittura cade: «{usable[i].hook[:48]}»")
+                    # La clip esce comunque, ma l'hook caduto non deve
+                    # restare appeso all'oggetto: se un domani qualcuno
+                    # rimette in gioco queste clip, deve trovare la frase
+                    # di partenza, non quella appena bocciata due volte.
+                    usable[i].hook = prima[i]
 
         salvati = set(nuovi)
-        usable = [c for i, c in enumerate(usable)
-                  if i in salvati or i not in esiti or esiti[i][0]]
+        tolte = sorted(respinti - salvati)
+        usable = [c for i, c in enumerate(usable) if i not in respinti or i in salvati]
+        if tolte:
+            print(f"   🚫 {len(tolte)} clip tolte: banner bocciato e riscrittura "
+                  f"non riuscita o caduta a sua volta")
 
     # A parità di clip disponibili si preferiscono gli hook più forti.
     #
