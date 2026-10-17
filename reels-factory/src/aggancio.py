@@ -275,24 +275,52 @@ def trova_nel_parlato(words: list[dict], frase: str,
     if not cercate:
         return None
 
+    trovato = _cerca(words, cercate, da, a)
+    return trovato[0] if trovato else None
+
+
+def trova_fine_nel_parlato(words: list[dict], frase: str,
+                           da: float, a: float) -> float | None:
+    """A che secondo si FINISCE di pronunciare `frase`. Gemella di sopra.
+
+    Serve alla fine della clip come trova_nel_parlato serve all'inizio: il
+    modello dice le ultime parole del Reel, e qui si ricava il secondo in
+    cui smettono di sentirsi.
+    """
+    cercate = parole(frase)
+    if not cercate:
+        return None
+    trovato = _cerca(words, cercate, da, a)
+    return trovato[1] if trovato else None
+
+
+def _cerca(words: list[dict], cercate: list[str],
+           da: float, a: float) -> tuple[float, float] | None:
+    """(quando comincia, quando finisce) la frase cercata, o None.
+
+    Il confronto e sulle parole nude: la trascrizione scrive "perche", il
+    banner "perché", e devono combaciare lo stesso. Bastano i primi tre
+    quarti delle parole, in ordine e consecutive — Whisper ogni tanto
+    attacca o stacca una parola, e pretendere il calco esatto farebbe
+    fallire proprio sulle frasi lunghe, che sono quelle che ne hanno piu
+    bisogno.
+    """
     dentro = [(w, parole(w["word"])) for w in words if da - 0.5 <= w["start"] <= a]
-    piatte: list[tuple[str, float]] = []
+    piatte: list[tuple[str, float, float]] = []
     for w, pp in dentro:
         for p in pp:
-            piatte.append((p, w["start"]))
+            piatte.append((p, w["start"], w["end"]))
     if not piatte:
         return None
 
-    testo = [p for p, _ in piatte]
+    testo = [p for p, _, _ in piatte]
     minimo = max(3, int(len(cercate) * 0.75))
-    # Si prova prima con la frase intera, poi accorciandola dalla coda: il
-    # principio della frase e la parte che conta, ed e quella su cui la clip
-    # deve aprirsi.
+    # Si prova prima con la frase intera, poi accorciandola dalla coda.
     for lunghezza in range(len(cercate), minimo - 1, -1):
         pezzo = cercate[:lunghezza]
         for k in range(len(testo) - lunghezza + 1):
             if testo[k:k + lunghezza] == pezzo:
-                return piatte[k][1]
+                return piatte[k][1], piatte[k + lunghezza - 1][2]
     return None
 
 

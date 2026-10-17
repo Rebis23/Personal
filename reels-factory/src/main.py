@@ -551,13 +551,33 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         # la clip finiva dove Lorenzo aveva preso fiato. Adesso il codice
         # elenca i punti in cui si puo chiudere e il modello sceglie quello
         # in cui il ragionamento e chiuso — lo stesso schema dell'apertura.
-        fine = chiusura.scegli_finale(
+        # ANCHE LA FINE SI LEGGE. Prima qui c'era scegli_finale(), che offre
+        # al modello i punti dove la voce si ferma almeno 0,28s o dove
+        # Whisper mette un segno forte. Su questo materiale non esistono ne
+        # gli uni ne gli altri — stacchi quasi tutti a zero, 0,6 segni al
+        # minuto — e il 17/10 la clip 2 e andata a sbattere contro il tetto
+        # dei 75 secondi finendo su «Il locus di controllo È».
+        #
+        # scegli_finale resta: su un video punteggiato bene offre punti veri
+        # e costa meno. Si prova prima a leggere, e se la lettura non da
+        # niente si ricade su quello.
+        argomento = (getattr(pick, "argomento", "") or pick.bersaglio
+                     or pick.hook)
+        fine = chiusura.fine_dal_testo(
             words, start,
-            argomento=getattr(pick, "argomento", "") or pick.bersaglio or pick.hook,
+            argomento=argomento,
             model=cfg["claude"]["model"],
             min_seconds=float(clip_cfg["min_seconds"]),
             max_seconds=float(clip_cfg["max_seconds"]),
         )
+        if fine is None:
+            fine = chiusura.scegli_finale(
+                words, start,
+                argomento=argomento,
+                model=cfg["claude"]["model"],
+                min_seconds=float(clip_cfg["min_seconds"]),
+                max_seconds=float(clip_cfg["max_seconds"]),
+            )
         if fine is not None:
             end = fine
 

@@ -198,3 +198,102 @@ def scegli_finale(words: list[dict], start: float, *, argomento: str,
         print(f"      ⚠️ Finale fuori elenco ({k} su {len(punti)})")
         break
     return None
+
+# ---------------------------------------------------------------------------
+# E ANCHE LA FINE SI DECIDE LEGGENDO
+#
+# Lorenzo, 17/10: «parlo direttamente tu, senza utilizzare software esterni».
+# L'inizio e passato a giudizio quel giorno; la fine era rimasta a misura, e
+# si e visto subito. Nella prima corsa buona col metodo nuovo la clip 2 e
+# uscita di 75 secondi — il tetto esatto — e finiva cosi:
+#
+#     «...L'internal locus of control, cioe la convinzione proprio cieca del
+#      fatto che le tue azioni abbiano un impatto reale sugli eventi [...]
+#      Il locus di controllo È»
+#
+# Taglio netto su «È». Lo stesso difetto dell'11/09, per lo stesso motivo:
+# punti_finali() offre un punto solo dove la voce si ferma almeno 0,28s o
+# dove Whisper mette un segno forte. Su quel video gli stacchi fra parole
+# sono quasi tutti zero esatto (il massimo misurato e 0,20s) e i segni sono
+# 0,6 al minuto. Risultato: nessun punto, e la clip va a sbattere contro il
+# tetto.
+#
+# Qui il modello legge il parlato e dice le ULTIME PAROLE del Reel. I tempi
+# servono solo a ritrovarle. Stessa forma di aggancio.scegli_inizio(), e
+# stessa ragione: il segnale meccanico su questo materiale non esiste.
+# ---------------------------------------------------------------------------
+
+DOVE_CHIUDE = """Questo e il parlato di un Reel verticale, dal primo \
+fotogramma in avanti. Devo decidere dove TAGLIARLO.
+
+Un Reel deve essere un discorso finito in se stesso: chi lo guarda non ha \
+visto niente prima e non vedra niente dopo. Se finisce a meta di un \
+ragionamento, o su una frase appesa, non vale niente — anche se quello che \
+viene dopo sarebbe interessante.
+
+Di cosa parla: {argomento}
+
+PARLATO:
+{parlato}
+
+Dimmi le ULTIME parole del Reel: il punto in cui il ragionamento si e \
+chiuso e si puo smettere. Copiale parola per parola dal testo qui sopra, \
+4-8 parole, senza riscriverle.
+
+Meglio tagliare PRESTO su una cosa chiusa che tardi su una aperta: se il \
+discorso si chiude dopo venti secondi, finisce li.
+
+Se non si chiude mai in tutto questo tratto, rispondi NESSUNO.
+
+Nient'altro: o le ultime parole, o NESSUNO."""
+
+
+def fine_dal_testo(words: list[dict], start: float, *, argomento: str,
+                   model: str, min_seconds: float,
+                   max_seconds: float) -> float | None:
+    """Il secondo in cui chiudere, letto nel parlato invece che misurato."""
+    ultimo = start + max_seconds
+    dentro = [w for w in words if start - 0.5 <= w["start"] <= ultimo]
+    if len(dentro) < 12:
+        print(f"      ⚠️ Solo {len(dentro)} parole da {start:.0f}s in avanti: "
+              f"la clip finisce dov'era")
+        return None
+    parlato = aggancio.ricuci(" ".join(w["word"].strip() for w in dentro))
+
+    prompt = DOVE_CHIUDE.format(argomento=argomento or "(non indicato)",
+                                parlato=parlato)
+    for tentativo, budget in enumerate(aggancio.BUDGET_PARLATO, start=1):
+        try:
+            r = aggancio._cliente().messages.create(
+                model=model, max_tokens=budget,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            conto.segna('fine clip', r.usage)
+        except Exception as e:                       # noqa: BLE001
+            print(f"      ⚠️ Scelta della fine, tentativo {tentativo}: {e}")
+            continue
+        testo = "".join(b.text for b in r.content if b.type == "text").strip()
+        if not testo:
+            print(f"      ⚠️ Fine: risposta vuota (stop_reason={r.stop_reason})")
+            if r.stop_reason == "max_tokens":
+                continue
+            return None
+        if testo.upper().startswith("NESSUN"):
+            print("      🔚 Non si chiude in questo tratto")
+            return None
+        frase = testo.strip().strip('"«»')
+        quando = aggancio.trova_fine_nel_parlato(dentro, frase, start - 0.5, ultimo)
+        if quando is None:
+            print(f"      ⚠️ «{frase[:46]}» non si ritrova nel parlato")
+            return None
+        # IL MINIMO RESTA UN MINIMO. Il modello puo scegliere un punto
+        # bellissimo al dodicesimo secondo: sotto la durata minima la clip
+        # non e un Reel, e si tiene la fine di prima invece di accorciarla.
+        if quando - start < min_seconds:
+            print(f"      ⚠️ Chiuderebbe a {quando - start:.0f}s, sotto il "
+                  f"minimo di {min_seconds:.0f}s: tengo la fine di prima")
+            return None
+        print(f"      🔚 Chiude su «{frase[-52:]}» ({quando:.0f}s, "
+              f"{quando - start:.0f}s di clip)")
+        return quando
+    return None
