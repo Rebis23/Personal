@@ -391,6 +391,32 @@ def select_clips(
                              f"cosa si parla")
             print(f"   🎯 hook fuori tema «{c.hook[:46]}» — la clip parla di "
                   f"«{c.argomento}»")
+            continue
+        # E LO STESSO CONTROLLO, MA CON UN TESTIMONE CHE NON SIA IL MODELLO.
+        # Qui sopra si confronta il banner con `argomento`, che il modello
+        # scrive nello stesso respiro del banner: se si e convinto che la
+        # clip parli dei reel, scrive «i reel» di qua e «Perdere 4 ore sui
+        # reel» di la, e i due si danno ragione a vicenda.
+        #
+        # Misurato il 17/10 sulle dieci clip in coda: quella col banner
+        # «Perdere 4 ore sui reel» parlava di archetipi e personalita — zero
+        # parole in comune col parlato — e questo controllo l'aveva lasciata
+        # passare. Altre due nominavano cose dette PRIMA dell'inizio della
+        # clip, nel video lungo.
+        #
+        # Il parlato della clip il modello non l'ha scritto, quindi puo fare
+        # da testimone. Senza finestra non si inventa un verdetto.
+        finestra = transcript.finestra(timed_transcript, c.start_seconds,
+                                       c.end_seconds, contorno=0.0)
+        if not finestra:
+            continue
+        va, dentro, piene = aggancio.radicato(c.hook, finestra)
+        if not va:
+            fuori_tema[i] = (f"delle {piene} parole piene del banner solo "
+                             f"{dentro} si sentono in questa clip: parla di "
+                             f"una cosa che qui non si dice")
+            print(f"   🎯 hook non radicato «{c.hook[:46]}» — {dentro}/{piene} "
+                  f"parole piene si sentono nella clip")
 
     if esiti or fuori_tema:
         bocciati = [(i, c.hook,
@@ -416,6 +442,17 @@ def select_clips(
         # di apertura, la clip resta dov'e.
         prima = {i: usable[i].hook for i in respinti}
         nuovi = riscrivi_hooks(bocciati, timed_transcript, model=model)
+        # UNA RISCRITTURA PER UNA CLIP CHE NESSUNO HA BOCCIATO NON SI APPLICA.
+        # riscrivi_hooks() torna i numeri che ha letto nella risposta del
+        # modello, e un numero fuori posto cambierebbe il banner di una clip
+        # che andava bene — o, come e successo provandolo, farebbe saltare
+        # tutta la lavorazione su un KeyError a riga 462. Il filtro sotto si
+        # fida di `nuovi ⊆ respinti`: meglio renderlo vero qui che sperarlo.
+        estranei = [i for i in nuovi if i not in respinti]
+        for i in estranei:
+            print(f"   ⚠️ riscrittura per la clip {i}, che nessuno aveva "
+                  f"bocciato: ignorata")
+            nuovi.pop(i, None)
         for i, hook in nuovi.items():
             print(f"   ✍️ riscritto → «{hook[:60]}»")
             usable[i].hook = hook

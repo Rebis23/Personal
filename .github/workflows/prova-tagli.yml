@@ -1,0 +1,149 @@
+# Prova: da dove puo partire una clip? Whisper contro Scribe, stesso audio.
+#
+# Lorenzo, 13/10: «non tracci bene il momento in cui parte, la conversazione
+# spesso parte a meta, quindi il Reel non impressiona per niente». E il
+# 15/10: «bisognerebbe stimare quanto il Level Labs ci servirebbe in termini
+# di crediti e quanto ne vale la pena [...] se il costo e basso potrebbe
+# migliorare la qualita dei tagli».
+#
+# Le due domande sono una sola, e si risponde con un numero: quanti PUNTI DI
+# PARTENZA offre un motore su un audio vero. La clip parte dove c'e una
+# prova che cominci una proposizione, e tre delle cinque prove vengono dai
+# TEMPI, non dal testo (src/aggancio.py). I tempi li da il fornitore.
+#
+# Misurato il 17/10 in locale con Whisper large-v3 su 34s di voce di
+# Lorenzo: 111 stacchi su 115 sono esattamente zero, zero pause sopra 0,45s,
+# un segno di punteggiatura in 34 secondi. Col VAD e senza: identico. Quindi
+# il nostro codice non ha un difetto da riparare — e l'informazione che non
+# arriva. Questa prova dice se con Scribe arriva.
+#
+# Costa: i minuti del runner sono gratis (repo pubblico), Scribe sta intorno
+# a 0,06$/minuto di audio, quindi una corsa su 60 secondi costa ~0,06$.
+
+name: "Prova · Da dove parte la clip"
+
+on:
+  workflow_dispatch:
+    inputs:
+      secondi:
+        description: "Quanti secondi di audio misurare (max 180)"
+        required: false
+        default: "60"
+
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa ffmpeg e i pacchetti
+        run: |
+          sudo apt-get -o DPkg::Lock::Timeout=300 update -qq
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y -qq \
+            --no-install-recommends ffmpeg
+          pip install --quiet requests PyYAML faster-whisper
+
+      # La cache del modello ha una chiave sua: large-v3 pesa ~3 GB e
+      # riscaricarlo a ogni corsa costerebbe piu del tempo della misura.
+      - name: Cache del modello Whisper
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-large-v3
+
+      - name: Prendi l'audio da una clip vera
+        run: |
+          SEC="${{ github.event.inputs.secondi }}"
+          SEC="${SEC:-60}"
+          if [ "$SEC" -gt 180 ]; then SEC=180; fi
+          echo "SEC=$SEC" >> "$GITHUB_ENV"
+          URL=$(python -u -c "
+          import json
+          d = json.load(open('reels-factory/state/queue.json'))
+          fonte = d['queue'] or d['published'] or []
+          print(fonte[0].get('media_url', '') if fonte else '')
+          ")
+          if [ -z "$URL" ]; then
+            echo '::error::Niente in coda ne fra i pubblicati: non ho un audio'
+            exit 1
+          fi
+          echo "Audio da: $URL"
+          curl -sSL --max-time 300 -o clip.mp4 "$URL"
+          ffmpeg -v error -y -t "$SEC" -i clip.mp4 -vn -ac 1 -ar 16000 voce.wav
+          ffmpeg -v error -y -i voce.wav -b:a 48k voce.mp3
+          ls -la voce.wav voce.mp3
+
+      - name: Whisper large-v3, come in produzione
+        run: |
+          python -u - <<'PY'
+          import json, sys
+          sys.path.insert(0, "reels-factory")
+          from faster_whisper import WhisperModel
+          from src import segnali
+
+          m = WhisperModel("large-v3", device="cpu", compute_type="int8")
+          pezzi, _ = m.transcribe("voce.wav", language="it",
+                                  word_timestamps=True, vad_filter=True)
+          parole = [{"word": w.word.strip(), "start": w.start, "end": w.end}
+                    for s in pezzi for w in (s.words or []) if w.word.strip()]
+          json.dump(parole, open("whisper.json", "w"))
+          print(segnali.scheda("Whisper large-v3", segnali.misura(parole)))
+          PY
+
+      - name: Scribe, sullo stesso audio
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          python -u - <<'PY'
+          import json, os, sys, yaml, requests
+          sys.path.insert(0, "reels-factory")
+          from src import segnali
+
+          chiave = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+          if not chiave:
+              print("::error::Il segreto ELEVENLABS_API_KEY non e arrivato.")
+              sys.exit(1)
+          cfg = yaml.safe_load(open("reels-factory/config.yaml"))
+          modello = cfg.get("trascrizione", {}).get("modello", "scribe_v2")
+
+          with open("voce.mp3", "rb") as f:
+              r = requests.post(
+                  "https://api.elevenlabs.io/v1/speech-to-text",
+                  headers={"xi-api-key": chiave},
+                  data={"model_id": modello, "language_code": "ita",
+                        "timestamps_granularity": "word", "diarize": "false"},
+                  files={"file": ("voce.mp3", f, "audio/mpeg")},
+                  timeout=300,
+              )
+          if r.status_code != 200:
+              print(f"::error::Scribe ha risposto {r.status_code}: {r.text[:400]}")
+              sys.exit(1)
+          voci = r.json().get("words") or []
+          parole = [{"word": w["text"].strip(), "start": w["start"],
+                     "end": w["end"]}
+                    for w in voci
+                    if w.get("type") == "word" and w.get("text", "").strip()]
+          json.dump(parole, open("scribe.json", "w"))
+
+          whisper = json.load(open("whisper.json"))
+          print(segnali.confronto(("Whisper large-v3", segnali.misura(whisper)),
+                                  ("Scribe", segnali.misura(parole))))
+          print("\n— le prime righe, per leggere con gli occhi —")
+          for a, b in zip(whisper[:14], parole[:14]):
+              print(f"  {a['start']:6.2f} {a['word']:<18} | "
+                    f"{b['start']:6.2f} {b['word']}")
+          PY
+
+      - name: Tieni le due trascrizioni
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trascrizioni
+          path: |
+            whisper.json
+            scribe.json

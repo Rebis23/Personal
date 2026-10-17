@@ -52,6 +52,16 @@ def check(nome, cond):
         rotti += 1
 
 
+# Una trascrizione temporizzata che COPRE i tempi delle clip finte. Prima
+# qui c'era "[00:00] niente": transcript.finestra() tornava vuoto per una
+# clip che parte al secondo 100, il controllo sul parlato non veniva mai
+# raggiunto e la prova credeva di averlo comandato. Una finestra vuota e un
+# controllo spento si assomigliano troppo.
+from src import transcript as T
+PARLATO = T.to_timed_text([{"word": f"p{i}", "start": float(i), "end": i + 0.9}
+                           for i in range(200)])
+
+
 class FintaClip:
     """Quanto basta di ClipPick perche select_clips la tratti da clip."""
 
@@ -64,7 +74,7 @@ class FintaClip:
         self.argomento = argomento
 
 
-def gira(clips, *, freddo, tema_ok, riscritture, ricontrollo):
+def gira(clips, *, freddo, tema_ok, riscritture, ricontrollo, radicato_ok=None):
     """Fa girare select_clips() con i giudici finti e torna (clip, stampato).
 
     Finto e solo chi parla col modello. Il filtro in fondo — quello sotto
@@ -101,6 +111,15 @@ def gira(clips, *, freddo, tema_ok, riscritture, ricontrollo):
     sostituisci("load_nicchia", lambda: "")
     sostituisci("nomina_argomento",
                 lambda hook, arg: tema_ok.get(hook, True), B.aggancio)
+    # I DUE GIUDICI SUL TEMA, tenuti separati anche qui. nomina_argomento
+    # confronta il banner con l'etichetta del modello, radicato lo confronta
+    # col parlato della clip. Questa prova parla del filtro in fondo, non di
+    # loro: se non li comando entrambi, il secondo boccia tutto (il parlato
+    # finto non contiene le parole dei banner finti) e la prova misura
+    # un'altra cosa senza dirlo.
+    radici = radicato_ok if radicato_ok is not None else {}
+    sostituisci("radicato",
+                lambda hook, parlato: (radici.get(hook, True), 1, 1), B.aggancio)
     sostituisci("accorcia", lambda hooks, **k: {}, B.aggancio)
     # prova_a_freddo viene chiamata due volte: prima su tutti, poi solo sulle
     # riscritture. Le due risposte arrivano in fila.
@@ -111,7 +130,7 @@ def gira(clips, *, freddo, tema_ok, riscritture, ricontrollo):
     buffer = io.StringIO()
     try:
         with redirect_stdout(buffer):
-            fuori = B.select_clips("[00:00] niente", "video", model="m",
+            fuori = B.select_clips(PARLATO, "video", model="m",
                                    brand_context="", clips_per_video=4,
                                    min_seconds=20, max_seconds=90)
     finally:
@@ -192,6 +211,37 @@ fuori, log = gira(
 )
 check("bocciata a freddo e riscritta male: non esce",
       [c.hook for c in fuori] == [BUONA])
+
+print("\n— e lo stesso vale se a bocciare e il controllo sul parlato —")
+# Il terzo giudice, aggiunto il 17/10: il banner riprende parole che in
+# QUELLA clip si sentono? «Perdere 4 ore sui reel» su una clip che parlava
+# di archetipi faceva zero, e nessuno la fermava. Il filtro non deve
+# imparare un elenco di giudici: deve guardare l'insieme dei respinti.
+NON_RADICATO = "Perdere 4 ore sui reel"
+clips = [FintaClip(0, BUONA, "il lavoro"),
+         FintaClip(100, NON_RADICATO, "gli archetipi")]
+fuori, log = gira(
+    clips,
+    freddo={0: (True, "ok"), 1: (True, "si regge da sola")},
+    tema_ok={},                              # l'etichetta la nomina
+    radicato_ok={NON_RADICATO: False},       # ma nella clip non si dice
+    riscritture={1: "Una riscrittura che non regge"},
+    ricontrollo={0: (False, "no")},
+)
+check("bocciata sul parlato e riscritta male: non esce",
+      [c.hook for c in fuori] == [BUONA])
+
+clips = [FintaClip(0, BUONA, "il lavoro"),
+         FintaClip(100, NON_RADICATO, "gli archetipi")]
+fuori, log = gira(
+    clips,
+    freddo={0: (True, "ok"), 1: (True, "ok")},
+    tema_ok={}, radicato_ok={NON_RADICATO: False},
+    riscritture={1: "Quale personalità lasciar morire"},
+    ricontrollo={0: (True, "ok")},
+)
+check("bocciata sul parlato e riscritta bene: esce col banner nuovo",
+      [c.hook for c in fuori] == [BUONA, "Quale personalità lasciar morire"])
 
 print("\n— una clip che nessuno boccia passa liscia —")
 clips = [FintaClip(0, BUONA, "il lavoro"), FintaClip(100, "Altra buona", "x")]

@@ -174,6 +174,76 @@ def nomina_argomento(hook: str, argomento: str) -> bool:
     return bool(dette & cercate)
 
 
+# Quante parole piene del banner devono sentirsi davvero nella clip.
+#
+# Misurato il 17/10 sulle dieci clip ferme in coda, contando le radici in
+# comune fra banner e parlato della clip:
+#
+#   5/6  «Vuoi un fisico bestiale? Stai pensando male»
+#   4/4  «La tua mente inconscia comanda il 95%»
+#   3/5  «Perché per un ricco 2.000 euro sono pochi»
+#   3/4  «Perché i più competenti restano invisibili?»
+#   3/3  «Giapponese in 30 giorni»
+#   2/4  «Essere competitivi è davvero una cosa brutta?»
+#   1/4  «Ci metti settimane a prendere una decisione?»
+#   1/4  «I soldi non fanno la felicità: falso»
+#   0/3  «Prova a urlare in strada»
+#   0/5  «Perdere 4 ore sui reel»
+#
+# Guardando questa colonna avevo messo la soglia a 2: le quattro in fondo
+# sono le quattro che non funzionano, e la riga sembrava cadere da sola fra
+# 2 e 1. Poi l'ho provata sul caso che ha dato il nome a tutta questa
+# faccenda — la zanzara del 6/09 — e la soglia a 2 BOCCIA l'aggancio che
+# Lorenzo stesso aveva indicato come quello giusto: «Perché Dio permette il
+# male sugli animali?» su una clip dove si sente «zanzara», «occhi»,
+# «bambini» e «dio buono». Una parola piena in comune su quattro, come «I
+# soldi non fanno la felicità: falso». Il conteggio non sa distinguere un
+# banner che GENERALIZZA bene (zanzara → animali, che senso ha → il male)
+# da uno che riprende una frase tagliata via un attimo prima.
+#
+# Quindi la soglia resta a 1, cioe questo controllo risponde solo alla
+# domanda che sa decidere: il banner parla di una cosa che in questa clip
+# non si dice MAI? Prende due delle quattro — le due a zero — e le altre
+# due restano a Lorenzo. Una soglia che boccia il buono insieme al cattivo
+# non e piu severa, e solo piu rumorosa.
+RADICI_MINIME = 1
+
+
+def radicato(hook: str, parlato: str) -> tuple[bool, int, int]:
+    """Il banner riprende parole che in QUESTA clip si sentono davvero?
+
+    Torna (va bene, quante dentro, quante piene), cosi chi chiama puo dire
+    nel log il numero invece di un "si"/"no".
+
+    E' il controllo che nomina_argomento() non poteva fare. Quello confronta
+    il banner con `argomento`, ma l'argomento lo scrive lo STESSO modello che
+    ha scritto il banner, nello stesso respiro: se si e convinto che la clip
+    parli dei reel, scrive «i reel» nell'argomento e «Perdere 4 ore sui reel»
+    nel banner, e i due si danno ragione a vicenda. Due cose scritte dalla
+    stessa penna non si verificano l'una con l'altra — misurato il 17/10,
+    quella clip parlava di archetipi e personalita, zero parole in comune col
+    suo banner, e il controllo l'aveva lasciata passare.
+
+    Qui il confronto e con il parlato, che il modello non ha scritto.
+
+    Resta grezzo come l'altro: non conosce i sinonimi, quindi puo bocciare un
+    banner buono che parafrasa. Per questo un "no" non butta via la clip, fa
+    riscrivere il banner — e la riscrittura adesso legge proprio la finestra
+    di parlato di quella clip, quindi nasce con le parole giuste a portata.
+    """
+    piene = {_radice(x) for x in parole(hook) if x not in VUOTE}
+    if not piene or not parlato.strip():
+        # Senza parlato non si sa, e "non lo so" non e "colpevole". Chi
+        # chiama ha gia la sua guardia, ma una funzione che inventa un
+        # verdetto quando non ha il materiale e una trappola per il
+        # prossimo che la usa da un altro punto.
+        return True, 0, len(piene)
+    dette = {_radice(x) for x in parole(parlato)}
+    dentro = piene & dette
+    basta = len(dentro) >= min(RADICI_MINIME, len(piene))
+    return basta, len(dentro), len(piene)
+
+
 def e_contiguo(frammento: str, intero: str) -> bool:
     """Vero se `frammento` e un pezzo consecutivo di `intero`.
 
