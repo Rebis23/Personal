@@ -367,8 +367,59 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
     queued = []
     banner_usati: set[str] = set()          # niente due clip che aprono uguale
     montate: list[tuple[float, float]] = []  # niente due clip sullo stesso spezzone
+
+    # E NIENTE DUE CLIP SULLO STESSO SPEZZONE NEMMENO FRA UNA CORSA E
+    # L'ALTRA. Finora `montate` nasceva vuoto a ogni lavorazione: il
+    # controllo valeva dentro la corsa e dimenticava tutto appena finita.
+    # Serve adesso, il 17/10, perche Lorenzo ha detto di tenere due clip di
+    # un video e rifare le altre: senza questo, la corsa nuova ripropone
+    # gli stessi due momenti e sul profilo escono due Reel identici a
+    # distanza di un giorno.
+    #
+    # I tempi si prendono da `inizio`/`fine`, che le clip portano con se da
+    # oggi. Quelle piu vecchie non li hanno: allora si ritrova il loro
+    # testo nel parlato, che e lo stesso mestiere di trova_nel_parlato().
+    # Dove non si ritrova non si inventa niente — si dice e basta.
+    for vecchia in [c for c in st.get("queue", []) + st.get("published", [])
+                    if c.get("video_id") == vid]:
+        if "inizio" in vecchia and "fine" in vecchia:
+            montate.append((float(vecchia["inizio"]), float(vecchia["fine"])))
+            continue
+        testo = (vecchia.get("testo") or "").strip()
+        if not testo:
+            continue
+        quando = aggancio.trova_nel_parlato(
+            words, " ".join(testo.split()[:8]), 0.0, 1e9)
+        if quando is None:
+            print(f"      ⚠️ {vecchia['clip_id']} e gia uscita da questo video "
+                  f"ma non so da che secondo: potrebbe essere riproposta")
+            continue
+        montate.append((quando, quando + float(vecchia.get("durata", 60.0))))
+    if montate:
+        print(f"   ↩️ {len(montate)} spezzoni di questo video sono gia Reel: "
+              f"non si rifanno")
+    # I NUMERI DELLE CLIP RIPARTONO DA DOVE ERANO ARRIVATI. Il nome e
+    # "<video>-<n>", e finora n ripartiva da 1 a ogni lavorazione: finche
+    # un video si faceva una volta sola andava bene. Dal 17/10 non e piu
+    # vero — Lorenzo ha chiesto di tenere due clip di un video e rifare le
+    # altre — e la corsa nuova avrebbe sfornato un "lReO_BD_fS4-2" mentre
+    # in coda ce n'era gia uno diverso con lo stesso nome. Due clip con lo
+    # stesso nome vuol dire che `published` e `shorts_done` scambiano
+    # l'una per l'altra: un Reel che non esce perche "risulta gia uscito".
+    visti = [c.get("clip_id", "") for c in
+             st.get("queue", []) + st.get("published", [])]
+    usati = []
+    for cid in visti:
+        testa, _, coda = cid.rpartition("-")
+        if testa == vid and coda.isdigit():
+            usati.append(int(coda))
+    scarto = max(usati) if usati else 0
+    if scarto:
+        print(f"   🔢 Di questo video ci sono gia clip fino alla {scarto}: "
+              f"le nuove partono dalla {scarto + 1}")
+
     for n, pick in enumerate(picks, start=1):
-        clip_id = f"{vid}-{n}"
+        clip_id = f"{vid}-{scarto + n}"
         somma = pick.punteggi.somma
         assi = str(pick.punteggi)
         print(f"   ✂️ Clip {n}: [{pick.start_seconds:.0f}s → {pick.end_seconds:.0f}s] «{pick.hook}»")
