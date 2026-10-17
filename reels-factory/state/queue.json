@@ -200,6 +200,19 @@
         "nhjqfCOAEEE-2",
         "nhjqfCOAEEE-3"
       ]
+    },
+    {
+      "video_id": "f9sp7rl0kw4",
+      "title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "status": "done",
+      "processed_at": "2026-10-17T16:19:29Z",
+      "clips": [
+        "f9sp7rl0kw4-1",
+        "f9sp7rl0kw4-2",
+        "f9sp7rl0kw4-3",
+        "f9sp7rl0kw4-4",
+        "f9sp7rl0kw4-5"
+      ]
     }
   ],
   "queue": [
@@ -215,6 +228,71 @@
       "testo": "Per me 2.000 euro al mese sono pochi. Per una persona ricca, uno dei paradigmi è che non è normale guadagnare 1.500-2.000 euro al mese. 1.500-2.000 euro al mese sono pochi. Si chiama termostato finanziario, cioè il livello economico a cui tu sei abituato. Per una persona ricca, 1.500-2.000 euro al mese sono pochi. Per una persona povera, 2.000 euro al mese sono tantissimi. Per un giovane, in Italia, medio standard, 2.000 euro al mese sono una cifra enorme. Per me 2.000 euro al mese sono pochi. Questo perché io ho riprogrammato la mia mente inconscia. Per un top atleta mondiale, prendiamo Singer ad esempio, l'alcol è un veleno. Non è una buona bevanda con cui rilassarsi, non è una cosa da bere al pranzo di famiglia. Perché? Perché lui ha un paradigma, che è quello del devo essere in forma e performare al meglio perché io sono un tennista, professionista, quindi devo stare in forma. Paradigma. Per tuo nonno o mio nonno, che durante il pranzo si beve un bicchiere, per lui il vino è una cosa buona. Sai, c'è il famoso detto, dalle mie parti ad esempio, il vino rosso fa bene. Per una persona di successo, il giudizio degli altri non conta. Quello lì è un paradigma. Per te, molto probabilmente, il giudizio degli altri conta. A livello inconscio, magari a livello conscio sai che non deve contare, ma a livello inconscio ne hai paura e ti comporti anche per paura del giudizio degli altri.",
       "testo_da": "whisper sul montato, 17/10 (recupero)",
       "durata": 73.1
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-1",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perché le persone compiacenti non fanno soldi",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-1.mp4",
+      "caption": "Chi ottiene grandi risultati, specialmente economici, ha un livello di compiacenza bassissimo.\nNon è cinismo: è che se vivi per approvare gli altri, farai sempre quello che vogliono loro.\nNel video spiego cosa dice davvero lo studio su 2,5 milioni di persone.\n\n#crescitapersonale #psicologia #mentalita #business #assertivita #carattere #obiettivi\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-17T16:06:26Z",
+      "testo": "isoliamo gli high performer Cioè quelle persone che sono in grado di performare Di raggiungere obiettivi e risultati Il profilo migliore Che prevede di più La tua capacità di ottenere Successo è proprio questo C'è la coscienziosità alta Non è importante quindi il carisma, la creatività La tua capacità di venderti Conta quanto sei in grado ogni giorno di presentarti E portare a termine un obiettivo Qual è quel tratto che ti impedisce Che tra virgolette è un ostacolo nel raggiungere i tuoi obiettivi E la risposta è quanto sei compiacente Tutte le persone O i caratteri Che erano in grado di ottenere grandi risultati Specialmente in ottica economica Erano persone con un livello di Agreeableness Molto grande Quindi di accondiscendenza Basso In poche parole Se ne fregavano relativamente poco degli altri Ma chi è una persona agreeable In genere tende ad evitare i conflitti Quindi a fare le cose per gli altri Per fare in modo di preservare un argomento Piuttosto dice Guarda mi sottometto io In un certo senso Che sono doti decisamente nobili Ma che in contesti come quello del business È ovvio che non aiuti",
+      "inizio": 224.6,
+      "fine": 287.0
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-2",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perché ti blocca il giudizio degli altri?",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-2.mp4",
+      "caption": "Tra tre generazioni chiunque tu abbia mai conosciuto sarà morto. Comprese le persone le cui opinioni ti bloccavano.\nQuando smetti di soffrire il giudizio degli altri, sei libero di fare quello che vuoi davvero.\n\n#crescitapersonale #psicologia #giudiziodeglialtri #liberta #mentalita #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-17T16:08:38Z",
+      "testo": "Tra tre generazioni Chiunque tu abbia mai conosciuto Sarà morto Comprese le persone Le cui opinioni ti interessavano E ti infastidivano Quindi Se if you zoom out Cioè se tu smetti di preoccuparti Della tua mente E guardi il mondo In maniera molto più ampia Capisci quanto ridicole Siano molte delle paure Che ti bloccano E chi di solito Riesce a fregarsene Del giudizio degli altri Sviluppa la capacità Di immunizzarsi Da praticamente qualsiasi cosa E quindi riesce a fare Ciò che desidera Perché nel momento in cui Smetti di soffrire Il giudizio degli altri Sei libero",
+      "inizio": 348.7,
+      "fine": 377.2
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-3",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perché le persone più competenti restano invisibili",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-3.mp4",
+      "caption": "Conosco una marea di persone straordinariamente competenti e completamente invisibili.\nEssere bravi in un gioco ed essere bravi a farti riconoscere per quanto sei bravo sono due tratti diversi. Ti servono entrambi.\n\n#crescitapersonale #liberiprofessionisti #assertivita #carriera #psicologia #autorevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-17T16:11:00Z",
+      "testo": "Tutti noi conosciamo Persone Estremamente competenti Io ne conosco Una marea Che sono invisibili Perché? Perché sono prive Di assertività Perché sono persone Straordinarie Che però Non sono in grado Di cogliere le opportunità Di sfruttarle Magari di entrare in sconto Proprio perché Sono molto compiacenti Essere bravi in un gioco Cioè essere competenti In una certa cosa E essere bravi A far sì Che questo mondo Riconosca quanto tu sei bravo E ti paghi Per questa capacità Non sono la stessa cosa E necessitano Di due tratti caratteriali Differenti Che possono essere sviluppati Ma sono differenti Quindi le devi avere Entrambi",
+      "inizio": 412.0,
+      "fine": 444.4
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-4",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Autoefficacia: a Kanye bastava crederci, senza prove",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-4.mp4",
+      "caption": "La convinzione di farcela non ha bisogno di prove: ha bisogno solo di te che ci credi.\nKanye era uno sconosciuto di Chicago convinto di vincere un premio. E ce l'ha fatta.\nNon è magia: è uno dei tratti più predittivi secondo lo studio.\n\n#crescitapersonale #mentalita #autoefficacia #psicologia #responsabilita #obiettivi\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-17T16:14:26Z",
+      "testo": "Non servono le prove Devi solo crederci Su questo ci insegna molto Kanye Che è delusional Al punto Da poter credere Di vincere un Emmy Quando sei una persona Sconosciuta di Chicago E ce la fa Ce l'ha fatta Questo ci dimostra La potenza Di tutte quelle cose Chiamate manifestazione Via dicendo Tutti questi elementi qui Quindi quanto sei operoso Quanto sei in grado Di portare a termine un conto Sei in grado di vendere Questa tua capacità E quanto sei convinto Di poter ottenere Il risultato E di esserne la causa Se uniti Alla stabilità emotiva Rende il potenziale Di una persona Praticamente illimitato Perché le persone Ad alto rendimento Cioè che portano a casa I risultati E che hanno una vita In media Più ricca Più bella Più soddisfacente Non pensano necessariamente Che tutto andrà bene Però pensano Che le loro azioni Possano cambiare Il corso degli eventi E che quindi loro Sono in grado Di fare andare bene Anche quando affronteranno Delle difficoltà",
+      "inizio": 502.4,
+      "fine": 548.0
+    },
+    {
+      "clip_id": "f9sp7rl0kw4-5",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perché passi 4 ore sui reel?",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-5.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-5.mp4",
+      "caption": "Puoi avere ambizione, disciplina e agency e passare comunque quattro ore al giorno a scrollare.\nQuello che manca si chiama self-regulation: ciò che vuoi fra cinque anni vale più di ciò che vuoi nei prossimi minuti.\nE no, la forza di volontà non basta: finisce.\n\n#crescitapersonale #abitudini #disciplina #distrazioni #produttivita #psicologia #focus\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-17T16:19:29Z",
+      "testo": "tu puoi avere la spinta Puoi avere l'agency La disciplina Ma comunque passare Quattro ore al giorno A guardare i reel di Instagram E quindi Che cos'è che manca Se sei una persona ambiziosa Capace Intelligente Con voglia di fare La risposta è la self -regulation Cioè la capacità Di governare i tuoi impulsi A breve termine In funzione di un qualcosa Più a lungo termine Significa Significa praticamente Avere chiaro in testa Che ciò che vuoi Tra cinque anni È più importante Di ciò che vuoi Nei prossimi minuti Perché ciò che vuoi Nei prossimi minuti Durerà qualche minuto Ciò che vuoi Per i prossimi cinque anni Durerà almeno cinque anni Se non di più E di solito I soggetti d'alto rendimento Non si affidano Alla forza di volontà Perché la forza di volontà Ad un certo punto Finisce Usano due strategie psicologiche Secondo me tra l'altro Molto intelligenti Che questo studio mostra La prima è la riprogettazione Dell'ambiente Cioè fanno in modo Di modificare il contesto In cui si trovano Per ridurre al minimo Le distrazioni Costi di attrito In uno dei miei video Sul tema di Instagram Cioè non disinstallare Instagram Fai questo Io parlo di questa cosa Per quale motivo Tu dovresti avere Le notifiche attive È una cosa terribile Le notifiche ti distraggono E tu stai cercando Di passare del tempo Senza il tuo telefono Se io sto lavorando E devo concentrarmi Non avrò il telefono Sulla scrivania Perché al posto Che darmi continuamente L'occasione di distrarmi Ha molto più senso Non averlo attorno",
+      "inizio": 693.9,
+      "fine": 766.9
     }
   ],
   "published": [
