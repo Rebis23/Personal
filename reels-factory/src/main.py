@@ -477,11 +477,29 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         # uscite IDENTICHE — stesso audio, 0.78s di sfasamento, misurato.
         # Il tetto sulla durata piu sotto arrivava troppo tardi: tagliava la
         # coda di una clip che era gia partita dal punto sbagliato.
-        limite = aggancio.limite_apertura(
-            start, end, pick.end_seconds,
-            min_seconds=float(clip_cfg["min_seconds"]),
-            max_seconds=float(clip_cfg["max_seconds"]),
-        )
+        # LA FINESTRA IN CUI CERCARE L'INIZIO. Prima si ricavava da `start`
+        # e `end` gia passati da snap_to_sentences, e il 17/10 e collassata
+        # a un secondo su tutte e tre le clip: «Troppo poco parlato in
+        # questo tratto per scegliere un inizio», e le clip sono partite
+        # dove le aveva tagliate Claude — cioe il difetto che stavo
+        # riparando.
+        #
+        # La catena: quel video ha 0,5 segni di punteggiatura al minuto,
+        # snap_to_sentences non trova frasi su cui appoggiarsi e restituisce
+        # una finestra vicina al minimo, e a quel punto spostare l'inizio
+        # anche di poco porterebbe la clip sotto i 20 secondi. Il calcolo
+        # era giusto; il materiale su cui lo facevo no.
+        #
+        # Adesso la finestra si prende dal momento VOTATO, che non dipende
+        # dalla punteggiatura: da un po' prima — il soggetto spesso sta
+        # nella frase precedente, e la correzione n.3 di Lorenzo e
+        # esattamente quella — fino a dove la clip resta sopra la durata
+        # minima. La fine viene comunque ricalcolata dopo, a partire dal
+        # nuovo inizio.
+        PRIMA = 20.0
+        apertura_da = max(0.0, pick.start_seconds - PRIMA)
+        limite = max(apertura_da + 3.0,
+                     pick.end_seconds - float(clip_cfg["min_seconds"]))
         # A GIUDIZIO, NON A MISURA. Lorenzo, 17/10: «parlo direttamente tu,
         # senza utilizzare software esterni». Prima qui c'era dal_parlato(),
         # che costruiva le candidate dai silenzi e dalla punteggiatura di
@@ -490,7 +508,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         # e si sceglie la frase, con le regole e le dieci correzioni di
         # inizio.md davanti.
         detta = aggancio.scegli_inizio(
-            words, start, limite,
+            words, apertura_da, limite,
             tema=pick.bersaglio or pick.hook,
             model=cfg["claude"]["model"],
             gia_usati=frozenset(banner_usati),

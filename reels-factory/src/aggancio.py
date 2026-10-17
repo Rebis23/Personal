@@ -1056,8 +1056,13 @@ def scegli_inizio(words: list[dict], da: float, a: float, *, tema: str,
     """
     dentro = [w for w in words if da - 0.5 <= w["start"] <= a]
     if len(dentro) < 8:
-        print("      ⚠️ Troppo poco parlato in questo tratto per scegliere "
-              "un inizio")
+        # I NUMERI NEL MESSAGGIO, non solo la lamentela. Il 17/10 questa
+        # riga e uscita su tutte e tre le clip e mi ha detto solo che
+        # qualcosa non andava: per capire che la finestra era larga un
+        # secondo ho dovuto rifare il conto a mano dal log. Una diagnosi
+        # che costa mezz'ora e una diagnosi che la prossima volta non si fa.
+        print(f"      ⚠️ Solo {len(dentro)} parole fra {da:.0f}s e {a:.0f}s "
+              f"({a - da:.0f}s di finestra): non scelgo un inizio")
         return None
     parlato = ricuci(" ".join(w["word"].strip() for w in dentro))
 

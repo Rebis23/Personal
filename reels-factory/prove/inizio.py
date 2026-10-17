@@ -144,6 +144,39 @@ check("gli inizi gia usati arrivano ancora alla scelta: niente due clip "
       "che aprono uguale",
       "gia_usati=frozenset(banner_usati)" in principale)
 
+print("\n— LA FINESTRA, che e quella che si e rotta davvero —")
+# Il 17/10 la prima corsa col metodo nuovo e finita con tutte e tre le
+# clip partite dove le aveva tagliate Claude, e il log diceva solo
+# «Troppo poco parlato». La finestra in cui cercare l'inizio si ricavava
+# da start/end gia passati da snap_to_sentences, e su un video con 0,5
+# segni di punteggiatura al minuto quella finestra collassa a un secondo.
+# Il calcolo era giusto, il materiale su cui lo facevo no.
+MIN_S = 20.0
+
+
+def finestra(votato_inizio, votato_fine, prima=20.0, minimo=MIN_S):
+    """La stessa regola di main.py, per provarla sui casi veri."""
+    da = max(0.0, votato_inizio - prima)
+    return da, max(da + 3.0, votato_fine - minimo)
+
+
+da, a = finestra(245.0, 286.0)
+check(f"la clip 1 del 17/10: finestra di {a - da:.0f}s, non di 1",
+      a - da > 40)
+check("comincia prima del momento votato: il soggetto sta spesso li",
+      da < 245.0)
+check("e non arriva alla fine: la clip deve restare sopra il minimo",
+      a <= 286.0 - MIN_S)
+da, a = finestra(10.0, 35.0)
+check("una clip corta a inizio video non va sotto zero", da == 0.0)
+check("e la finestra non si annulla mai", a - da >= 3.0)
+check("non dipende da start/end passati da snap_to_sentences",
+      "apertura_da = max(0.0, pick.start_seconds - PRIMA)" in principale
+      and "words, apertura_da, limite," in principale)
+check("e il messaggio dice i numeri, se succede ancora",
+      "di finestra): non scelgo un inizio"
+      in (RADICE / "src" / "aggancio.py").read_text(encoding="utf-8"))
+
 print("\n— il fallback senza il file —")
 import builtins
 vero = builtins.open
