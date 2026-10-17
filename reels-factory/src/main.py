@@ -671,6 +671,24 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             "media_url": media_url,
             "caption": caption,
             "created_at": state_mod.now_iso(),
+            # LA TRASCRIZIONE DELLA CLIP, salvata qui.
+            #
+            # Lorenzo, 15/10: «facciamo che le prossime volte che prepari un
+            # reel mi mandi prima la trascrizione e ti do io un feedback».
+            # Il 17/10 ho dovuto riscaricare dieci clip da R2 e rifare
+            # Whisper sul montato — con la musica dentro — per avere un
+            # testo che era gia stato calcolato tre volte: per i
+            # sottotitoli, per le enfasi, per la riga d'apertura. Era
+            # sempre stato li, e veniva buttato alla fine del giro.
+            #
+            # `testo` e esattamente quello che si sente nel montato, nello
+            # stesso ordine (col cold open davanti, se c'e). `inizio` e
+            # `fine` sono i secondi nel video di partenza: senza, per
+            # ritrovare il punto bisogna riascoltare tutto.
+            "testo": aggancio.ricuci(
+                " ".join(w["word"].strip() for w in clip_words)),
+            "inizio": round(start, 1),
+            "fine": round(end, 1),
         })
         queued.append(clip_id)
 
@@ -946,6 +964,64 @@ def cmd_status() -> int:
         print(f"  ⏳ {c['clip_id']} — {c.get('hook', '')}")
     for p in st["published"][-5:]:
         print(f"  ✅ {p['clip_id']} — {p.get('permalink', '')}")
+    return 0
+
+
+def cmd_revisione() -> int:
+    """Scrive il file che Lorenzo legge prima che i Reel escano.
+
+    Lorenzo, 15/10: «facciamo che le prossime volte che prepari un reel mi
+    mandi prima la trascrizione e ti do io un feedback di quanto funziona e
+    poi ti do delle alternative e vediamo come iterare». Due lamentele
+    precise dietro la richiesta: i tagli non cadono nel punto giusto, e gli
+    agganci non danno contesto a chi arriva da zero.
+
+    Per questo il file mette in fila, per ogni clip, le tre cose su cui si
+    pronuncia: il banner, la PRIMA FRASE che si sente (se quella non regge,
+    il taglio e sbagliato a prescindere) e il testo intero. Dove la
+    trascrizione non c'e — le clip montate prima del 17/10 — lo dice invece
+    di stampare una riga vuota: una tabella con un buco travestito da dato
+    e peggio di una tabella con scritto "non ce l'ho".
+
+        python -m src.main revisione [file.md]
+    """
+    st = state_mod.load_state()
+    coda = st.get("queue", [])
+    dove = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("revisione.md")
+    if not coda:
+        print("✅ Coda vuota: niente da far leggere")
+        return 0
+
+    righe = [f"# Clip in attesa — {len(coda)}", ""]
+    senza = 0
+    for n, c in enumerate(coda, start=1):
+        hook = c.get("hook", "")
+        parole_hook = aggancio.quante(hook)
+        avviso = f"  ⚠️ {parole_hook} parole" if parole_hook > aggancio.MAX_PAROLE else ""
+        righe += [
+            f"## {n}. {hook}{avviso}",
+            "",
+            f"- clip: `{c.get('clip_id','')}`"
+            + (f" · {c['inizio']:.0f}s → {c['fine']:.0f}s nel video"
+               if "inizio" in c else "")
+            + (f" · in coda dal {c.get('created_at','')[:10]}"
+               if c.get("created_at") else ""),
+            f"- video: {c.get('video_title','')}",
+            f"- montato: {c.get('media_url','')}",
+            "",
+        ]
+        testo = (c.get("testo") or "").strip()
+        if not testo:
+            senza += 1
+            righe += ["> Trascrizione non salvata: questa clip e stata "
+                      "montata prima che la fabbrica la tenesse da parte.", ""]
+            continue
+        prima = testo.split(".")[0].strip()
+        righe += [f"**Parte da:** «{prima[:120]}»", "",
+                  "**Trascrizione:**", "", testo, ""]
+    dove.write_text("\n".join(righe), encoding="utf-8")
+    print(f"📝 {dove} — {len(coda)} clip"
+          + (f", {senza} senza trascrizione" if senza else ""))
     return 0
 
 
@@ -1248,7 +1324,7 @@ def main() -> int:
                 "musica": cmd_musica, "status": cmd_status,
                 "fondi": cmd_fondi, "shorts": cmd_shorts,
                 "chiavi": cmd_chiavi, "riscontro": cmd_riscontro,
-                "cervello": cmd_cervello}
+                "cervello": cmd_cervello, "revisione": cmd_revisione}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         print(f"Uso: python -m src.main [{'|'.join(commands)}]")
         return 1
