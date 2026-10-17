@@ -97,6 +97,20 @@ check("e lo conta anche a voce", "1 senza trascrizione" in log)
 check("ma la clip compare comunque", "vecchia-1" in testo)
 check("senza inventarsi i secondi", "→" not in testo.split("- video:")[0])
 
+print("\n— un testo ripescato lo deve dichiarare —")
+# Lorenzo legge questo file anche per giudicare la qualita della
+# trascrizione. Il testo delle dieci clip del 15/10 l'ho ripreso con
+# Whisper sul montato, con la musica sotto: se non c'e scritto, lui
+# giudica una cosa credendo di giudicarne un'altra.
+RIPESCATA = dict(PIENA, clip_id="ripescata-1",
+                 testo_da="whisper sul montato, 17/10 (recupero)")
+testo, _, _ = scrivi([RIPESCATA])
+check("c'e scritto da dove viene", "whisper sul montato" in testo)
+check("e la trascrizione c'e comunque", "sopra una certa soglia" in testo)
+testo, _, _ = scrivi([PIENA])
+check("mentre il testo della lavorazione non porta avvisi",
+      "Testo ripreso" not in testo)
+
 print("\n— un banner troppo lungo si vede subito —")
 LUNGA = dict(PIENA, clip_id="lunga-1",
              hook="Perché per un ricco 2.000 euro sono pochi")

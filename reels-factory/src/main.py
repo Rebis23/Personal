@@ -1017,8 +1017,17 @@ def cmd_revisione() -> int:
                       "montata prima che la fabbrica la tenesse da parte.", ""]
             continue
         prima = testo.split(".")[0].strip()
-        righe += [f"**Parte da:** «{prima[:120]}»", "",
-                  "**Trascrizione:**", "", testo, ""]
+        # DA DOVE VIENE IL TESTO, quando non e quello della lavorazione.
+        # Per le dieci clip del 15/10 l'ho ripescato con Whisper sul
+        # montato, cioe con la musica sotto. Lorenzo legge questo file per
+        # giudicare anche la QUALITA della trascrizione: dargli un
+        # ripescaggio senza dirglielo significa fargli giudicare una cosa
+        # al posto di un'altra.
+        fonte = c.get("testo_da")
+        righe += [f"**Parte da:** «{prima[:120]}»", ""]
+        if fonte:
+            righe += [f"_Testo ripreso dopo: {fonte}._", ""]
+        righe += ["**Trascrizione:**", "", testo, ""]
     dove.write_text("\n".join(righe), encoding="utf-8")
     print(f"📝 {dove} — {len(coda)} clip"
           + (f", {senza} senza trascrizione" if senza else ""))
