@@ -23,11 +23,24 @@ codice.
    psicoterapia:»* (×20). Quello che non va bene e il frammento che non fa
    capire il tema: *e*, *ma*, *quindi*, *che*, *allora* in apertura sono
    quasi sempre quel caso.
-3. **Massimo 7 parole, concrete.** "Il 95% delle tue scelte non le fai tu"
-   funziona. "Parliamo di come funziona la mente inconscia" no. Sette e il
-   limite oltre il quale il banner va a capo e smette di fermare lo scroll:
-   sopra quella soglia il codice taglia d'ufficio, quindi tanto vale
-   scriverlo gia corto e scegliere tu quale pezzo tenere.
+3. **Circa 7 parole, concrete.** "Il 95% delle tue scelte non le fai tu"
+   funziona. "Parliamo di come funziona la mente inconscia" no. Sette e la
+   misura oltre la quale il banner va a capo e smette di fermare lo scroll.
+   **Ma il contesto batte la brevita**, e non e un'opinione: il 17/10
+   Lorenzo ha chiamato «OTTIMO HOOK bravo» *«Perché per un ricco 2.000 euro
+   sono pochi»*, che di parole ne ha otto. Un banner di otto parole che si
+   capisce vale piu di uno di sei che non si capisce. Sopra le sette il
+   codice prova ad accorciare, ma solo tagliando: se non c'e un taglio che
+   tenga in piedi la frase, la frase resta lunga ed e giusto cosi.
+
+   **E puo AGGIUNGERE il contesto che il parlato da per scontato.** Sempre
+   il 17/10, sulla clip di uno che impara il giapponese in un mese:
+
+   > "L'hook testuale dovrebbe dare più contesto [...] per questo meglio
+   > **«Come ha imparato il giapponese in 30 giorni»**"
+
+   «Giapponese in 30 giorni» da solo non dice che e la storia di qualcuno.
+   Le due parole in piu — «Come ha» — valgono piu delle due parole in meno.
 4. **Deve creare SCONTRO.** Non basta essere interessante: serve un attrito.
    Contraddire una convinzione diffusa, mettere due cose in opposizione, dire
    la cosa scomoda che nessuno dice ad alta voce. Se nessuno può dissentire,
@@ -44,6 +57,26 @@ codice.
 
    La zanzara nel video c'è davvero: è l'esempio che porta il discorso. Ma
    l'argomento è Dio. **Il banner nomina l'argomento, non l'esempio.**
+
+   **I due approvati, per sapere a cosa somigliare.** Il 17/10 Lorenzo ha
+   bocciato otto banner su dieci e ne ha promossi due:
+
+   > *«La tua mente inconscia comanda il 95%»* — "OTTIMO HOOK è molto bello"
+   > *«Perché per un ricco 2.000 euro sono pochi»* — "OTTIMO HOOK bravo"
+
+   Hanno in comune tre cose: **un numero concreto**, **un'affermazione che
+   contraddice il senso comune**, e **l'argomento dentro il banner** — si
+   capisce di cosa si parla senza aver visto niente. Nessuno dei due e una
+   domanda vaga, e nessuno dei due e un frammento sospeso.
+
+   E vanno letti insieme alla prima frase della clip: **fra banner e
+   apertura, almeno uno dei due deve dire di chi stiamo parlando.** La clip
+   del giapponese comincia con *«Ha comprato solo libri in giapponese»* —
+   un verbo senza soggetto — e va bene lo stesso, perche il soggetto lo da
+   il banner. Dove nessuno dei due lo dava (*«Essere competitivi è davvero
+   una cosa brutta?»* su una clip che apre con *«Normalmente ha una
+   caratteristica…»*) il Reel non si capisce. Da dove parte la clip e in
+   [inizio.md](./inizio.md), con tutte e dieci le correzioni.
 
    Attenzione: questa regola ha sostituito quella vecchia, che diceva il
    contrario — "il banner riprende le parole davvero pronunciate". Era un mio

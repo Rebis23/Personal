@@ -66,6 +66,35 @@ prova("il video comincia dopo il banner",
 prova("il video sta dentro il frame", square_y + 1080 <= ALTEZZA,
       f"finirebbe a {square_y + 1080}")
 
+# I SOTTOTITOLI STANNO FRA DUE MURI, e nessuno dei due si vede nel file
+# renderizzato. Sopra c'e la faccia di Lorenzo — 17/10: «falli piu bassi,
+# non sul mio volto», stavano al 56% del riquadro, cioe sul mento. Sotto
+# c'e la didascalia di Instagram, che nel file non c'e e nel feed si.
+import yaml
+cfg = yaml.safe_load((RADICE / "config.yaml").read_text(encoding="utf-8"))
+sub = cfg["subtitles"]
+pos = float(sub["vertical_position"])
+# Interlinea 1.02 (Reel.tsx), 1.09em sulla parola enfatizzata, riga
+# centrata sulla posizione.
+alta = sub["font_size"] * 1.02 * 1.09
+centro = pos * ALTEZZA
+dentro = 100 * (centro - square_y) / 1080
+
+print(f"  caption {centro - alta / 2:.0f} → {centro + alta / 2:.0f} "
+      f"({dentro:.0f}% del riquadro)\n")
+
+prova("i sottotitoli finiscono sopra la didascalia di Instagram",
+      centro + alta / 2 <= IG_BASSO,
+      f"arrivano a {centro + alta / 2:.0f}, il limite e {IG_BASSO}")
+prova("e stanno sotto la meta del riquadro, cioe sotto il viso",
+      dentro >= 60, f"stanno al {dentro:.0f}%")
+prova("il limite di sotto e scritto nel codice, non solo in configurazione",
+      "IG_BASSO = 1500" in (RADICE / "src" / "remotion_render.py")
+      .read_text(encoding="utf-8"))
+prova("e Remotion parte dalla stessa posizione del config",
+      f"verticalPosition: {pos}," in reel_tsx,
+      f"config dice {pos}, Reel.tsx ha un altro valore di scorta")
+
 # Il nero sprecato: prima erano 420 px sotto il video, un quinto del Reel.
 nero_sotto = ALTEZZA - (square_y + 1080)
 prova("sotto il video non resta un buco nero", nero_sotto <= 200,

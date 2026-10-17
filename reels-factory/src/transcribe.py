@@ -53,10 +53,30 @@ from . import punteggiatura, scribe
 ISO3 = {"it": "ita", "en": "eng", "es": "spa", "fr": "fra", "de": "deu"}
 
 
+# SCRIBE E' SPENTO. Lorenzo, 17/10: «Ora non utilizzare più le whisper, le
+# venlabs, perché vedo che non stai facendo un buon lavoro, parlo
+# direttamente tu, senza utilizzare software esterni».
+#
+# Misurato quello stesso giorno sullo stesso audio — 34 secondi di voce
+# vera — Scribe offriva 20 punti di attacco contro i 7 di Whisper, 9,0
+# segni al minuto contro 1,8. Quindi era davvero meglio. E non serve lo
+# stesso, perche da oggi la clip non parte piu dove lo dice un segnale
+# misurato: parte dove lo decide una lettura del testo
+# (aggancio.scegli_inizio, regole e correzioni in inizio.md). Pagare per
+# avere piu segnali meccanici, quando i segnali meccanici non decidono
+# piu niente, sarebbe spendere per un contorno.
+#
+# Il codice resta e si riaccende mettendo True qui. Le parole di Whisper
+# servono ancora a due cose — i sottotitoli e ritrovare nell'audio la
+# frase scelta — e per quelle bastano: il TESTO era giusto, erano i tempi
+# a non dire niente.
+SCRIBE_ACCESO = False
+
+
 def transcribe_words(video_path: Path, model_size: str = "large-v3",
                      language: str = "it", *,
                      scribe_model: str = scribe.MODELLO,
-                     usa_scribe: bool = True) -> list[dict]:
+                     usa_scribe: bool = SCRIBE_ACCESO) -> list[dict]:
     """Ritorna [{word, start, end}] in secondi, stessa forma di parse_json3."""
     parole = _con_whisper(video_path, model_size, language)
 

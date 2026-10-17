@@ -116,8 +116,22 @@ subtitles:
   # Parole per schermata (stile word) / per riga (stile karaoke)
   words_per_line: 1
   # Posizione verticale del testo (0 = alto, 1 = basso).
-  # 0.68 = sul petto, dentro il riquadro ma sotto il viso
-  vertical_position: 0.68
+  #
+  # Lorenzo, 17/10: «i sottotitoli invece, falli più bassi, non sul mio
+  # volto». Erano a 0.68, cioè 1306 px sui 1920. Il riquadro video va da
+  # 700 a 1780, quindi 1306 cade al 56% dell'inquadratura: ancora sul
+  # mento. 0.73 fa 1402, cioè il 65% — sul petto.
+  #
+  # E 0.73 non è una preferenza, è il fondo. Due numeri lo tengono lì:
+  #   · la riga è alta ~131 px (128 di corpo × 1.02 di interlinea), ~143
+  #     quando una parola è enfatizzata (1.09em), ed è CENTRATA su questa
+  #     posizione: quindi arriva fino a ~1473;
+  #   · da 1500 in giù Instagram ci mette didascalia e tasti — misurato
+  #     sullo screenshot di Lorenzo del 6/09, è IG_BASSO in
+  #     prove/composizione.py.
+  # Restano 27 px. Per scendere ancora bisognerebbe alzare il riquadro
+  # video, che però è già appoggiato al banner.
+  vertical_position: 0.73
 
 audio:
   # Sound design: base musicale in sottofondo (file bed-*.mp3 in assets/audio,

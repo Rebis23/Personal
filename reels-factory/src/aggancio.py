@@ -29,6 +29,7 @@ import json
 import os
 import re
 import time
+from pathlib import Path
 
 import anthropic
 
@@ -945,6 +946,179 @@ def dal_parlato(words: list[dict], da: float, a: float, *, tema: str,
               "niente pause. La clip resta dove l'ha tagliata la selezione")
         return None
     return scegli_parlato(tratti, tema=tema, model=model)
+
+
+# ---------------------------------------------------------------------------
+# DA DOVE PARTE LA CLIP — a giudizio, non a misura
+#
+# Lorenzo, 17/10: «Ora non utilizzare più le whisper, le venlabs, perché vedo
+# che non stai facendo un buon lavoro, parlo direttamente tu, senza utilizzare
+# software esterni».
+#
+# Fino a oggi l'inizio nasceva da tre SEGNALI MISURATI nella trascrizione —
+# muri di punteggiatura, virgole, silenzi fra le parole — e il modello sceglieva
+# fra quello che i segnali offrivano. Misurato il 17/10 su 34 secondi di voce
+# vera: 111 stacchi su 115 sono esattamente zero, zero pause sopra 0.45s, un
+# segno di punteggiatura in tutta la clip. Due delle cinque prove non potevano
+# scattare mai, e le opzioni che arrivavano al modello erano quasi tutte
+# frammenti a meta frase. Si sceglieva bene fra cose sbagliate.
+#
+# Adesso il taglio e una LETTURA: il testo della finestra, le regole di
+# inizio.md con le dieci correzioni di Lorenzo, e la frase da cui partire detta
+# per esteso. I tempi servono ancora a una cosa sola — ritrovare quella frase
+# nell'audio — e a niente altro. La trascrizione torna a essere una dettatura.
+#
+# Resta un veto meccanico, corto e certo, sulle parole che in testa non ci
+# vanno mai. Non e il controllo principale: la correzione n. 3 («Normalmente
+# ha una caratteristica…») comincia con un avverbio innocuo e nessuna lista di
+# parole se ne accorge. E il pavimento, non il metro.
+# ---------------------------------------------------------------------------
+
+# Congiunzioni, connettivi e dimostrativi senza referente. Ricavati uno per
+# uno dalle correzioni: «perché» (n.1 e n.10), «e» (n.9), «tutte cose» (n.9).
+# Sono AMMESSE e si trovano negli inizi approvati: «chi» (n.2), «noi» (n.6),
+# «per» (n.7), «un» (n.1 corretta), «beh» (n.5, accettata esplicitamente).
+MAI_IN_TESTA = {
+    "e", "ed", "ma", "pero", "però", "perche", "perché", "perchè",
+    "quindi", "allora", "cioe", "cioè", "anzi", "invece", "dunque",
+    "comunque", "tuttavia", "eppure",
+    "questo", "questa", "questi", "queste", "quello", "quella",
+    "quelli", "quelle", "cio", "ciò",
+    "ehm", "ehmm", "mmh", "uhm", "mh",
+}
+
+
+def apertura_vietata(frase: str) -> str:
+    """Perche questa frase non puo aprire un Reel. Stringa vuota = va bene.
+
+    Corta di proposito. Il controllo vero e la domanda «di chi stiamo
+    parlando?», che una lista di parole non sa fare: su sei inizi bocciati
+    da Lorenzo questa ne prende tre.
+    """
+    pz = parole(frase)
+    if not pz:
+        return "frase vuota"
+    primo = pz[0]
+    if primo in MAI_IN_TESTA:
+        return f"comincia con «{primo}»: rimanda a quello che e stato detto prima"
+    if primo == "tutte" and len(pz) > 1 and pz[1] in {"cose", "queste"}:
+        return "«tutte cose» senza le cose: chi guarda non sa quali"
+    return ""
+
+
+SCEGLI_INIZIO = """Devo decidere il PRIMO FOTOGRAMMA di un Reel verticale \
+ritagliato da un video lungo. Chi lo guarda non ha visto niente del video, non \
+sa chi parla, e arriva qui scorrendo.
+
+{regole}
+
+Di cosa parla questa clip: {tema}
+{evitare}
+Qui sotto c'e il parlato di questo tratto, cosi come si sente. Devi dirmi da \
+quale frase far partire il Reel.
+
+PARLATO:
+{parlato}
+
+Rispondi con la frase esatta da cui comincia il Reel, copiata parola per \
+parola dal parlato qui sopra — le prime 4-10 parole bastano, non riscriverle \
+e non correggerle, nemmeno la punteggiatura.
+
+Se in tutto questo tratto non c'e un punto da cui un Reel possa partire e \
+reggersi da solo, rispondi SCARTA: meglio un Reel in meno che uno che comincia \
+a meta di un ragionamento.
+
+Nient'altro: o la frase, o SCARTA."""
+
+
+def _regole_inizio() -> str:
+    """Le regole di Lorenzo, dal file che lui puo correggere senza toccare
+    il codice. Se il file sparisce resta la regola in una riga: meglio una
+    frase giusta che un prompt vuoto."""
+    f = Path(__file__).resolve().parent.parent / "inizio.md"
+    try:
+        return f.read_text(encoding="utf-8")
+    except OSError:
+        return ("La prima frase deve bastare a chi non ha visto niente: deve "
+                "dire di chi o di cosa si parla, reggersi da sola, e non "
+                "cominciare con una congiunzione o un dimostrativo.")
+
+
+def scegli_inizio(words: list[dict], da: float, a: float, *, tema: str,
+                  model: str,
+                  gia_usati: frozenset[str] = frozenset()) -> dict | None:
+    """Da quale frase parte la clip. Torna {"testo", "start"} oppure None.
+
+    None vuol dire due cose diverse, e il log le distingue: o il modello ha
+    detto SCARTA (qui dentro non c'e un inizio), o non sono riuscito a
+    ritrovare la frase nell'audio. Nel primo caso la clip non vale, nel
+    secondo resta dove l'ha tagliata la selezione.
+    """
+    dentro = [w for w in words if da - 0.5 <= w["start"] <= a]
+    if len(dentro) < 8:
+        print("      ⚠️ Troppo poco parlato in questo tratto per scegliere "
+              "un inizio")
+        return None
+    parlato = ricuci(" ".join(w["word"].strip() for w in dentro))
+
+    # Le finestre di due clip dello stesso video si sovrappongono, e la
+    # frase migliore e spesso la stessa: il 6/09 le clip 3 e 4 sono uscite
+    # identiche in apertura. Si dice qui, prima, invece di accorgersene
+    # dopo — e si ricontrolla sotto, perche dirlo non basta a garantirlo.
+    evitare = ""
+    if gia_usati:
+        elenco = "\n".join(f"- {t}" for t in sorted(gia_usati))
+        evitare = ("\nQueste frasi aprono gia un'altra clip di questo stesso "
+                   f"video, quindi non sceglierle:\n{elenco}\n")
+
+    for tentativo, budget in enumerate(BUDGET_PARLATO, start=1):
+        try:
+            r = _cliente().messages.create(
+                model=model, max_tokens=budget,
+                messages=[{"role": "user", "content": SCEGLI_INIZIO.format(
+                    regole=_regole_inizio(), tema=tema, parlato=parlato,
+                    evitare=evitare)}],
+            )
+            conto.segna('inizio clip', r.usage)
+            testo = "".join(b.text for b in r.content if b.type == "text").strip()
+            if not testo:
+                print(f"      ⚠️ Inizio: risposta vuota "
+                      f"(stop_reason={r.stop_reason}, budget={budget})")
+                if (r.stop_reason == "max_tokens"
+                        and tentativo < len(BUDGET_PARLATO)):
+                    continue
+                return None
+            if testo.upper().startswith("SCARTA"):
+                print("      🗑️ Nessun inizio che regga da solo: clip scartata")
+                return {"scarta": True}
+            frase = testo.strip().strip('"«»')
+            vietata = apertura_vietata(frase)
+            if vietata:
+                # Non si litiga col modello: si taglia la testa alla frase.
+                # Se togliendo la parola proibita resta qualcosa di sensato,
+                # e esattamente la correzione n.1 di Lorenzo — «via il perché
+                # prima di "un high performer"».
+                pulita = " ".join(frase.split()[1:])
+                print(f"      ✂️ Inizio da ripulire ({vietata}) → «{pulita[:52]}»")
+                frase = pulita
+                if apertura_vietata(frase):
+                    print("      ⚠️ Anche togliendo la prima parola non regge")
+                    return None
+            if " ".join(parole(frase)) in gia_usati:
+                print(f"      ⚠️ «{frase[:46]}» apre gia un'altra clip: "
+                      f"la clip resta dove l'ha tagliata la selezione")
+                return None
+            quando = trova_nel_parlato(dentro, frase, da - 0.5, a)
+            if quando is None:
+                print(f"      ⚠️ «{frase[:46]}» non si ritrova nell'audio")
+                return None
+            return {"testo": frase, "start": quando}
+        except Exception as e:                  # noqa: BLE001
+            print(f"      ⚠️ Scelta dell'inizio, tentativo "
+                  f"{tentativo}/{len(BUDGET_PARLATO)} ({e})")
+            if tentativo < len(BUDGET_PARLATO):
+                time.sleep(tentativo * 4)
+    return None
 
 
 def limite_apertura(start: float, end: float, votato_fine: float, *,

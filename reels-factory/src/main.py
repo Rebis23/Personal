@@ -415,12 +415,26 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             min_seconds=float(clip_cfg["min_seconds"]),
             max_seconds=float(clip_cfg["max_seconds"]),
         )
-        detta = aggancio.dal_parlato(
+        # A GIUDIZIO, NON A MISURA. Lorenzo, 17/10: «parlo direttamente tu,
+        # senza utilizzare software esterni». Prima qui c'era dal_parlato(),
+        # che costruiva le candidate dai silenzi e dalla punteggiatura di
+        # Whisper — segnali che su 34 secondi di voce vera valevano 111
+        # stacchi a zero su 115 e un solo segno. Adesso si legge il parlato
+        # e si sceglie la frase, con le regole e le dieci correzioni di
+        # inizio.md davanti.
+        detta = aggancio.scegli_inizio(
             words, start, limite,
             tema=pick.bersaglio or pick.hook,
             model=cfg["claude"]["model"],
             gia_usati=frozenset(banner_usati),
         )
+        # SCARTA vuol dire che qui dentro non c'e un Reel, non che non ho
+        # trovato l'inizio. Correzione n.4: «Tutto questo reel è inutile,
+        # non è autoconclusivo nè sensato da solo» — quella clip non andava
+        # montata, non andava spostata. Meglio due Reel buoni che sei pieni.
+        if detta and detta.get("scarta"):
+            print(f"   🗑️ Clip {n} scartata: nessun inizio che si regga")
+            continue
         # LA FRASE DA CUI PARTIRE, NON IL BANNER. Il 5/09 avevo fatto
         # scrivere il banner con questa stessa frase pronunciata, e il 6/09
         # Lorenzo ha visto il risultato: un Reel sulla religione col titolo

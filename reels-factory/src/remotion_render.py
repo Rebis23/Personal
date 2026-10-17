@@ -140,6 +140,25 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
               f"finirebbero sul viso. Riportate a {MINIMO}")
         vertical_position = MINIMO
 
+    # E UN LIMITE ANCHE DALL'ALTRA PARTE. Lorenzo, 17/10: «falli piu bassi,
+    # non sul mio volto» — e aveva ragione, stavano al 56% del riquadro,
+    # cioe sul mento. Ma sotto c'e un muro che nel file renderizzato non si
+    # vede: da 1500 px in giu Instagram ci mette didascalia e tasti
+    # (IG_BASSO, misurato sul suo screenshot del 6/09). Una caption piu in
+    # basso si legge benissimo in anteprima e sparisce nel feed, che e il
+    # modo peggiore di sbagliare — perche sembra giusto.
+    #
+    # Il conto: la riga e alta corpo × 1.02 di interlinea, × 1.09 quando una
+    # parola e enfatizzata, ed e CENTRATA sulla posizione. Quindi il fondo
+    # sta a posizione × 1920 + alta / 2, e deve restare sopra 1500.
+    IG_BASSO = 1500
+    alta = font_size * 1.02 * 1.09
+    massimo = (IG_BASSO - alta / 2) / 1920
+    if vertical_position > massimo:
+        print(f"      ⚠️ Caption a {vertical_position:.2f}: finirebbero sotto "
+              f"la didascalia di Instagram. Riportate a {massimo:.2f}")
+        vertical_position = massimo
+
     # Le foto della fascia devono stare dentro public/: staticFile() legge
     # solo da li. Si ricopia la cartella a ogni clip invece di accumulare —
     # altrimenti la clip 3 si ritroverebbe in cima le foto della clip 1.
