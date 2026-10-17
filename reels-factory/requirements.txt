@@ -11,3 +11,7 @@ Pillow>=10
 # Pinterest: la fascia di foto in cima ai Reel (misurato dai runner GitHub
 # il 4/09 — passa senza VPN, a differenza di Instagram)
 gallery-dl>=1.30
+
+# Serve a prove/lint.py: prende i nomi usati prima di esistere, che e
+# il difetto che il 17/10 ha ucciso una rilavorazione dopo 35 minuti.
+pyflakes>=3.2

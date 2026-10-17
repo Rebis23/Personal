@@ -19,7 +19,6 @@ in coda insieme alla clip.
     python prove/revisione.py
 """
 import io
-import json
 import sys
 import types
 from contextlib import redirect_stdout

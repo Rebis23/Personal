@@ -158,6 +158,23 @@ jobs:
       # perche i runner GitHub escono da IP condivisi che quel limite lo
       # avevano gia consumato. Un dispositivo registrato pero vale a lungo:
       # si tiene nella cache e si registra solo quando manca davvero.
+      # UN SECONDO DI LINTER PRIMA DI TUTTO IL RESTO. Il 17/10 una
+      # rilavorazione e morta dopo 35 minuti — video gia scaricato,
+      # trascritto, clip gia scelte — su un UnboundLocalError: una
+      # variabile letta prima di essere assegnata. pyflakes la vede in un
+      # secondo. Sta qui e non dentro l'ingest perche prima dell'ingest
+      # c'e tutta la trafila del tunnel, che a volte da sola ci mette
+      # minuti: non ha senso farla per poi morire su una riga di Python.
+      - name: Il codice sta in piedi?
+        working-directory: reels-factory
+        run: |
+          python -m pyflakes src/*.py || {
+            echo "::error::pyflakes ha trovato un errore nel codice: mi " \
+                 "fermo qui, prima di spendere scaricamento e trascrizione."
+            exit 1
+          }
+          echo "pyflakes: nessuna segnalazione"
+
       - name: Dispositivo WARP dalla cache
         id: warp-cache
         uses: actions/cache@v4
@@ -375,6 +392,7 @@ jobs:
           # esce prima di pagare Apify e la trascrizione.
           python -u -m src.main cervello || exit 1
           export CERVELLO_PROVATO=1
+
 
           if [ "${WARP_PRONTO:-0}" = "1" ]; then
             sudo timeout 60 wg-quick up warp \

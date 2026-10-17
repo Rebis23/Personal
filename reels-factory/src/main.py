@@ -20,7 +20,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import aggancio, apify, brain, chiusura, conto, immagini, shorts, ricerca_nicchia, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, sentinella, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
+from . import aggancio, apify, brain, chiusura, conto, immagini, shorts, scuola, clipcafe, drive, instagram, moviesource, musica, prestazioni, remotion_render, ritmo_giorno, sentinella, state as state_mod, storage, subtitles, transcribe, transcript, tunnel, video, yt
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKDIR = ROOT / "work"
@@ -420,6 +420,22 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
 
     for n, pick in enumerate(picks, start=1):
         clip_id = f"{vid}-{scarto + n}"
+        # IL TONO, scelto da Claude clip per clip. Lorenzo, 17/10: «alcuni
+        # dei video che magari sono quelli un po' più filosofici, un po' più
+        # profondi [...] metteci un hook di questo tipo con una scritta
+        # seria [...] un filter un pochino gray, una color correction per
+        # farlo sembrare cinematic». Le clip 'serio' escono desaturate e
+        # fredde, col banner bianco su nero invece della pillola.
+        #
+        # Sta QUI, in cima al giro, e non piu accanto a render_common: la
+        # musica e la fascia di foto lo leggono prima, e la prima corsa
+        # vera del 17/10 e morta su UnboundLocalError dopo 35 minuti di
+        # lavoro, con le clip gia scelte. Le prove non potevano vederlo:
+        # cercavano le righe nel sorgente, e le righe c'erano tutte — solo
+        # nell'ordine sbagliato.
+        tono = "serio" if getattr(pick, "tono", "") == "serio" else "normale"
+        if tono == "serio":
+            print("      🎬 Tono serio: fotografia fredda e banner su nero")
         somma = pick.punteggi.somma
         assi = str(pick.punteggi)
         print(f"   ✂️ Clip {n}: [{pick.start_seconds:.0f}s → {pick.end_seconds:.0f}s] «{pick.hook}»")
@@ -650,16 +666,6 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             if pf.is_file():
                 pop = pf
                 pop_times = remotion_render.emphasis_times(clip_words, emph)
-
-        # IL TONO, scelto da Claude clip per clip. Lorenzo, 17/10: «alcuni
-        # dei video che magari sono quelli un po' più filosofici, un po' più
-        # profondi [...] metteci un hook di questo tipo con una scritta
-        # seria [...] un filter un pochino gray, una color correction per
-        # farlo sembrare cinematic». Le clip 'serio' escono desaturate e
-        # fredde, col banner bianco su nero invece della pillola.
-        tono = "serio" if getattr(pick, "tono", "") == "serio" else "normale"
-        if tono == "serio":
-            print(f"      🎬 Tono serio: fotografia fredda e banner su nero")
 
         render_common = dict(
             start=start, end=end,
