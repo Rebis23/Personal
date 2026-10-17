@@ -5,7 +5,7 @@ La colonna gg dice da quanti giorni il Reel e online: le views crescono nel temp
 | views | salv | like | gg | hook |
 |------:|-----:|-----:|---:|------|
 | 3982 | 27 | 38 | 11 | Si può diventare più belli senza chirurgia? |
-| 3470 | 15 | 60 | 6 | Ho 22 anni e voglio 4 figli |
+| 3472 | 15 | 60 | 6 | Ho 22 anni e voglio 4 figli |
 | 2530 | 12 | 27 | 10 | Se sei simmetrico al 100% sei spaventoso |
 | 2288 | 13 | 41 | 5 | Serve andare a letto con tante donne? |
 | 1967 | 2 | 19 | 6 | Fate i figli tardi è una cazzata |
@@ -30,5 +30,5 @@ La colonna gg dice da quanti giorni il Reel e online: le views crescono nel temp
 | 467 | 1 | 5 | 9 | Hai notato che tutto è in abbonamento? |
 | 461 | 0 | 3 | 9 | Estetica o personalità: chi vince davvero? |
 
-I 8 migliori hanno fatto in media 2102 views, i 8 peggiori 490.
+I 8 migliori hanno fatto in media 2103 views, i 8 peggiori 490.
 Studia cosa distingue i primi dagli ultimi PRIMA di scegliere: quella differenza vale piu di qualunque regola generale.
