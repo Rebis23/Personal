@@ -23,8 +23,34 @@ def _spinta(zoom: float, duration: float) -> str:
             ":d=1:s=1080x1080:fps=30")
 
 
+# LA CORREZIONE COLORE "SERIA". Lorenzo, 17/10, mandando lo screenshot di
+# uno Short in quello stile: «metteci magari anche un filter un pochino
+# gray, una color correction per farlo sembrare cinematic, ci sono tutti
+# questi piccoli trucchi qua che lo fanno sentire premium».
+#
+# Tre mosse piccole, nessuna vistosa — un grado che si nota e un filtro,
+# uno che non si nota e una fotografia:
+#   saturation 0.78  i colori si spengono un po', la pelle resta viva
+#   contrast   1.10  i neri chiudono, l'immagine "stacca"
+#   bs/rs            un soffio di blu nelle ombre, via il rosso: e il
+#                    freddo che fa leggere "cinema" invece di "webcam"
+# Si applica alla sorgente, prima dello split, cosi sfondo sfocato e
+# quadrato restano la stessa fotografia. Se si gradasse solo il quadrato,
+# lo sfondo resterebbe caldo e si vedrebbe il trucco.
+GRADO_SERIO = ("eq=saturation=0.78:contrast=1.10:brightness=-0.015,"
+               "colorbalance=rs=-0.03:bs=0.05:rm=-0.02:bm=0.03")
+
+
 def _vertical_filter(mode: str, duration: float, zoom: float,
-                     src: str = "[0:v]", mask: str | None = None) -> str:
+                     src: str = "[0:v]", mask: str | None = None,
+                     grado: str = "") -> str:
+    if grado:
+        # Si infila fra la sorgente e tutto il resto: `src` smette di
+        # essere "[0:v]" e diventa "[0:v]<grado>," cioe la stessa
+        # sorgente gia gradata. Tutti i rami sotto non cambiano di una
+        # riga, ed e il motivo per cui il grado entra qui e non in
+        # quattro posti diversi.
+        src = f"{src}{grado},"
     if mode == "crop":
         # Ritaglio centrale 9:16 a piena altezza
         return f"{src}crop=ih*9/16:ih,scale=1080:1920,setsar=1[vmain]"
@@ -137,6 +163,9 @@ def render_clip(
     cutaway_src_offset: float = 0.0,
     corner_radius: int = 96,
     zoom: float = 0.0,
+    # "serio" accende la correzione colore cinematic (GRADO_SERIO), per le
+    # clip piu riflessive. Richiesta di Lorenzo del 17/10.
+    tono: str = "normale",
     music: Path | None = None,
     music_gain_db: float = -20.0,
     ducking: bool = True,
@@ -207,7 +236,8 @@ def render_clip(
         n_inputs += 1
 
     parts.append(_vertical_filter(vertical_mode, total, zoom, src=vsrc,
-                                  mask=mask_label))
+                                  mask=mask_label,
+                                  grado=GRADO_SERIO if tono == "serio" else ""))
     last = "[vmain]"
 
     if cutaway is not None and cutaway_duration > 0.25:

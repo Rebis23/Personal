@@ -569,6 +569,14 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             # perche di quelle non sappiamo da dove vengano — e roba che
             # finisce su un profilo pubblico.
             mood = (getattr(pick, "mood", "") or "").strip().lower()
+            # Il tono serio tira la musica verso il riflessivo, qualunque
+            # carattere avesse scelto Claude: una base allegra sotto una
+            # fotografia fredda si sente subito, e disfa tutto il resto.
+            # Lorenzo, 17/10: «c'è una musica in trend molto seriosa e
+            # minimal» — quando mi manda quella, entra qui come
+            # bed-riflessivo-4 e non serve toccare il codice.
+            if tono == "serio":
+                mood = "riflessivo"
             beds = sorted(AUDIO_DIR.glob(f"bed-{mood}-*.mp3")) if mood else []
             if not beds:
                 beds = sorted(AUDIO_DIR.glob("bed-*-*.mp3"))
@@ -592,6 +600,16 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                 pop = pf
                 pop_times = remotion_render.emphasis_times(clip_words, emph)
 
+        # IL TONO, scelto da Claude clip per clip. Lorenzo, 17/10: «alcuni
+        # dei video che magari sono quelli un po' più filosofici, un po' più
+        # profondi [...] metteci un hook di questo tipo con una scritta
+        # seria [...] un filter un pochino gray, una color correction per
+        # farlo sembrare cinematic». Le clip 'serio' escono desaturate e
+        # fredde, col banner bianco su nero invece della pillola.
+        tono = "serio" if getattr(pick, "tono", "") == "serio" else "normale"
+        if tono == "serio":
+            print(f"      🎬 Tono serio: fotografia fredda e banner su nero")
+
         render_common = dict(
             start=start, end=end,
             punch_start=punch[0] if punch else 0.0,
@@ -601,6 +619,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             cutaway_src_offset=cut_src,
             corner_radius=cfg["clips"].get("corner_radius", 96),
             zoom=cfg["clips"].get("zoom", 0),
+            tono=tono,
             music=music,
             music_gain_db=audio_cfg.get("music_gain_db", -20),
             ducking=audio_cfg.get("ducking", True),
@@ -613,7 +632,14 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
         # la clip esce senza fascia: e un ornamento, non deve fermare niente.
         img_cfg = cfg["clips"].get("immagini", {})
         foto: list[Path] = []
-        if img_cfg.get("attive") and getattr(pick, "immagini", None):
+        # NIENTE FASCIA DI FOTO SULLE CLIP SERIE. Lo Short che Lorenzo ha
+        # mandato come riferimento e nero, con una riga di testo e basta:
+        # tre foto di Pinterest in cima sono l'opposto del "premium come
+        # una cosa importante da ascoltare". E' una mia scelta su una cosa
+        # che lui non ha nominato — si disfa togliendo queste due righe.
+        if tono == "serio" and img_cfg.get("attive"):
+            print("      🎬 Niente fascia di foto: il tono serio vuole il nero")
+        elif img_cfg.get("attive") and getattr(pick, "immagini", None):
             try:
                 foto = immagini.per_clip(
                     pick.immagini,
@@ -650,6 +676,7 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                     hook_text=pick.hook if cfg["clips"].get("hook_card", True) else "",
                     hook_seconds=float(cfg["clips"].get("hook_card_seconds", 0)),
                     images=foto,
+                    tono=tono,
                 )
                 rendered = True
             except Exception as e:  # noqa: BLE001 — il fallback ASS tiene viva la pipeline

@@ -87,6 +87,16 @@ class ClipPick(BaseModel):
     punteggi: Punteggi = Field(description=(
         "Voto da 0 a 3 su ognuno dei cinque assi dell'hook. Somma massima 15."
     ))
+    tono: str = Field(default="normale", description=(
+        "Il carattere di questa clip: 'serio' oppure 'normale'. "
+        "'serio' SOLO quando la clip e riflessiva o di principio — i soldi, "
+        "la morte, la fede, il senso di quello che si fa, una verita scomoda "
+        "detta piano. Quelle clip escono con la fotografia desaturata e fredda "
+        "e il banner in bianco su nero, e devono sembrare importanti. "
+        "'normale' per tutto il resto: una cosa tecnica, un metodo, un "
+        "esempio pratico, qualsiasi cosa con un tono leggero o divertito. "
+        "Nel dubbio, 'normale': se tutto e importante, niente lo e."
+    ))
     immagini: list[str] = Field(default_factory=list, description=(
         "Da 2 a 3 chiavi di ricerca IN INGLESE per trovare su Pinterest le "
         "foto da mettere in cima al Reel. Devono essere COSE FOTOGRAFABILI "

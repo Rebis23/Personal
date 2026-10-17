@@ -111,7 +111,7 @@ def emphasis_times(words: list[dict], emphasis: set[str]) -> list[float]:
 def render(base_video: Path, out_path: Path, *, pages: list[dict],
            duration: float, font_size: int, vertical_position: float,
            uppercase: bool, hook_text: str = "", hook_seconds: float = 0.0,
-           images: list[Path] | None = None,
+           images: list[Path] | None = None, tono: str = "normale",
            timeout_minutes: int = 40) -> Path:
     """Renderizza la clip finale con Remotion. Solleva RuntimeError se fallisce.
 
@@ -183,6 +183,10 @@ def render(base_video: Path, out_path: Path, *, pages: list[dict],
         "uppercase": uppercase,
         "hookText": hook_text,
         "hookSeconds": round(hook_seconds, 3),
+        # 'serio' cambia il banner: bianco su nero con la coda a colore,
+        # niente pillola. La fotografia fredda la mette gia ffmpeg prima
+        # (video.GRADO_SERIO), quindi qui arriva solo la grafica.
+        "tono": tono,
         "images": nomi,
     }
     props_file = REMOTION_DIR / "props.json"

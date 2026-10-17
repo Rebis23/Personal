@@ -37,6 +37,10 @@ export const reelSchema = z.object({
   uppercase: z.boolean().default(false),
   hookText: z.string().default(''),
   hookSeconds: z.number().default(0),
+  // 'serio' = banner bianco su nero con la coda a colore, niente pillola.
+  // Lorenzo, 17/10, mandando uno Short in quello stile: «metteci un hook
+  // di questo tipo con una scritta seria [...] lo fanno sentire premium».
+  tono: z.string().default('normale'),
   images: z.array(z.string()).default([]),
 });
 
@@ -54,6 +58,7 @@ export const defaultReelProps: ReelProps = {
   uppercase: false,
   hookText: '',
   hookSeconds: 0,
+  tono: 'normale',
   images: [],
 };
 
@@ -221,8 +226,27 @@ const CaptionPage: React.FC<{
 // pieno, mai su nero): entra con una molla mentre il video già scorre.
 // seconds = 0 → resta visibile per tutta la clip.
 
-const HookBanner: React.FC<{text: string; seconds: number; sottoFascia: boolean}> =
-  ({text, seconds, sottoFascia}) => {
+// LA CODA A COLORE. Nello Short che Lorenzo ha mandato il 17/10 — «Renowned
+// Neuroscientist ON GOD» — la riga e bianca e le ultime parole sono blu: sono
+// quelle che dicono di cosa si parla, e l'occhio ci cade sopra per prime.
+// Dove tagliare lo decide il codice, non il modello: le ultime due parole, una
+// sola se il banner e corto. In italiano il colpo sta quasi sempre in fondo
+// («...comanda il 95%», «...sono pochi»), e una regola che sbaglia ogni tanto
+// e meglio di un campo in piu che il modello puo riempire male.
+const CODA_BLU = '#3B6FF6';
+
+const spezzaCoda = (testo: string): [string, string] => {
+  const pz = testo.trim().split(/\s+/);
+  if (pz.length < 3) {
+    return [testo, ''];
+  }
+  const quante = pz.length <= 4 ? 1 : 2;
+  return [pz.slice(0, -quante).join(' '), pz.slice(-quante).join(' ')];
+};
+
+const HookBanner: React.FC<{text: string; seconds: number; sottoFascia: boolean;
+  tono: string}> =
+  ({text, seconds, sottoFascia, tono}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const total = seconds > 0 ? Math.round(seconds * fps) : Number.MAX_SAFE_INTEGER;
@@ -247,6 +271,17 @@ const HookBanner: React.FC<{text: string; seconds: number; sottoFascia: boolean}
     extrapolateRight: 'clamp',
   });
 
+  const serio = tono === 'serio';
+  const [testa, coda] = serio ? spezzaCoda(text) : [text, ''];
+  // IL CORPO SI ADATTA, come gia fanno le caption. Reso il primo
+  // fotogramma vero il 17/10, «La tua mente inconscia comanda il 95%» a 68
+  // andava a capo e lasciava «95%» da solo sulla seconda riga — cioe
+  // spezzava in due proprio la coda blu, che e la parte che deve colpire.
+  // Anton occupa circa 0.44 di corpo per carattere; la fascia utile e
+  // 994 px (92% di 1080). Sotto i 46 non si scende: un banner lunghissimo
+  // va a capo e va bene, meglio due righe leggibili di una illeggibile.
+  const corpoSerio = Math.max(46, Math.min(68, Math.floor(994 / (0.44 * text.length))));
+
   return (
     <AbsoluteFill style={{alignItems: 'center'}}>
       <div
@@ -258,20 +293,35 @@ const HookBanner: React.FC<{text: string; seconds: number; sottoFascia: boolean}
           top: sottoFascia ? 496 : 400,
           opacity: opacity * fadeOut,
           transform: `scale(${scale})`,
-          maxWidth: '86%',
-          backgroundColor: 'white',
-          color: 'black',
+          maxWidth: serio ? '92%' : '86%',
+          // Serio: nessuna pillola, il testo sta direttamente sul nero. La
+          // pillola bianca e un oggetto grafico, e un oggetto grafico in
+          // piu e esattamente cio che toglie il "premium".
+          backgroundColor: serio ? 'transparent' : 'white',
+          color: serio ? 'white' : 'black',
           textAlign: 'center',
-          fontFamily: 'Instrument Sans',
-          fontWeight: 700,
-          fontSize: 58,
-          lineHeight: 1.22,
-          padding: '26px 44px',
-          borderRadius: 30,
-          boxShadow: '0 14px 44px rgba(0,0,0,0.5)',
+          fontFamily: serio ? 'Anton' : 'Instrument Sans',
+          fontWeight: serio ? 400 : 700,
+          fontSize: serio ? corpoSerio : 58,
+          lineHeight: serio ? 1.1 : 1.22,
+          letterSpacing: serio ? '-0.01em' : undefined,
+          padding: serio ? '0 20px' : '26px 44px',
+          borderRadius: serio ? 0 : 30,
+          boxShadow: serio ? 'none' : '0 14px 44px rgba(0,0,0,0.5)',
         }}
       >
-        {text}
+        {serio ? (
+          <>
+            {testa}
+            {coda ? (
+              <span style={{color: CODA_BLU, whiteSpace: 'nowrap'}}>
+                {' ' + coda}
+              </span>
+            ) : null}
+          </>
+        ) : (
+          text
+        )}
       </div>
     </AbsoluteFill>
   );
@@ -305,6 +355,7 @@ export const Reel: React.FC<ReelProps> = (props) => {
           text={props.hookText}
           seconds={props.hookSeconds}
           sottoFascia={props.images.length > 0}
+          tono={props.tono}
         />
       ) : null}
     </AbsoluteFill>
