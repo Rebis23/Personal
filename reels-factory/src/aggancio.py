@@ -1016,6 +1016,21 @@ MAI_IN_TESTA = {
 }
 
 
+# Le cerniere del video lungo. Qui il veto meccanico puo essere preciso,
+# al contrario della lista di parole singole: sono formule fisse, e in un
+# Reel non vogliono mai dire niente. Il 18/10 una clip e partita da «in
+# questo video ti voglio spiegare…»: frase intera, soggetto e verbo, passa
+# ogni controllo sulla forma — e annuncia a chi scorre un video che non
+# vedra mai.
+RIMANDI = (
+    "in questo video", "in questa puntata", "nel video di prima",
+    "nel video precedente", "come vi dicevo", "come ti dicevo",
+    "come dicevo prima", "oggi vi parlo", "oggi ti parlo",
+    "prima di cominciare", "prima di iniziare", "nel prossimo video",
+    "torniamo a noi", "riprendiamo da dove",
+)
+
+
 def apertura_vietata(frase: str) -> str:
     """Perche questa frase non puo aprire un Reel. Stringa vuota = va bene.
 
@@ -1031,6 +1046,11 @@ def apertura_vietata(frase: str) -> str:
         return f"comincia con «{primo}»: rimanda a quello che e stato detto prima"
     if primo == "tutte" and len(pz) > 1 and pz[1] in {"cose", "queste"}:
         return "«tutte cose» senza le cose: chi guarda non sa quali"
+    inizio = " ".join(pz[:4])
+    for rimando in RIMANDI:
+        if inizio.startswith(rimando):
+            return (f"«{rimando}» rimanda al video lungo: per chi guarda un "
+                    f"Reel quel video non esiste")
     return ""
 
 

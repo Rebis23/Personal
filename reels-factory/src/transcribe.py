@@ -87,10 +87,25 @@ def transcribe_words(video_path: Path, model_size: str = "large-v3",
         return parole
 
     if parole:
-        print(f"  ⚠️ Punteggiatura troppo scarsa "
-              f"({punteggiatura.densita(parole):.1f} punti/min, "
-              f"serve {punteggiatura.SOGLIA}): senza segni si taglierebbe "
-              f"sui respiri")
+        # QUALE DELLE DUE MISURE E' FUORI, non una sola a caso. Il 17/10
+        # il log ha scritto «Punteggiatura troppo scarsa (13,1 punti/min,
+        # serve 2.0)»: 13,1 contro 2,0 e sei volte la soglia, e la riga
+        # diceva il contrario di quello che mostrava. A essere fuori era
+        # l'altra misura — un tratto lungo senza nemmeno un segno — che
+        # nel messaggio non compariva.
+        #
+        # Una riga di log che si contraddice da sola e peggio di nessuna
+        # riga: chi la legge smette di fidarsi di tutte le altre.
+        d = punteggiatura.densita(parole)
+        vuoto = punteggiatura.vuoto_massimo(parole)
+        motivi = []
+        if d < punteggiatura.SOGLIA:
+            motivi.append(f"{d:.1f} segni/min invece di {punteggiatura.SOGLIA}")
+        if vuoto > punteggiatura.VUOTO_MAX:
+            motivi.append(f"{vuoto:.0f}s di fila senza un segno "
+                          f"(il massimo e {punteggiatura.VUOTO_MAX:.0f})")
+        print(f"  ⚠️ Punteggiatura non affidabile: {' e '.join(motivi)}. "
+              f"Senza segni si taglierebbe sui respiri")
 
     if usa_scribe and scribe.disponibile():
         print("  💳 Passo a Scribe, che punteggia")

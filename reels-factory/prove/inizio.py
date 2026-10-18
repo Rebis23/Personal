@@ -108,6 +108,26 @@ check("e il codice fa proprio questo",
       'pulita = " ".join(frase.split()[1:])'
       in (RADICE / "src" / "aggancio.py").read_text(encoding="utf-8"))
 
+print("\n— e mai un rimando al video lungo —")
+# Il 18/10 una clip e partita da «in questo video ti voglio spiegare…»:
+# frase intera, soggetto e verbo, passa ogni controllo sulla forma. E non
+# va bene lo stesso, perche per chi scorre un Reel quel video non esiste.
+# Qui il veto puo essere preciso: sono formule fisse.
+check("«in questo video» non apre un Reel",
+      "rimanda al video lungo" in A.apertura_vietata(
+          "in questo video ti voglio spiegare come capire"))
+check("ne «come vi dicevo»",
+      A.apertura_vietata("come vi dicevo la settimana scorsa") != "")
+check("ne «oggi vi parlo di»",
+      A.apertura_vietata("oggi vi parlo di una cosa seria") != "")
+# E deve restare preciso: «in questo momento» non e «in questo video».
+check("ma «Se in questo momento stai procrastinando» passa",
+      A.apertura_vietata("Se in questo momento stai procrastinando") == "")
+check("e «Ci sono persone portate per una certa cosa» pure",
+      A.apertura_vietata("Ci sono persone portate per una certa cosa") == "")
+check("la regola sta anche scritta, non solo nel codice",
+      "«questo video» per chi guarda un Reel non esiste" in TESTO)
+
 print("\n— le ammesse sono ammesse davvero —")
 for p in ("chi", "noi", "per", "un", "una", "beh"):
     check(f"«{p}» puo aprire un Reel", p not in A.MAI_IN_TESTA)

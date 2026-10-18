@@ -148,6 +148,24 @@ nominava l'urlo in strada, che in questa clip non si sente mai.
 
 ---
 
+## E mai un rimando al video lungo
+
+Il 18/10 una clip e uscita con questo inizio:
+
+> *«in questo video ti voglio spiegare come capire esattamente che cosa la
+> tua parte inconscia vuole»*
+
+Frase intera, soggetto, verbo: passa tutte e tre le domande qui sopra. E
+non va bene lo stesso, perche **«questo video» per chi guarda un Reel non
+esiste**. Sta scorrendo, e arrivato qui per caso, e si sente annunciare un
+video che non vedra mai. Lo stesso vale per «come vi dicevo», «nel video
+di prima», «oggi vi parlo di», «prima di cominciare»: sono cerniere del
+video lungo, e nel Reel restano appese nel vuoto.
+
+E' la stessa famiglia della correzione n.4 — la clip che rimandava al
+video sugli archetipi — vista dall'altro capo: li era la fine a rimandare
+altrove, qui e l'inizio.
+
 ## In testa non ci vanno mai
 
 Una lista corta e certa, da tenere come pavimento — **non come il
