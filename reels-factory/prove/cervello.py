@@ -85,5 +85,66 @@ check("e viene prima di guardare il feed",
 check("senza cervello la corsa finisce male (esce 1, cosi arriva la mail)",
       "return 1" in corpo[corpo.index("cervello_pronto"):][:400])
 
+
+print("\n— e si riprova, se il guasto e di quelli che passano —")
+# Il 18 e il 19/10 due corse sono morte qui su «Request timed out», con la
+# chiave viva e il credito pieno. Un controllo nato per non sprecare una
+# lavorazione ne stava buttando una al giorno da solo.
+check("un timeout si riprova", B.passeggero("Request timed out or interrupted"))
+check("una connessione caduta pure", B.passeggero("Connection error."))
+check("un 503 pure", B.passeggero("503 overloaded_error"))
+check("il credito finito NO: aspettare non lo ricarica",
+      not B.passeggero("credito Anthropic esaurito — serve una ricarica"))
+check("la chiave rifiutata nemmeno",
+      not B.passeggero("authentication_error: invalid x-api-key"))
+check("e un guasto mai visto non si riprova a caso",
+      not B.passeggero("qualcosa di mai visto"))
+
+
+class Finto:
+    """Risponde male le prime N volte, poi bene."""
+
+    def __init__(self, quanti, errore="Request timed out or interrupted"):
+        self.rimasti, self.errore, self.chiamate = quanti, errore, 0
+
+    def __call__(self, **kw):
+        self.chiamate += 1
+        if self.rimasti > 0:
+            self.rimasti -= 1
+            raise RuntimeError(self.errore)
+        return object()
+
+
+def gira(finto):
+    import os
+    import types as t
+    vecchio = B.anthropic.Anthropic
+    B.anthropic.Anthropic = lambda **_: t.SimpleNamespace(
+        messages=t.SimpleNamespace(create=finto))
+    os.environ.setdefault("ANTHROPIC_API_KEY", "prova")
+    try:
+        return B.cervello_pronto("m", attesa=0.0)
+    finally:
+        B.anthropic.Anthropic = vecchio
+
+
+f = Finto(2)
+vivo, _ = gira(f)
+check(f"due timeout e poi passa: vivo ({f.chiamate} tentativi)",
+      vivo and f.chiamate == 3)
+
+f = Finto(99)
+vivo, guasto = gira(f)
+check(f"ma non si riprova per sempre ({f.chiamate} tentativi)",
+      not vivo and f.chiamate == 3)
+check("e dice quante volte ha provato", "dopo 3 tentativi" in guasto)
+
+f = Finto(99, errore=B.CREDITO_ESAURITO)
+vivo, guasto = gira(f)
+check(f"col credito finito si esce al primo colpo ({f.chiamate})",
+      not vivo and f.chiamate == 1)
+check("e il messaggio dice cosa fare, non cosa e successo",
+      "ricarica" in guasto)
+
 print(f"\n{ok} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)

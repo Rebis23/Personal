@@ -2,6 +2,7 @@
 e scrive caption + hashtag per ogni Reel."""
 
 import os
+import time
 from pathlib import Path
 
 from pydantic import BaseModel, Field
@@ -712,7 +713,23 @@ def leggi_guasto(errore: Exception) -> str:
     return testo[:300]
 
 
-def cervello_pronto(model: str) -> tuple[bool, str]:
+# Guasti che passano da soli: la domanda non e arrivata, non e che la
+# risposta sia "no". Si distinguono da quelli veri — credito finito, chiave
+# rifiutata — perche quelli non cambiano aspettando.
+PASSEGGERI = ("timed out", "timeout", "connection", "overloaded",
+              "502", "503", "504", "internal server error")
+
+
+def passeggero(guasto: str) -> bool:
+    """Questo guasto ha senso riprovarlo?"""
+    basso = guasto.lower()
+    if CREDITO_ESAURITO.lower() in basso or "authentication" in basso:
+        return False
+    return any(s in basso for s in PASSEGGERI)
+
+
+def cervello_pronto(model: str, *, tentativi: int = 3,
+                    attesa: float = 4.0) -> tuple[bool, str]:
     """Il cervello risponde? Da chiedere PRIMA di spendere per lo scarico.
 
     Il 25 e il 26/09 sei corse di ingest hanno fatto tutte la stessa cosa:
@@ -723,18 +740,39 @@ def cervello_pronto(model: str) -> tuple[bool, str]:
     giorno.
 
     Una domanda da un token costa una frazione di centesimo e risponde
-    esattamente a quello che conta: l'API accetta le nostre richieste? La
-    risposta viene tagliata subito e non serve a niente — qui l'unica cosa
-    che si guarda e se la porta si apre.
+    esattamente a quello che conta: l'API accetta le nostre richieste?
+
+    E SI RIPROVA, se il guasto e di quelli che passano. Il 18 e il 19/10
+    due corse sono morte qui su «Request timed out», con la chiave viva e
+    il credito pieno: un controllo nato per non sprecare una lavorazione
+    ne stava buttando una al giorno da solo. Un timeout non vuol dire che
+    il cervello e spento, vuol dire che la domanda non e arrivata — e si
+    richiede. Credito finito e chiave rifiutata invece non cambiano
+    aspettando, e li si esce al primo colpo come prima.
     """
-    try:
-        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
-        client.messages.create(
-            model=model,
-            max_tokens=1,  # risposta-non-usata: serve solo l'ok dell'API
-            messages=[{"role": "user", "content": "ok"}])
-        return True, ""
-    except KeyError:
-        return False, "manca ANTHROPIC_API_KEY nell'ambiente"
-    except Exception as e:                       # noqa: BLE001
-        return False, leggi_guasto(e)
+    guasto = ""
+    for giro in range(1, tentativi + 1):
+        try:
+            # Su UNA riga: prove/chiavi.py controlla che la chiave sia
+            # sempre .strip()ata, e lo fa per riga. Spezzarla qui lo
+            # faceva suonare a vuoto su un codice giusto — ma la regola
+            # che difende (un a-capo nel segreto rende illegale l'header)
+            # vale, quindi mi adeguo invece di allentare il controllo.
+            client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"].strip())
+            client.messages.create(
+                model=model,
+                max_tokens=1,  # risposta-non-usata: serve solo l'ok dell'API
+                messages=[{"role": "user", "content": "ok"}])
+            if giro > 1:
+                print(f"🧠 Cervello vivo al tentativo {giro}")
+            return True, ""
+        except KeyError:
+            return False, "manca ANTHROPIC_API_KEY nell'ambiente"
+        except Exception as e:                   # noqa: BLE001
+            guasto = leggi_guasto(e)
+            if not passeggero(guasto):
+                return False, guasto
+            if giro < tentativi:
+                print(f"🧠 Cervello, tentativo {giro}/{tentativi}: {guasto[:70]}")
+                time.sleep(attesa * giro)
+    return False, f"{guasto} (dopo {tentativi} tentativi)"

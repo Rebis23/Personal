@@ -125,5 +125,15 @@ CON_PAUSE += parla("Essere bravi e farsi riconoscere non sono la stessa cosa.",
 punti = C.punti_finali(CON_PAUSE, 0.0, min_seconds=5.0, max_seconds=75.0)
 check(f"li i punti si trovano ({len(punti)})", len(punti) > 0)
 
+
+print("\n— e la lunghezza giusta sta scritta, coi numeri veri —")
+# I verdetti di Lorenzo sui Reel veri: promossi 28, 32, 46 secondi;
+# bocciati per prolissita 62, 71, 73. La finestra non e un'opinione.
+check("il prompt dice la finestra", "FRA 25 E 45 SECONDI" in C.DOVE_CHIUDE)
+check("e dice perche, coi numeri", "28, 32 e 46" in C.DOVE_CHIUDE
+      and "62, 71 e 73" in C.DOVE_CHIUDE)
+check("e dice di preferirla anche a una chiusura piu completa",
+      "perde chi" in C.DOVE_CHIUDE)
+
 print(f"\n{ok} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)

@@ -243,6 +243,14 @@ chiuso e si puo smettere. Copiale parola per parola dal testo qui sopra, \
 Meglio tagliare PRESTO su una cosa chiusa che tardi su una aperta: se il \
 discorso si chiude dopo venti secondi, finisce li.
 
+LA LUNGHEZZA GIUSTA STA FRA 25 E 45 SECONDI. Non e un capriccio: sono i \
+numeri dei Reel che hanno funzionato. Quelli promossi duravano 28, 32 e 46 \
+secondi; quelli bocciati per essere prolissi 62, 71 e 73. Se trovi una \
+chiusura dentro quella finestra, prendila anche se piu avanti ce n'e una \
+"piu completa": un Reel che continua dopo aver detto la sua perde chi \
+guarda prima della fine. Oltre i 50 secondi vacci solo se davvero il \
+discorso non si chiude prima.
+
 Se non si chiude mai in tutto questo tratto, rispondi NESSUNO.
 
 Nient'altro: o le ultime parole, o NESSUNO."""
