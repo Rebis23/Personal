@@ -235,9 +235,60 @@
         "QGYgXd7utXs-2",
         "QGYgXd7utXs-4"
       ]
+    },
+    {
+      "video_id": "87YaB0eod78",
+      "title": "This book changed my life.",
+      "status": "done",
+      "processed_at": "2026-10-20T20:22:08Z",
+      "clips": [
+        "87YaB0eod78-1",
+        "87YaB0eod78-3",
+        "87YaB0eod78-4"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "87YaB0eod78-1",
+      "video_id": "87YaB0eod78",
+      "video_title": "This book changed my life.",
+      "hook": "Sei un inetto come Zeno Cosini?",
+      "r2_key": "reels/87YaB0eod78/87YaB0eod78-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/87YaB0eod78/87YaB0eod78-1.mp4",
+      "caption": "L'inetto non è lo stupido. È quello che vede tutto, capisce tutto e non muove un dito.\nIpercoscienza paralizzante: l'intelligenza che diventa sabotaggio.\nSe ti sei riconosciuto, il video intero è per te.\n\n#crescitapersonale #psicologia #letteratura #autosabotaggio #decisioni #consapevolezza #libri\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-20T20:16:15Z",
+      "testo": "L'inetto è l'uomo che non sa stare al mondo, incapace di agire in modo lineare, di scegliere e di assumere una postura ferma. È inetto perché riflette troppo e agisce poco, vive di autoinganni, è disallineato con le altre persone e subisce invece di dirigere. La sua inettitudine non è stupidità, è ipercoscienza paralizzante. Mostra un uomo dove l'intelligenza diventa sabotaggio. Quando ho letto La coscienza di Zeno mi sono sentito leggermente preso in causa. Perché? Perché mi sono sentito un inetto, mi sono sentito una persona incapace di scegliere, che spesso subisce, non ottiene quello che vuole e lo fa come conseguenza di mettere gli altri al primo posto, di non sentirsi allineato, di non riuscire ad importare. Non riuscirsi in senso buono. Ci ho messo tanto tempo a lavorare su questa cosa perché l'inetto è una persona passiva. Cioè è una persona che non fa, che non agisce per l'appunto, eppure è estremamente intelligente, vede tutto quanto, però non riesce ad agire di conseguenza a ciò che vede.",
+      "inizio": 12.7,
+      "fine": 70.1
+    },
+    {
+      "clip_id": "87YaB0eod78-3",
+      "video_id": "87YaB0eod78",
+      "video_title": "This book changed my life.",
+      "hook": "Boiler rotto: come lo scrivi al proprietario?",
+      "r2_key": "reels/87YaB0eod78/87YaB0eod78-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/87YaB0eod78/87YaB0eod78-3.mp4",
+      "caption": "Boiler rotto, lavastoviglie ferma, doccia che perde. Ho scritto al proprietario: ci sono questi problemi, come li risolviamo?\nMessaggio da inetto. Faccio presente il problema e aspetto che lo risolva qualcun altro.\nCome si riscrive quel messaggio quando sai cosa vuoi.\n\n#crescitapersonale #comunicazione #assertività #decisioni #mentalità #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-20T20:19:28Z",
+      "testo": "Oppure, come posso trarne il massimo vantaggio da questa situazione? che non è così. Mi sono reso conto che il mio messaggio è un messaggio da inetto. Perché le ho scritto, guarda, ci sono questi tre problemi, punto. Come possiamo risolverli? Questo qui non è un messaggio da persona che ottiene ciò che vuole, per il semplice fatto che non si pone la domanda, ma che cosa voglio io? Oppure, come posso trarne il massimo vantaggio da questa situazione? Ma è un messaggio da inetto, cioè, io ti faccio presenti i problemi, risolveli tu. Io rimango passivo, rimango qui fermo, io ti aspetto, non ti preoccupare, rispondimi quando preferisci.",
+      "inizio": 176.3,
+      "fine": 203.5
+    },
+    {
+      "clip_id": "87YaB0eod78-4",
+      "video_id": "87YaB0eod78",
+      "video_title": "This book changed my life.",
+      "hook": "Perché al ristorante dici sempre scegliete voi?",
+      "r2_key": "reels/87YaB0eod78/87YaB0eod78-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/87YaB0eod78/87YaB0eod78-4.mp4",
+      "caption": "Dove andiamo a mangiare stasera? A me va benissimo, scegliete voi.\nLo dicono tutti, e poi decide il primo che apre bocca.\nNel mondo le persone davvero attive sono pochissime: è per questo che chiedere funziona.\n\n#crescitapersonale #assertività #relazioni #decisioni #abitudini #psicologia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-20T20:22:08Z",
+      "testo": "la domanda del che cosa voglio, è una domanda difficile da porsi, ma cruciale. Perché una volta che conosci la risposta al che cosa voglio, che tipo di vita vuoi vivere, tutto quello che ti accade è un'opportunità. È un'opportunità per avvicinarti a questo tipo di vita. Anche perché nel mondo in generale, poche persone sono realmente persone attive. Molti sono inetti. Quindi l'essere una persona attiva facilita enormemente la vita, ti permette molto più facilmente di ottenere ciò che vuoi.",
+      "inizio": 251.2,
+      "fine": 275.3
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -867,7 +918,8 @@
     "KJjqkkpThVQ",
     "nhjqfCOAEEE",
     "lReO_BD_fS4",
-    "P_DrEt0S0Go"
+    "P_DrEt0S0Go",
+    "87YaB0eod78"
   ],
   "sospese": [
     {
@@ -977,7 +1029,7 @@
       "motivo": "71s e banner vago («Dire la verità è facile»): non dice di cosa parla la clip."
     }
   ],
-  "last_archive_at": "2026-10-17T18:43:14Z",
+  "last_archive_at": "2026-10-20T20:22:08Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
