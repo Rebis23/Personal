@@ -237,21 +237,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "QGYgXd7utXs-1",
-      "video_id": "QGYgXd7utXs",
-      "video_title": "Ho smesso di dire Bugie per 365 Giorni (ecco cosa è successo)",
-      "hook": "10 video che nessuno guarda: colpa dell'algoritmo?",
-      "r2_key": "reels/QGYgXd7utXs/QGYgXd7utXs-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/QGYgXd7utXs/QGYgXd7utXs-1.mp4",
-      "caption": "Pubblichi 10 video, nessuno li guarda. E dai la colpa all'algoritmo.\nQuella scusa non protegge i tuoi video: protegge il tuo ego. E ti lascia esattamente dove sei.\n\n#contenuti #creatordigitali #mentalità #crescitapersonale #responsabilità #autocritica\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-19T23:51:29Z",
-      "testo": "Instagram mi ha shadowbannato. E tu lì, che cos'è che stai facendo? Immagina che tu voglia diventare un influencer. E quindi pubblichi 10 video che nessuno guarda. Tu hai due opzioni. Puoi chiederti se il tema interessi, se i video sono fatti bene, se i tuoi, non so, argomenti sono interessanti, affascinanti e mantengono la promessa che hai dato. Oppure puoi dare la colpa all'algoritmo. E dire, eh, ma l'algoritmo è stupido. Eh, ma sai, i miei video non fanno partire perché YouTube mi ha shadowbannato. Instagram mi ha shadowbannato. E tu lì, che cos'è che stai facendo? Stai rifiutando la realtà per proteggere quella che è la tua versione. Originale, il tuo ego. E giustificare, tra virgolette, un insuccesso.",
-      "inizio": 174.4,
-      "fine": 208.1
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -861,6 +847,14 @@
       "ig_media_id": "18011863112912829",
       "permalink": "https://www.instagram.com/reel/DetlYy2E2vM/",
       "published_at": "2026-10-20T10:09:55Z"
+    },
+    {
+      "clip_id": "QGYgXd7utXs-1",
+      "video_id": "QGYgXd7utXs",
+      "hook": "10 video che nessuno guarda: colpa dell'algoritmo?",
+      "ig_media_id": "17983114313914098",
+      "permalink": "https://www.instagram.com/reel/DeuLTZfCS4C/",
+      "published_at": "2026-10-20T15:41:14Z"
     }
   ],
   "archive_done": [
