@@ -62,7 +62,17 @@ clips:
   # tensione) perche una clip venga montata. Su 15.
   punteggio_minimo: 7
   min_seconds: 20
-  max_seconds: 75
+  # SCESO DA 75 A 50 il 21/10, deciso da Lorenzo sui numeri dei Reel veri:
+  #   promossi            28, 32, 46 secondi
+  #   bocciati, prolissi  62, 71, 73
+  # La riga cade da sola, e finche il tetto restava a 75 le clip lunghe
+  # potevano ancora nascere e toccava fermarle a mano una per una.
+  #
+  # Non e solo un taglio alla fine: questo numero decide anche quanto
+  # parlato il modello LEGGE per scegliere dove chiudere (chiusura.py) e
+  # quanto indietro puo spostare l'inizio (main.py). Con 50 la finestra e
+  # piu stretta e le occasioni di allungarsi non si presentano proprio.
+  max_seconds: 50
   # "square" = video ritagliato quadrato su sfondo nero, persona al centro
   #            (stile Modern Wisdom — scelto da Lorenzo il 15/08)
   # "blur"   = video originale centrato su sfondo sfocato

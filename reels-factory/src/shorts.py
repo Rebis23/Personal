@@ -2,7 +2,7 @@
 
 Lorenzo, 25/09: "puoi postare tutti i vecchi video anche su yt shorts?"
 
-Le clip sono gia pronte: 1080x1920 verticali, fra i 20 e i 75 secondi. Il
+Le clip sono gia pronte: 1080x1920 verticali, fra i 20 e i 50 secondi. Il
 limite degli Shorts e tre minuti, quindi YouTube le riconosce come Shorts
 da sole — non c'e niente da segnalare, basta caricarle.
 

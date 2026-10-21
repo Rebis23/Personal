@@ -135,5 +135,26 @@ check("e dice perche, coi numeri", "28, 32 e 46" in C.DOVE_CHIUDE
 check("e dice di preferirla anche a una chiusura piu completa",
       "perde chi" in C.DOVE_CHIUDE)
 
+
+print("\n— il tetto vero, quello in config.yaml —")
+# Lorenzo, 21/10: «si abbassa». Da 75 a 50, sui numeri dei Reel veri. Il
+# numero vive in config.yaml e da li decide tre cose diverse: dove si
+# taglia, quanto parlato il modello LEGGE per scegliere la chiusura, e
+# quanto indietro puo spostare l'inizio. Se un domani torna a 75 senza
+# che nessuno lo voglia, questa riga lo dice.
+import yaml
+cfg = yaml.safe_load((RADICE / "config.yaml").read_text(encoding="utf-8"))
+tetto = float(cfg["clips"]["max_seconds"])
+minimo = float(cfg["clips"]["min_seconds"])
+check(f"il massimo e {tetto:.0f} secondi, non 75", tetto == 50.0)
+check(f"il minimo resta {minimo:.0f}", minimo == 20.0)
+check("e la finestra buona del prompt ci sta dentro",
+      "FRA 25 E 45 SECONDI" in C.DOVE_CHIUDE and tetto >= 45)
+check("arrivato in fondo senza chiusura, scarta invece di tagliare a meta",
+      "rispondi NESSUNO" in C.DOVE_CHIUDE)
+check("e Shorts dice la stessa durata",
+      "fra i 20 e i 50 secondi"
+      in (RADICE / "src" / "shorts.py").read_text(encoding="utf-8"))
+
 print(f"\n{ok} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)

@@ -248,8 +248,12 @@ numeri dei Reel che hanno funzionato. Quelli promossi duravano 28, 32 e 46 \
 secondi; quelli bocciati per essere prolissi 62, 71 e 73. Se trovi una \
 chiusura dentro quella finestra, prendila anche se piu avanti ce n'e una \
 "piu completa": un Reel che continua dopo aver detto la sua perde chi \
-guarda prima della fine. Oltre i 50 secondi vacci solo se davvero il \
-discorso non si chiude prima.
+guarda prima della fine.
+
+Il parlato qui sopra finisce dove finisce il massimo consentito. Se arrivi \
+in fondo senza aver trovato una chiusura, non tirare fino all'ultima parola: \
+rispondi NESSUNO, e la clip verra scartata invece di uscire tagliata a \
+meta.
 
 Se non si chiude mai in tutto questo tratto, rispondi NESSUNO.
 
