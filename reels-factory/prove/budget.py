@@ -134,3 +134,7 @@ if colpevoli:
           "vuol dire che basti poco.")
     sys.exit(1)
 print("nessun budget sotto soglia")
+# La riga nel formato che conta prove/tutte.py. Senza, questo file usciva
+# verde e i suoi controlli non venivano contati da nessuna parte: una
+# prova che non si conta e una prova che domani sparisce in silenzio.
+print(f"\n{trovati + per_nome + len(CONTROLLATE)} verdi, 0 rotti")

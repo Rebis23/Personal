@@ -58,3 +58,5 @@ if colpevoli:
     sys.exit(1)
 
 print("nessuna costruzione sbagliata")
+# Vedi prove/tutte.py: senza questa riga i controlli non si contano.
+print(f"\n{buone} verdi, 0 rotti")

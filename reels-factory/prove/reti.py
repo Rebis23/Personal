@@ -28,6 +28,14 @@ VERI = {
        "quello studio era fatto su ragazzi di vent'anni",
 }
 
+# QUALI DEVONO FARCELA, dichiarato prima invece che constatato dopo. Le
+# reti tagliano dove la frase si spezza da sola; il 5 non ha un punto di
+# rottura utile e resta lungo — e un esito previsto dal 4/09, non un
+# difetto. Scriverlo qui serve a due cose: il conto non chiama "rotto"
+# qualcosa che va come deve, e se un domani il 5 cominciasse a passare
+# (o il 3 a fallire) la prova se ne accorge.
+ATTESI = {3: True, 4: True, 5: False}
+
 
 class ModelloMuto:
     """Il caso peggiore: ogni chiamata al modello fallisce."""
@@ -46,18 +54,29 @@ errori = 0
 for i, intero in sorted(VERI.items()):
     tagliato = fuori.get(i)
     n_prima = aggancio.quante(intero)
+    atteso = ATTESI.get(i, True)
     if tagliato is None:
-        print(f"  ✗ {i}: resta a {n_prima} parole — «{intero[:60]}…»")
-        errori += 1
+        come_deve = not atteso
+        print(f"  {'✓' if come_deve else '✗'} {i}: resta a {n_prima} parole"
+              f"{' (previsto: non ha un punto di rottura)' if come_deve else ''}"
+              f" — «{intero[:56]}…»")
+        if not come_deve:
+            errori += 1
         continue
     n = aggancio.quante(tagliato)
-    ok = n <= aggancio.MAX_PAROLE and aggancio.e_contiguo(tagliato, intero)
-    print(f"  {'✓' if ok else '✗'} {i}: {n_prima}p → {n}p  «{tagliato}»")
-    if not ok:
+    buono = n <= aggancio.MAX_PAROLE and aggancio.e_contiguo(tagliato, intero)
+    come_deve = buono == atteso
+    print(f"  {'✓' if come_deve else '✗'} {i}: {n_prima}p → {n}p  «{tagliato}»"
+          + ("" if atteso else "  (non doveva farcela: guardare)"))
+    if not come_deve:
         errori += 1
 
 print(f"\n{len(fuori)}/{len(VERI)} agganci accorciati senza il modello")
 if errori:
     print("Con il modello muto le reti devono comunque prendere quello che "
           "ha un punto di rottura.")
-sys.exit(1 if len(fuori) == 0 else 0)
+# Vedi prove/tutte.py: senza questa riga i controlli non si contano, e
+# questo file girava da settimane senza che il suo numero entrasse nel
+# totale che riferisco a Lorenzo.
+print(f"\n{len(VERI) - errori} verdi, {errori} rotti")
+sys.exit(1 if errori else 0)
