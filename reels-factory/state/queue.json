@@ -250,19 +250,6 @@
   ],
   "queue": [
     {
-      "clip_id": "87YaB0eod78-3",
-      "video_id": "87YaB0eod78",
-      "video_title": "This book changed my life.",
-      "hook": "Boiler rotto: come lo scrivi al proprietario?",
-      "r2_key": "reels/87YaB0eod78/87YaB0eod78-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/87YaB0eod78/87YaB0eod78-3.mp4",
-      "caption": "Boiler rotto, lavastoviglie ferma, doccia che perde. Ho scritto al proprietario: ci sono questi problemi, come li risolviamo?\nMessaggio da inetto. Faccio presente il problema e aspetto che lo risolva qualcun altro.\nCome si riscrive quel messaggio quando sai cosa vuoi.\n\n#crescitapersonale #comunicazione #assertività #decisioni #mentalità #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-20T20:19:28Z",
-      "testo": "Oppure, come posso trarne il massimo vantaggio da questa situazione? che non è così. Mi sono reso conto che il mio messaggio è un messaggio da inetto. Perché le ho scritto, guarda, ci sono questi tre problemi, punto. Come possiamo risolverli? Questo qui non è un messaggio da persona che ottiene ciò che vuole, per il semplice fatto che non si pone la domanda, ma che cosa voglio io? Oppure, come posso trarne il massimo vantaggio da questa situazione? Ma è un messaggio da inetto, cioè, io ti faccio presenti i problemi, risolveli tu. Io rimango passivo, rimango qui fermo, io ti aspetto, non ti preoccupare, rispondimi quando preferisci.",
-      "inizio": 176.3,
-      "fine": 203.5
-    },
-    {
       "clip_id": "87YaB0eod78-4",
       "video_id": "87YaB0eod78",
       "video_title": "This book changed my life.",
@@ -901,6 +888,14 @@
       "ig_media_id": "17875884024586263",
       "permalink": "https://www.instagram.com/reel/DewLD8fk7a_/",
       "published_at": "2026-10-21T10:17:32Z"
+    },
+    {
+      "clip_id": "87YaB0eod78-3",
+      "video_id": "87YaB0eod78",
+      "hook": "Boiler rotto: come lo scrivi al proprietario?",
+      "ig_media_id": "18080855954651280",
+      "permalink": "https://www.instagram.com/reel/DewtxOHFCbx/",
+      "published_at": "2026-10-21T15:20:54Z"
     }
   ],
   "archive_done": [
