@@ -122,12 +122,47 @@ def transcribe_words(video_path: Path, model_size: str = "large-v3",
     return parole
 
 
+def _risorse() -> str:
+    """Memoria e disco liberi, in una riga. Serve a sapere, non a decidere.
+
+    Dal 18 al 20/10 tre corse sono morte nello stesso identico punto: la
+    riga di onnxruntime che faster-whisper stampa mentre carica il modello.
+    GitHub le ha chiuse con «the runner has received a shutdown signal»,
+    che dice solo che il runner e sparito, non perche.
+
+    Non e il video: lo stesso identico video e passato al tentativo dopo.
+    Non e il tempo: 22:21, 12:39, 11:12. Resta una risorsa che a volte
+    manca proprio mentre il modello grande entra in memoria — e questa
+    riga, stampata prima e dopo, lo dira invece di farmelo indovinare.
+    Un guasto che si ripete senza lasciare un numero e un guasto che si
+    ripara a caso.
+    """
+    pezzi = []
+    try:
+        import shutil as _sh
+        tot, _usato, libero = _sh.disk_usage("/")
+        pezzi.append(f"disco {libero / 2**30:.1f} GB liberi su {tot / 2**30:.0f}")
+    except OSError:
+        pass
+    try:
+        with open("/proc/meminfo", encoding="utf-8") as f:
+            info = {r.split(":")[0]: r.split()[1] for r in f if ":" in r}
+        disponibile = int(info.get("MemAvailable", 0)) / 2**20
+        totale = int(info.get("MemTotal", 0)) / 2**20
+        pezzi.append(f"memoria {disponibile:.1f} GB liberi su {totale:.0f}")
+    except (OSError, ValueError, IndexError):
+        pass
+    return " · ".join(pezzi) or "(risorse non leggibili)"
+
+
 def _con_whisper(video_path: Path, model_size: str, language: str) -> list[dict]:
     from faster_whisper import WhisperModel  # import pigro: pacchetto pesante
 
     print(f"  🎙️ Trascrizione con Whisper ({model_size}, {language})...")
+    print(f"     prima di caricare il modello: {_risorse()}", flush=True)
     try:
         model = WhisperModel(model_size, device="cpu", compute_type="int8")
+        print(f"     modello in memoria:          {_risorse()}", flush=True)
         segments, info = model.transcribe(
             str(video_path),
             language=language,

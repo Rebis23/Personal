@@ -117,5 +117,30 @@ prova("l'indirizzo e quello ufficiale",
 prova("il modello di partenza e scritto una volta sola",
       MODELLO == "scribe_v2", MODELLO)
 
+
+print("\n— la misura delle risorse, che serve a non indovinare —")
+# Dal 18 al 20/10 tre corse sono morte nello stesso punto: la riga di
+# onnxruntime che faster-whisper stampa mentre carica il modello. GitHub
+# le ha chiuse con «the runner has received a shutdown signal», che dice
+# che il runner e sparito, non perche. Lo stesso identico video e passato
+# al tentativo dopo, quindi non e il contenuto, ed erano le 22:21, le
+# 12:39 e le 11:12, quindi non e l'ora. Questa riga trasforma la prossima
+# volta in una diagnosi invece che in un'ipotesi.
+from src.transcribe import _risorse
+import inspect
+from src import transcribe as T
+
+riga = _risorse()
+prova(f"dice disco e memoria: {riga}", "disco" in riga and "memoria" in riga)
+prova("con dei numeri dentro", any(c.isdigit() for c in riga))
+prova("non esplode se /proc/meminfo non c'e", isinstance(riga, str))
+corpo = inspect.getsource(T._con_whisper)
+prova("si stampa PRIMA di caricare il modello",
+      "prima di caricare il modello" in corpo)
+prova("e anche DOPO, che e il confronto che conta",
+      "modello in memoria" in corpo)
+prova("col flush: se no l'ultima riga si perde proprio quando il "
+      "processo muore", corpo.count("flush=True") >= 2)
+
 print(f"\n  {verdi} verdi, {rotti} rotti")
 sys.exit(1 if rotti else 0)
