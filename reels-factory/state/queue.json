@@ -248,21 +248,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "87YaB0eod78-4",
-      "video_id": "87YaB0eod78",
-      "video_title": "This book changed my life.",
-      "hook": "Perché al ristorante dici sempre scegliete voi?",
-      "r2_key": "reels/87YaB0eod78/87YaB0eod78-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/87YaB0eod78/87YaB0eod78-4.mp4",
-      "caption": "Dove andiamo a mangiare stasera? A me va benissimo, scegliete voi.\nLo dicono tutti, e poi decide il primo che apre bocca.\nNel mondo le persone davvero attive sono pochissime: è per questo che chiedere funziona.\n\n#crescitapersonale #assertività #relazioni #decisioni #abitudini #psicologia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-20T20:22:08Z",
-      "testo": "la domanda del che cosa voglio, è una domanda difficile da porsi, ma cruciale. Perché una volta che conosci la risposta al che cosa voglio, che tipo di vita vuoi vivere, tutto quello che ti accade è un'opportunità. È un'opportunità per avvicinarti a questo tipo di vita. Anche perché nel mondo in generale, poche persone sono realmente persone attive. Molti sono inetti. Quindi l'essere una persona attiva facilita enormemente la vita, ti permette molto più facilmente di ottenere ciò che vuoi.",
-      "inizio": 251.2,
-      "fine": 275.3
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -896,6 +882,14 @@
       "ig_media_id": "18080855954651280",
       "permalink": "https://www.instagram.com/reel/DewtxOHFCbx/",
       "published_at": "2026-10-21T15:20:54Z"
+    },
+    {
+      "clip_id": "87YaB0eod78-4",
+      "video_id": "87YaB0eod78",
+      "hook": "Perché al ristorante dici sempre scegliete voi?",
+      "ig_media_id": "18116057483517512",
+      "permalink": "https://www.instagram.com/reel/Deyv-7-AM1T/",
+      "published_at": "2026-10-22T10:18:27Z"
     }
   ],
   "archive_done": [
