@@ -248,7 +248,22 @@
       ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "f9sp7rl0kw4-5",
+      "video_id": "f9sp7rl0kw4",
+      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
+      "hook": "Perché passi 4 ore sui reel?",
+      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-5.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-5.mp4",
+      "caption": "Puoi avere ambizione, disciplina e agency e passare comunque quattro ore al giorno a scrollare.\nQuello che manca si chiama self-regulation: ciò che vuoi fra cinque anni vale più di ciò che vuoi nei prossimi minuti.\nE no, la forza di volontà non basta: finisce.\n\n#crescitapersonale #abitudini #disciplina #distrazioni #produttivita #psicologia #focus\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-10-17T16:19:29Z",
+      "testo": "tu puoi avere la spinta Puoi avere l'agency La disciplina Ma comunque passare Quattro ore al giorno A guardare i reel di Instagram E quindi Che cos'è che manca Se sei una persona ambiziosa Capace Intelligente Con voglia di fare La risposta è la self -regulation Cioè la capacità Di governare i tuoi impulsi A breve termine In funzione di un qualcosa Più a lungo termine Significa Significa praticamente Avere chiaro in testa Che ciò che vuoi Tra cinque anni È più importante Di ciò che vuoi Nei prossimi minuti Perché ciò che vuoi Nei prossimi minuti Durerà qualche minuto Ciò che vuoi Per i prossimi cinque anni Durerà almeno cinque anni Se non di più E di solito I soggetti d'alto rendimento Non si affidano Alla forza di volontà Perché la forza di volontà Ad un certo punto Finisce Usano due strategie psicologiche Secondo me tra l'altro Molto intelligenti Che questo studio mostra La prima è la riprogettazione Dell'ambiente Cioè fanno in modo Di modificare il contesto In cui si trovano Per ridurre al minimo Le distrazioni Costi di attrito In uno dei miei video Sul tema di Instagram Cioè non disinstallare Instagram Fai questo Io parlo di questa cosa Per quale motivo Tu dovresti avere Le notifiche attive È una cosa terribile Le notifiche ti distraggono E tu stai cercando Di passare del tempo Senza il tuo telefono Se io sto lavorando E devo concentrarmi Non avrò il telefono Sulla scrivania Perché al posto Che darmi continuamente L'occasione di distrarmi Ha molto più senso Non averlo attorno",
+      "inizio": 693.9,
+      "fine": 766.9,
+      "ripresa_il": "2026-10-23: rimessa in coda da Lorenzo mentre il credito e fermo. Difetto noto: 73s, il punto chiude a ~30s e il resto si allarga."
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -955,20 +970,6 @@
       "inizio": 224.6,
       "fine": 287.0,
       "motivo": "parte da «isoliamo gli high performer»: verbo che continua la frase di prima, e il punto forte arriva 25s dopo. 62s."
-    },
-    {
-      "clip_id": "f9sp7rl0kw4-5",
-      "video_id": "f9sp7rl0kw4",
-      "video_title": "5 tratti Psicologici per ottenere la vita che vuoi (secondo la Scienza)",
-      "hook": "Perché passi 4 ore sui reel?",
-      "r2_key": "reels/f9sp7rl0kw4/f9sp7rl0kw4-5.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/f9sp7rl0kw4/f9sp7rl0kw4-5.mp4",
-      "caption": "Puoi avere ambizione, disciplina e agency e passare comunque quattro ore al giorno a scrollare.\nQuello che manca si chiama self-regulation: ciò che vuoi fra cinque anni vale più di ciò che vuoi nei prossimi minuti.\nE no, la forza di volontà non basta: finisce.\n\n#crescitapersonale #abitudini #disciplina #distrazioni #produttivita #psicologia #focus\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-10-17T16:19:29Z",
-      "testo": "tu puoi avere la spinta Puoi avere l'agency La disciplina Ma comunque passare Quattro ore al giorno A guardare i reel di Instagram E quindi Che cos'è che manca Se sei una persona ambiziosa Capace Intelligente Con voglia di fare La risposta è la self -regulation Cioè la capacità Di governare i tuoi impulsi A breve termine In funzione di un qualcosa Più a lungo termine Significa Significa praticamente Avere chiaro in testa Che ciò che vuoi Tra cinque anni È più importante Di ciò che vuoi Nei prossimi minuti Perché ciò che vuoi Nei prossimi minuti Durerà qualche minuto Ciò che vuoi Per i prossimi cinque anni Durerà almeno cinque anni Se non di più E di solito I soggetti d'alto rendimento Non si affidano Alla forza di volontà Perché la forza di volontà Ad un certo punto Finisce Usano due strategie psicologiche Secondo me tra l'altro Molto intelligenti Che questo studio mostra La prima è la riprogettazione Dell'ambiente Cioè fanno in modo Di modificare il contesto In cui si trovano Per ridurre al minimo Le distrazioni Costi di attrito In uno dei miei video Sul tema di Instagram Cioè non disinstallare Instagram Fai questo Io parlo di questa cosa Per quale motivo Tu dovresti avere Le notifiche attive È una cosa terribile Le notifiche ti distraggono E tu stai cercando Di passare del tempo Senza il tuo telefono Se io sto lavorando E devo concentrarmi Non avrò il telefono Sulla scrivania Perché al posto Che darmi continuamente L'occasione di distrarmi Ha molto più senso Non averlo attorno",
-      "inizio": 693.9,
-      "fine": 766.9,
-      "motivo": "73 secondi e si allarga su tre argomenti: self-regulation, ambiente, notifiche. Prolissa."
     },
     {
       "clip_id": "P_DrEt0S0Go-3",
