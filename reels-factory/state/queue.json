@@ -246,9 +246,60 @@
         "87YaB0eod78-3",
         "87YaB0eod78-4"
       ]
+    },
+    {
+      "video_id": "WMp6y1ytRM0",
+      "title": "How to Articulate Your Worth and Become SELF-CONFIDENT",
+      "status": "done",
+      "processed_at": "2026-11-07T20:49:59Z",
+      "clips": [
+        "WMp6y1ytRM0-1",
+        "WMp6y1ytRM0-2",
+        "WMp6y1ytRM0-3"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "WMp6y1ytRM0-1",
+      "video_id": "WMp6y1ytRM0",
+      "video_title": "How to Articulate Your Worth and Become SELF-CONFIDENT",
+      "hook": "Ho 21 anni e zero appuntamenti",
+      "r2_key": "reels/WMp6y1ytRM0/WMp6y1ytRM0-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/WMp6y1ytRM0/WMp6y1ytRM0-1.mp4",
+      "caption": "Due anni senza un appuntamento. Non per scelta estetica: non mi sentivo degno.\nE il dubbio di non essere abbastanza è la cosa che ho fatto più fatica ad ammettere a me stesso.\nNel video racconto come sto tornando in gioco.\n\n#autostima #crescitapersonale #relazioni #dating #psicologia #uomini #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-07T20:43:52Z",
+      "testo": "E il secondo motivo è una cosa che ho fatto fatica ad ammettere a me stesso, ma la verità è che non mi sentivo degno. è normale per un ragazzo di 21 anni non andare a nessun appuntamento, non essere iscritto ad app di incontri e non ricercare attivamente una tipa? No, non lo è. Però è quello che ho fatto negli ultimi due anni, per due motivi principali. Il primo è che stavo cercando di costruire una vita di qualità, quindi lavorare, quindi viaggiare, costruirmi come persona. E il secondo motivo è una cosa che ho fatto fatica ad ammettere a me stesso, ma la verità è che non mi sentivo degno. Degno di che cosa? Di riuscire a provvedere con delle basi solide per la mia relazione.",
+      "inizio": 0.1,
+      "fine": 26.0
+    },
+    {
+      "clip_id": "WMp6y1ytRM0-2",
+      "video_id": "WMp6y1ytRM0",
+      "video_title": "How to Articulate Your Worth and Become SELF-CONFIDENT",
+      "hook": "Sai raccontarti? Berlusconi e Trump sì",
+      "r2_key": "reels/WMp6y1ytRM0/WMp6y1ytRM0-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/WMp6y1ytRM0/WMp6y1ytRM0-2.mp4",
+      "caption": "Berlusconi, Trump: quello che hanno in comune non è il potere, è che sanno raccontare storie.\nEntrare e restare nella mente delle persone non è talento. È pratica, anche da soli.\n\n#comunicazione #storytelling #crescitapersonale #autostima #psicologia #relazioni\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-07T20:46:40Z",
+      "testo": "Tutte le persone, prendi Berlusconi, prendi Trump, sono persone che hanno questa sorta di attitudine, di charm, che riescono in un qualche modo a intrattenere le persone. Perché? Perché sanno raccontare storie. E qui c'è l'altro passaggio importante. Cioè, come si fa a saper raccontare delle belle storie, specialmente su se stessi? Come si fa a presentarsi ed essere una persona che intrattiene? Come si fa ad entrare e rimanere nella mente delle persone? Che è esattamente l'indicatore del fatto che hai fatto un buon lavoro dal punto di vista sociale, secondo me. Beh, il fatto è semplicemente pratica. Non solo pratica con gli altri, ma anche con te stesso.",
+      "inizio": 344.3,
+      "fine": 380.0
+    },
+    {
+      "clip_id": "WMp6y1ytRM0-3",
+      "video_id": "WMp6y1ytRM0",
+      "video_title": "How to Articulate Your Worth and Become SELF-CONFIDENT",
+      "hook": "Carisma: Marilyn Monroe lo provava allo specchio",
+      "r2_key": "reels/WMp6y1ytRM0/WMp6y1ytRM0-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/WMp6y1ytRM0/WMp6y1ytRM0-3.mp4",
+      "caption": "Da fuori sembrava la donna più naturale del mondo. In realtà passava 5-6 ore allo specchio a testare microespressioni.\nNessuno nasce \"tutto d'un pezzo\". La gente si prepara, semplicemente non te lo mostra.\n\n#crescitapersonale #carisma #disciplina #psicologia #abitudini #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-07T20:49:59Z",
+      "testo": "Eppure da fuori sembrava una persona estremamente naturale, genuina, le veniva tutto automatico. Marilyn Monroe è stata una delle più grandi sedutrici della storia. La donna forse più desiderata, anche in un certo senso, da tutto il popolo americano. Un'icona che tutt'oggi è estremamente conosciuta, rappresentata sulle magliette. Marilyn Monroe era una che passava ore, nella sua biografia viene raccontato, passava delle ore allo specchio a provare le posizioni delle espressioni facciali. Ore a truccarsi nel modo che potesse risaltare. Ore a fare certe espressioni, certi movimenti del corpo, che fossero più o meno seducenti a capire cosa funzionava e cosa non funzionava. Eppure da fuori sembrava una persona estremamente naturale, genuina, le veniva tutto automatico.",
+      "inizio": 465.6,
+      "fine": 502.8
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -911,7 +962,8 @@
     "nhjqfCOAEEE",
     "lReO_BD_fS4",
     "P_DrEt0S0Go",
-    "87YaB0eod78"
+    "87YaB0eod78",
+    "WMp6y1ytRM0"
   ],
   "sospese": [
     {
@@ -1007,7 +1059,7 @@
       "motivo": "71s e banner vago («Dire la verità è facile»): non dice di cosa parla la clip."
     }
   ],
-  "last_archive_at": "2026-10-20T20:22:08Z",
+  "last_archive_at": "2026-11-07T20:49:59Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
