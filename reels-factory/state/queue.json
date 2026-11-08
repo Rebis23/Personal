@@ -259,21 +259,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "WMp6y1ytRM0-3",
-      "video_id": "WMp6y1ytRM0",
-      "video_title": "How to Articulate Your Worth and Become SELF-CONFIDENT",
-      "hook": "Carisma: Marilyn Monroe lo provava allo specchio",
-      "r2_key": "reels/WMp6y1ytRM0/WMp6y1ytRM0-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/WMp6y1ytRM0/WMp6y1ytRM0-3.mp4",
-      "caption": "Da fuori sembrava la donna più naturale del mondo. In realtà passava 5-6 ore allo specchio a testare microespressioni.\nNessuno nasce \"tutto d'un pezzo\". La gente si prepara, semplicemente non te lo mostra.\n\n#crescitapersonale #carisma #disciplina #psicologia #abitudini #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-07T20:49:59Z",
-      "testo": "Eppure da fuori sembrava una persona estremamente naturale, genuina, le veniva tutto automatico. Marilyn Monroe è stata una delle più grandi sedutrici della storia. La donna forse più desiderata, anche in un certo senso, da tutto il popolo americano. Un'icona che tutt'oggi è estremamente conosciuta, rappresentata sulle magliette. Marilyn Monroe era una che passava ore, nella sua biografia viene raccontato, passava delle ore allo specchio a provare le posizioni delle espressioni facciali. Ore a truccarsi nel modo che potesse risaltare. Ore a fare certe espressioni, certi movimenti del corpo, che fossero più o meno seducenti a capire cosa funzionava e cosa non funzionava. Eppure da fuori sembrava una persona estremamente naturale, genuina, le veniva tutto automatico.",
-      "inizio": 465.6,
-      "fine": 502.8
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -939,6 +925,14 @@
       "ig_media_id": "18115251889868997",
       "permalink": "https://www.instagram.com/reel/DfetGI4gs92/",
       "published_at": "2026-11-08T11:59:58Z"
+    },
+    {
+      "clip_id": "WMp6y1ytRM0-3",
+      "video_id": "WMp6y1ytRM0",
+      "hook": "Carisma: Marilyn Monroe lo provava allo specchio",
+      "ig_media_id": "17918963493460799",
+      "permalink": "https://www.instagram.com/reel/DffQLKwib2Y/",
+      "published_at": "2026-11-08T17:06:31Z"
     }
   ],
   "archive_done": [
