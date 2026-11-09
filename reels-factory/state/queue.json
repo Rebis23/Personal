@@ -272,19 +272,6 @@
   ],
   "queue": [
     {
-      "clip_id": "ZxBcT0a0SYI-1",
-      "video_id": "ZxBcT0a0SYI",
-      "video_title": "How You Can Get (REALLY) SMARTER",
-      "hook": "Chi andava bene a scuola è scemo?",
-      "r2_key": "reels/ZxBcT0a0SYI/ZxBcT0a0SYI-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/ZxBcT0a0SYI/ZxBcT0a0SYI-1.mp4",
-      "caption": "Chi andava bene a scuola a volte è scemo nella vita, chi ha un master viene sottopagato.\nL'intelligenza vera non sta in un voto né in un certificato: è la capacità di descrivere bene il mondo dentro e fuori di te.\nE si allena.\n\n#intelligenza #crescitapersonale #studio #mentalita #apprendimento #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-09T16:04:39Z",
-      "testo": "Ti hanno detto che l'intelligenza è prendere un voto alto a scuola, è avere la laurea, il master, il certificato o avere un quoziente intellettivo molto alto. Ma chi andava bene a scuola a volte è scemo nella vita, chi ha una laurea o un master viene sottopagato e chi ha un quoziente intellettivo alto spesso tende all'autismo. Quindi forse l'intelligenza non si può contenere all'interno di questi risultati. Quindi, posto che oggi in questo video si parla di intelligenza non misurabile, quindi non nel senso acabebico, per parlare di come si diventa più intelligenti bisogna prima dare una definizione o almeno provarci sul che cos'è l'intelligenza. E Naval Ravikant, secondo me, aveva un'idea molto interessante sull'intelligenza, cioè la capacità di ottenere ciò che vuoi.",
-      "inizio": 0.0,
-      "fine": 37.1
-    },
-    {
       "clip_id": "ZxBcT0a0SYI-2",
       "video_id": "ZxBcT0a0SYI",
       "video_title": "How You Can Get (REALLY) SMARTER",
@@ -984,6 +971,14 @@
       "ig_media_id": "17918963493460799",
       "permalink": "https://www.instagram.com/reel/DffQLKwib2Y/",
       "published_at": "2026-11-08T17:06:31Z"
+    },
+    {
+      "clip_id": "ZxBcT0a0SYI-1",
+      "video_id": "ZxBcT0a0SYI",
+      "hook": "Chi andava bene a scuola è scemo?",
+      "ig_media_id": "18116879423038589",
+      "permalink": "https://www.instagram.com/reel/DfhxIaxHHWg/",
+      "published_at": "2026-11-09T16:32:46Z"
     }
   ],
   "archive_done": [
