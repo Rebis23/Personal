@@ -257,9 +257,60 @@
         "WMp6y1ytRM0-2",
         "WMp6y1ytRM0-3"
       ]
+    },
+    {
+      "video_id": "ZxBcT0a0SYI",
+      "title": "How You Can Get (REALLY) SMARTER",
+      "status": "done",
+      "processed_at": "2026-11-09T16:09:09Z",
+      "clips": [
+        "ZxBcT0a0SYI-1",
+        "ZxBcT0a0SYI-2",
+        "ZxBcT0a0SYI-4"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "ZxBcT0a0SYI-1",
+      "video_id": "ZxBcT0a0SYI",
+      "video_title": "How You Can Get (REALLY) SMARTER",
+      "hook": "Chi andava bene a scuola è scemo?",
+      "r2_key": "reels/ZxBcT0a0SYI/ZxBcT0a0SYI-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/ZxBcT0a0SYI/ZxBcT0a0SYI-1.mp4",
+      "caption": "Chi andava bene a scuola a volte è scemo nella vita, chi ha un master viene sottopagato.\nL'intelligenza vera non sta in un voto né in un certificato: è la capacità di descrivere bene il mondo dentro e fuori di te.\nE si allena.\n\n#intelligenza #crescitapersonale #studio #mentalita #apprendimento #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-09T16:04:39Z",
+      "testo": "Ti hanno detto che l'intelligenza è prendere un voto alto a scuola, è avere la laurea, il master, il certificato o avere un quoziente intellettivo molto alto. Ma chi andava bene a scuola a volte è scemo nella vita, chi ha una laurea o un master viene sottopagato e chi ha un quoziente intellettivo alto spesso tende all'autismo. Quindi forse l'intelligenza non si può contenere all'interno di questi risultati. Quindi, posto che oggi in questo video si parla di intelligenza non misurabile, quindi non nel senso acabebico, per parlare di come si diventa più intelligenti bisogna prima dare una definizione o almeno provarci sul che cos'è l'intelligenza. E Naval Ravikant, secondo me, aveva un'idea molto interessante sull'intelligenza, cioè la capacità di ottenere ciò che vuoi.",
+      "inizio": 0.0,
+      "fine": 37.1
+    },
+    {
+      "clip_id": "ZxBcT0a0SYI-2",
+      "video_id": "ZxBcT0a0SYI",
+      "video_title": "How You Can Get (REALLY) SMARTER",
+      "hook": "Perché i pesi ti rendono più intelligente",
+      "r2_key": "reels/ZxBcT0a0SYI/ZxBcT0a0SYI-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/ZxBcT0a0SYI/ZxBcT0a0SYI-2.mp4",
+      "caption": "Il cervello è l'organo che consuma più risorse del tuo corpo.\nPiù capacità fisica hai, meglio le usa. E con gli anni l'allenamento è l'unica cosa che frena davvero il declino.\nNon è motivazione da palestra: è fisiologia.\n\n#allenamento #cervello #salute #crescitapersonale #disciplina #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-09T16:06:42Z",
+      "testo": "Allenamento cardio e appunto sollevamento pesi aiutano enormemente la capacità operativa del cervello. Per il semplice fatto che il nostro cervello è uno degli organi che consuma di più in termini di risorse all'interno del nostro corpo. E quindi avere più capacità generale, saper sopportare una fatica maggiore, consente al nostro cervello di usare meglio le risorse che ha a disposizione. E banalmente di ottenerne di più in percentuale.",
+      "inizio": 210.6,
+      "fine": 234.4
+    },
+    {
+      "clip_id": "ZxBcT0a0SYI-4",
+      "video_id": "ZxBcT0a0SYI",
+      "video_title": "How You Can Get (REALLY) SMARTER",
+      "hook": "Il tuo cervello cancella quello che leggi",
+      "r2_key": "reels/ZxBcT0a0SYI/ZxBcT0a0SYI-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/ZxBcT0a0SYI/ZxBcT0a0SYI-4.mp4",
+      "caption": "Leggi un libro, dopo due settimane non ricordi niente. Non è colpa della memoria.\nIl cervello non conserva le informazioni inutili: le elimina. Devi dargli un motivo per tenerle.\nIl trucco è applicare ogni principio alla tua situazione mentre lo leggi.\n\n#lettura #memoria #apprendimento #crescitapersonale #libri #studio\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-09T16:09:09Z",
+      "testo": "Devi far capire al tuo cervello che le informazioni che stai leggendo ti sono realmente utili. Devi dargli un motivo per ricordarti ciò che stai leggendo. I libri di business io li leggo perché mi interessano, sì, fino a un certo punto in alcuni casi. Alcuni leggo per il semplice fatto che mi sono utili e quello che cerco di fare è cercare di leggere il principio che sto leggendo e applicarlo alla mia situazione in modo tale che il mio cervello noti ah, questa cosa qui ti è utile, puoi applicarla ai principi che hai presente e piano piano questa cosa arriva in automatico.",
+      "inizio": 599.9,
+      "fine": 627.6
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -947,7 +998,8 @@
     "lReO_BD_fS4",
     "P_DrEt0S0Go",
     "87YaB0eod78",
-    "WMp6y1ytRM0"
+    "WMp6y1ytRM0",
+    "ZxBcT0a0SYI"
   ],
   "sospese": [
     {
@@ -1043,7 +1095,7 @@
       "motivo": "71s e banner vago («Dire la verità è facile»): non dice di cosa parla la clip."
     }
   ],
-  "last_archive_at": "2026-11-07T20:49:59Z",
+  "last_archive_at": "2026-11-09T16:09:09Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
