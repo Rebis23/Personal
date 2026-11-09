@@ -272,19 +272,6 @@
   ],
   "queue": [
     {
-      "clip_id": "ZxBcT0a0SYI-2",
-      "video_id": "ZxBcT0a0SYI",
-      "video_title": "How You Can Get (REALLY) SMARTER",
-      "hook": "Perché i pesi ti rendono più intelligente",
-      "r2_key": "reels/ZxBcT0a0SYI/ZxBcT0a0SYI-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/ZxBcT0a0SYI/ZxBcT0a0SYI-2.mp4",
-      "caption": "Il cervello è l'organo che consuma più risorse del tuo corpo.\nPiù capacità fisica hai, meglio le usa. E con gli anni l'allenamento è l'unica cosa che frena davvero il declino.\nNon è motivazione da palestra: è fisiologia.\n\n#allenamento #cervello #salute #crescitapersonale #disciplina #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-09T16:06:42Z",
-      "testo": "Allenamento cardio e appunto sollevamento pesi aiutano enormemente la capacità operativa del cervello. Per il semplice fatto che il nostro cervello è uno degli organi che consuma di più in termini di risorse all'interno del nostro corpo. E quindi avere più capacità generale, saper sopportare una fatica maggiore, consente al nostro cervello di usare meglio le risorse che ha a disposizione. E banalmente di ottenerne di più in percentuale.",
-      "inizio": 210.6,
-      "fine": 234.4
-    },
-    {
       "clip_id": "ZxBcT0a0SYI-4",
       "video_id": "ZxBcT0a0SYI",
       "video_title": "How You Can Get (REALLY) SMARTER",
@@ -979,6 +966,14 @@
       "ig_media_id": "18116879423038589",
       "permalink": "https://www.instagram.com/reel/DfhxIaxHHWg/",
       "published_at": "2026-11-09T16:32:46Z"
+    },
+    {
+      "clip_id": "ZxBcT0a0SYI-2",
+      "video_id": "ZxBcT0a0SYI",
+      "hook": "Perché i pesi ti rendono più intelligente",
+      "ig_media_id": "18082068476387036",
+      "permalink": "https://www.instagram.com/reel/DfiIRn1AtY8/",
+      "published_at": "2026-11-09T19:54:53Z"
     }
   ],
   "archive_done": [
