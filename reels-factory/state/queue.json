@@ -283,19 +283,6 @@
   ],
   "queue": [
     {
-      "clip_id": "1Uqy6j3sP2Q-2",
-      "video_id": "1Uqy6j3sP2Q",
-      "video_title": "How to REDEEM Your Life Overnight",
-      "hook": "Sei intelligente? Per questo non inizi mai",
-      "r2_key": "reels/1Uqy6j3sP2Q/1Uqy6j3sP2Q-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/1Uqy6j3sP2Q/1Uqy6j3sP2Q-2.mp4",
-      "caption": "Essere intelligente qui è uno svantaggio: vedi tutte le difficoltà e non parti.\nChi ottiene risultati di solito sottovaluta quanto sarà dura — ed è esattamente per questo che inizia.\nIl prezzo non è la fatica. È lo sconforto.\n\n#mentalità #crescitapersonale #resilienza #autostima #disciplina #motivazione\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-11T00:45:36Z",
-      "testo": "Tu che guardi questo canale sei una persona intelligente. Perché altrimenti non guarderesti questi video. E voglio darti una brutta notizia che poi rendiamo buona. Essere intelligente in questo caso è uno svantaggio. Cioè la maggior parte delle persone che riesce ad ottenere certi risultati. Sottovaluta così tanto la difficoltà dell'ottenere quei risultati. Che è proprio il motivo per cui inizia. E per cui dice no secondo me è fattibile. Perché sottovaluta. E questo qui è un vantaggio del non essere svegli.",
-      "inizio": 276.3,
-      "fine": 297.9
-    },
-    {
       "clip_id": "1Uqy6j3sP2Q-3",
       "video_id": "1Uqy6j3sP2Q",
       "video_title": "How to REDEEM Your Life Overnight",
@@ -1014,6 +1001,14 @@
       "ig_media_id": "18021445115956136",
       "permalink": "https://www.instagram.com/reel/Dfmg868DVkr/",
       "published_at": "2026-11-11T12:47:53Z"
+    },
+    {
+      "clip_id": "1Uqy6j3sP2Q-2",
+      "video_id": "1Uqy6j3sP2Q",
+      "hook": "Sei intelligente? Per questo non inizi mai",
+      "ig_media_id": "17960870700016800",
+      "permalink": "https://www.instagram.com/reel/Dfm_wj5gath/",
+      "published_at": "2026-11-11T17:16:48Z"
     }
   ],
   "archive_done": [
