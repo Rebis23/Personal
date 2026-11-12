@@ -279,9 +279,88 @@
         "1Uqy6j3sP2Q-2",
         "1Uqy6j3sP2Q-3"
       ]
+    },
+    {
+      "video_id": "uEID8OoAmRA",
+      "title": "I Asked a Mental Coach How to Live Better",
+      "status": "done",
+      "processed_at": "2026-11-12T23:18:21Z",
+      "clips": [
+        "uEID8OoAmRA-1",
+        "uEID8OoAmRA-2",
+        "uEID8OoAmRA-3",
+        "uEID8OoAmRA-4",
+        "uEID8OoAmRA-5"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "uEID8OoAmRA-1",
+      "video_id": "uEID8OoAmRA",
+      "video_title": "I Asked a Mental Coach How to Live Better",
+      "hook": "Perché certe persone ti triggerano? È proiezione",
+      "r2_key": "reels/uEID8OoAmRA/uEID8OoAmRA-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/uEID8OoAmRA/uEID8OoAmRA-1.mp4",
+      "caption": "Ti irrita qualcosa negli altri? È lì che devi guardare.\nIl concetto di proiezione di Jung spiegato con un esempio che non puoi ignorare.\nLa lezione più importante di dieci anni di sessioni one on one.\n\n#psicologia #jung #consapevolezza #crescitapersonale #emozioni #autoanalisi\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-12T23:05:36Z",
+      "testo": "Cioè, a volte si dice, quello che mi triggera negli altri ce l'ho anch'io. che io penso che abbiano gli altri ce l'ho anch'io. Il famoso concetto di proiezione di Jung. Certo. Ma sempre, eh. Cioè, a volte si dice, quello che mi triggera negli altri ce l'ho anch'io. A volte le persone mi dicono, vabbè, ma a me triggerano le persone in sovrappeso, io non lo sono. Com'è possibile? Fuori. Ma se tu lo fossi, ti odieresti. E quindi c'è quella parte di... Quindi è sempre quel riflesso di... Quindi questa è stata per me la lezione più importante che continuo a portarmi dietro oggi, è di valore inestimabile.",
+      "inizio": 1238.6,
+      "fine": 1271.9
+    },
+    {
+      "clip_id": "uEID8OoAmRA-2",
+      "video_id": "uEID8OoAmRA",
+      "video_title": "I Asked a Mental Coach How to Live Better",
+      "hook": "Perché sono diventato coach? Per puro egoismo",
+      "r2_key": "reels/uEID8OoAmRA/uEID8OoAmRA-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/uEID8OoAmRA/uEID8OoAmRA-2.mp4",
+      "caption": "Nessuno inizia per aiutare gli altri. Si inizia per ego.\nAiutare per sentirsi bravi toglie energia e rende tutto frustrante: il risultato dell'altro diventa il tuo voto.\nIl passaggio che cambia il mestiere.\n\n#coaching #egoismo #crescitapersonale #lavoro #motivazione #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-12T23:09:29Z",
+      "testo": "io sono partito come coach con un desiderio egoista di avere successo e di fare il maestrino. Sì. Come capita spesso a molti clienti, e poi mi sono subito reso conto, anzi subito forse è una parola grossa, col tempo mi sono reso conto che aiutare gli altri con questo fine è molto frustrante, toglie energia nel lungo termine e soprattutto non permette di staccare i soldi dall'aiuto che si dà perché si cerca sempre un risultato. Oppure non permette di staccare il risultato della persona dall'aiuto che do. Quindi se la persona non riceveva un certo risultato io non ero contento.",
+      "inizio": 1308.3,
+      "fine": 1353.5
+    },
+    {
+      "clip_id": "uEID8OoAmRA-3",
+      "video_id": "uEID8OoAmRA",
+      "video_title": "I Asked a Mental Coach How to Live Better",
+      "hook": "Regalo sessioni di coaching senza cercare clienti",
+      "r2_key": "reels/uEID8OoAmRA/uEID8OoAmRA-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/uEID8OoAmRA/uEID8OoAmRA-3.mp4",
+      "caption": "Regala sessioni e non si aspetta che diventino clienti.\nSembra un suicidio commerciale: è la cosa che gli ha reso il lavoro sostenibile per anni.\nQuando le cose vanno male non sente di sprecare tempo.\n\n#liberiprofessionisti #coaching #lavoro #mentalita #clienti #crescitapersonale\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-12T23:12:30Z",
+      "testo": "io seguo una filosofia molto particolare io come tu sai regalo tantissime sessioni ma le regalo proprio senza preoccuparmi che la persona poi decida di fare un percorso con me proprio perché seguo quella filosofia e per anni questo si è rivelato essere per me la cosa più sostenibile mi permette di se io per esempio ho un periodo dove le cose vanno male se io applico questa filosofia non sento che sto sprecando tempo mentre prima lo sentivo",
+      "inizio": 1529.7,
+      "fine": 1562.5
+    },
+    {
+      "clip_id": "uEID8OoAmRA-4",
+      "video_id": "uEID8OoAmRA",
+      "video_title": "I Asked a Mental Coach How to Live Better",
+      "hook": "Yes Man: dico sì a ogni favore",
+      "r2_key": "reels/uEID8OoAmRA/uEID8OoAmRA-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/uEID8OoAmRA/uEID8OoAmRA-4.mp4",
+      "caption": "Il primo filtro quando ti chiedono un favore è: cosa ci guadagno?\nÈ un filtro bassissimo. Lui fa l'opposto, come nel film Yes Man, e lo tratta come un gioco.\nOgni sì è un deposito nel conto corrente della tua vita sociale.\n\n#relazioni #capitalesociale #generosita #crescitapersonale #abitudini #mentalita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-12T23:15:50Z",
+      "testo": "un esercizio che mi piace molto fare è un po'fare quello che si fa nel film Yes Man è presente quello con Jim Carrey cioè quando mi chiedono un favore cercare di dire sempre di sì a prescindere perché il mio primo filtro è cosa me ne viene in tasca però io so che quel filtro non è un filtro molto elevato diciamo quindi cerco di orientarmi sul sì e di prenderla come sfida anche come gioco un gioco del dare no? e questo produce tanto produce tanto, produce gratitudine negli altri ma soprattutto produce soddisfazione nella persona che lo applica",
+      "inizio": 1605.7,
+      "fine": 1644.5
+    },
+    {
+      "clip_id": "uEID8OoAmRA-5",
+      "video_id": "uEID8OoAmRA",
+      "video_title": "I Asked a Mental Coach How to Live Better",
+      "hook": "I tuoi problemi fisici sono solo un'emozione?",
+      "r2_key": "reels/uEID8OoAmRA/uEID8OoAmRA-5.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/uEID8OoAmRA/uEID8OoAmRA-5.mp4",
+      "caption": "Il messaggio che manderebbe a tutto il mondo, se avesse trenta secondi.\nQuasi tutto quello che chiamiamo problema è una percezione tenuta ferma da un'emozione.\nSblocchi l'emozione, il problema si scioglie.\n\n#emozioni #consapevolezza #crescitapersonale #lettinggo #psicologia #benessere\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-12T23:18:21Z",
+      "testo": "tutti quelli che pensavo essere problemi fisici reali erano in realtà frutta di una mia percezione tenuta bloccata da un'emozione mhm e quando ho sentito questa domanda che in inglese era isn't that just a feeling mhm mi ha veramente aperto un mondo perché sbloccando l'emozione che c'era dietro la maggior parte dei problemi si risolvono e per me è stato veramente life changing quindi questo è il messaggio che manderei a tutti",
+      "inizio": 1735.0,
+      "fine": 1762.9
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1019,7 +1098,8 @@
     "87YaB0eod78",
     "WMp6y1ytRM0",
     "ZxBcT0a0SYI",
-    "1Uqy6j3sP2Q"
+    "1Uqy6j3sP2Q",
+    "uEID8OoAmRA"
   ],
   "sospese": [
     {
@@ -1115,7 +1195,7 @@
       "motivo": "71s e banner vago («Dire la verità è facile»): non dice di cosa parla la clip."
     }
   ],
-  "last_archive_at": "2026-11-11T00:49:40Z",
+  "last_archive_at": "2026-11-12T23:18:21Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
