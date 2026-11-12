@@ -281,21 +281,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "1Uqy6j3sP2Q-3",
-      "video_id": "1Uqy6j3sP2Q",
-      "video_title": "How to REDEEM Your Life Overnight",
-      "hook": "Perché ai giovani chiedono cosa vuoi diventare",
-      "r2_key": "reels/1Uqy6j3sP2Q/1Uqy6j3sP2Q-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/1Uqy6j3sP2Q/1Uqy6j3sP2Q-3.mp4",
-      "caption": "Quando sei giovane sei il caos: il nemico dell'ordine, della disciplina, del progresso.\nPer questo invece di dirti che puoi fare tutto ti chiedono cosa vuoi diventare.\nÈ una seconda nascita: nasci e sei già morto.\n\n#crescitapersonale #giovani #libertà #consapevolezza #società #riflessioni\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-11T00:49:40Z",
-      "testo": "E tutto va avanti come esattamente ti hanno insegnato. Quando tu sei giovane. Tu sei il nemico numero uno. Perché tu sei il caos. Cioè sei il nemico dell'ordine. Della disciplina. Della civiltà. Del progresso. Tu puoi fare tutto quello che vuoi. E quindi per questo sei il nemico numero uno. E sai che cosa ti dicono le persone? Al posto che dirti che tu ora puoi fare quello che vuoi. Ti dicono. Cosa vuoi diventare? Come se te non fossi già qualcosa. Qualcosa fra l'altro di incredibile. Di potentissimo. Come se l'atto dell'esistenza non fosse abbastanza. Cioè il fatto che sei venuto. Non lo so da dove. Lui giustamente dice. Dall'inesistenza. Dal buio. E ti sei manifestato dal niente. Questo trick incredibile non è abbastanza. E quindi ti chiedono che cosa vuoi diventare. E te cominci a pensare. E non ti accorgi del fatto che sei praticamente onnipotente. E tutto va avanti come esattamente ti hanno insegnato. E come hanno disegnato. Come hanno deciso che doveva andare.",
-      "inizio": 372.4,
-      "fine": 420.2
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1009,6 +995,14 @@
       "ig_media_id": "17960870700016800",
       "permalink": "https://www.instagram.com/reel/Dfm_wj5gath/",
       "published_at": "2026-11-11T17:16:48Z"
+    },
+    {
+      "clip_id": "1Uqy6j3sP2Q-3",
+      "video_id": "1Uqy6j3sP2Q",
+      "hook": "Perché ai giovani chiedono cosa vuoi diventare",
+      "ig_media_id": "17966623635217646",
+      "permalink": "https://www.instagram.com/reel/DfpNEdVk0er/",
+      "published_at": "2026-11-12T13:51:55Z"
     }
   ],
   "archive_done": [
