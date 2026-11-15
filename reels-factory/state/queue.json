@@ -303,9 +303,88 @@
         "AIVYmT6i8pk-3",
         "AIVYmT6i8pk-4"
       ]
+    },
+    {
+      "video_id": "9ivXef8shkg",
+      "title": "\"La depressione è una sala d'attesa\"",
+      "status": "done",
+      "processed_at": "2026-11-15T21:30:56Z",
+      "clips": [
+        "9ivXef8shkg-1",
+        "9ivXef8shkg-2",
+        "9ivXef8shkg-3",
+        "9ivXef8shkg-4",
+        "9ivXef8shkg-5"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "9ivXef8shkg-1",
+      "video_id": "9ivXef8shkg",
+      "video_title": "\"La depressione è una sala d'attesa\"",
+      "hook": "La depressione è meno rischiosa che cambiare?",
+      "r2_key": "reels/9ivXef8shkg/9ivXef8shkg-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/9ivXef8shkg/9ivXef8shkg-1.mp4",
+      "caption": "La depressione è una sala d'attesa: ci entri quando non sai cosa fare della tua vita.\nÈ calda, è comoda, non rischi niente. Il problema è che nessun treno parte da solo.\nIl video completo è sul canale.\n\n#crescitapersonale #depressione #consapevolezza #cambiamento #psicologia #scelte #coraggio\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-15T21:18:06Z",
+      "testo": "arrivarci, ma soprattutto non sai neanche perché dovresti partire, perché dovresti lasciare casa e cambiare tutto, la depressione funge da sala d'attesa e tu ci puoi entrare, magari la trovi confortevole, magari ci fai qualche amico, magari scopri che insomma è meno pericolosa rispetto che prendere un treno qualsiasi e scoprire dove ti porta. Oppure puoi decidere appunto di prenderti il rischio, pagare il prezzo del biglietto, in diversi sensi non solo diciamo letterali, ed effettivamente vedere dove arrivi.",
+      "inizio": 18.6,
+      "fine": 46.2
+    },
+    {
+      "clip_id": "9ivXef8shkg-2",
+      "video_id": "9ivXef8shkg",
+      "video_title": "\"La depressione è una sala d'attesa\"",
+      "hook": "Ho l'impressione che la depressione non esista",
+      "r2_key": "reels/9ivXef8shkg/9ivXef8shkg-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/9ivXef8shkg/9ivXef8shkg-2.mp4",
+      "caption": "Ho l'impressione che la depressione non esista. Lo so che è scomodo da sentire.\nCi credi solo se esiste ed esiste solo se ci credi: è un meccanismo che si autoalimenta.\nNon lo dico per offendere: lo dico perché ne ho viste troppe.\n\n#depressione #psicologia #crescitapersonale #consapevolezza #mentalità #veritàscomode\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-15T21:20:25Z",
+      "testo": "Ho l'impressione che la depressione non esista, mi spiego meglio. Stare male a volte è la scelta più facile. Lo so che tante persone non saranno d'accordo, anche perché la depressione è particolare, cioè ci credi solo se esiste ed esiste solo se ci credi, quindi è un meccanismo che si autoalimenta, come in tantissimi principi ermetici dell'universo, tutto quanto è mentale, quindi la depressione esiste nel momento in cui ci credi, e chi non ci crede non soffre di depressione,",
+      "inizio": 57.2,
+      "fine": 81.2
+    },
+    {
+      "clip_id": "9ivXef8shkg-3",
+      "video_id": "9ivXef8shkg",
+      "video_title": "\"La depressione è una sala d'attesa\"",
+      "hook": "Essere depresso ti porta dei vantaggi?",
+      "r2_key": "reels/9ivXef8shkg/9ivXef8shkg-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/9ivXef8shkg/9ivXef8shkg-3.mp4",
+      "caption": "E se la tua mente inconscia pensasse che essere depresso ti conviene?\nAdler ribalta Freud: non è il passato che ti schiaccia, è uno scopo che non vuoi vedere.\nLa depressione come strategia inconsapevole per non rischiare.\n\n#psicologia #adler #inconscio #crescitapersonale #depressione #consapevolezza #libri\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-15T21:24:08Z",
+      "testo": "Adler ribalta la prospettiva e dice, aspetta, vuoi vedere che forse il motivo per cui io soffro di depressione è che la mia mente inconscia, perché questo è un meccanismo inconscio, pensa che essere depresso mi porti dei vantaggi? Uno potrebbe dire, cavolo, ma quali vantaggi ti porta a essere depresso, o pensare di esserlo e quindi poi manifestare questa cosa? E in realtà dei vantaggi ci sono. Nel libro veniva fatto proprio l'esempio di un ragazzo che soffre di depressione e veniva descritta la depressione come questa strategia inconsapevole. Con uno scopo ben preciso che era quello di proteggere da quelli che sono i rischi e soprattutto mantenere un controllo percepito, diciamo, della situazione.",
+      "inizio": 174.6,
+      "fine": 215.2
+    },
+    {
+      "clip_id": "9ivXef8shkg-4",
+      "video_id": "9ivXef8shkg",
+      "video_title": "\"La depressione è una sala d'attesa\"",
+      "hook": "Alle aziende conviene che tu sia depresso",
+      "r2_key": "reels/9ivXef8shkg/9ivXef8shkg-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/9ivXef8shkg/9ivXef8shkg-4.mp4",
+      "caption": "La tua depressione conviene a te: è una giustificazione per non rischiare.\nMa conviene anche a chi ti sta attorno: a una persona che sta male puoi vendere una soluzione.\nA chi sta bene no.\n\n#depressione #farmaci #psicologia #consapevolezza #crescitapersonale #veritàscomode #mentalità\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-15T21:27:05Z",
+      "testo": "soffrire di depressione per come viene vista oggi è un ottimo modo per alcune aziende per continuare a venderti certe cose. Potrebbero essere diciamo i farmaci, potrebbero essere le sedute ad esempio da un terapeuta che non ha cuore e tema, vuole semplicemente o magari è semplicemente incompetente, quindi continua a portarti in queste sedute che poi dopo non finiscono diciamo da nessuna parte. E quindi in realtà questa depressione conviene a te che hai una sicurezza, una comfort zone, una giustificazione per non fare certe cose, per non rischiare.",
+      "inizio": 315.7,
+      "fine": 346.1
+    },
+    {
+      "clip_id": "9ivXef8shkg-5",
+      "video_id": "9ivXef8shkg",
+      "video_title": "\"La depressione è una sala d'attesa\"",
+      "hook": "La tua vita fa schifo",
+      "r2_key": "reels/9ivXef8shkg/9ivXef8shkg-5.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/9ivXef8shkg/9ivXef8shkg-5.mp4",
+      "caption": "Vuoi vedere che sei depresso perché la tua vita fa schifo?\nPeterson aggiungeva: di questo dovresti essere felice, perché una vita si può migliorare.\nSei ore in una scuola che odiavo, zero amici, telefono fino alle tre. Era ovvio.\n\n#depressione #abitudini #crescitapersonale #peterson #disciplina #consapevolezza #cambiamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-15T21:30:53Z",
+      "testo": "vuoi vedere che sei depresso perché la tua vita fa schifo? Che è una bella riflessione, e poi subito dopo aggiungeva, però di questo ne dovresti essere felice, perché visto che questo è il motivo per cui tu ora ti senti depresso, credi di essere depresso, ti basta migliorare la tua vita e la depressione sparisce. Io ho letto questa cosa, ho detto, sai che c'ha ragione, cioè la mia vita oggettivamente fa schifo, io passo sei ore in una scuola che odio, che non mi interessa, torno a casa, non esco, non faccio nulla di produttivo nella mia vita, passo tutto il tempo davanti ai social, esco una volta ogni morte di papa, effettivamente la mia vita fa schifo, ho un cattivo rapporto con la mia famiglia, cioè oggettivamente non ho vantaggi in una vita di questo tipo, è chiaro che io mi sento depresso,",
+      "inizio": 423.3,
+      "fine": 462.8
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1093,7 +1172,8 @@
     "ZxBcT0a0SYI",
     "1Uqy6j3sP2Q",
     "uEID8OoAmRA",
-    "AIVYmT6i8pk"
+    "AIVYmT6i8pk",
+    "9ivXef8shkg"
   ],
   "sospese": [
     {
@@ -1213,7 +1293,7 @@
       "motivo": "non e autoconclusiva: finisce mentre introduce «l'effetto Dan Inkruger» e si interrompe su «novizie», senza spiegarlo. In piu Whisper ha storpiato Dunning-Kruger e il nome sbagliato finirebbe nei sottotitoli"
     }
   ],
-  "last_archive_at": "2026-11-14T13:35:47Z",
+  "last_archive_at": "2026-11-15T21:30:56Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
