@@ -305,21 +305,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "AIVYmT6i8pk-3",
-      "video_id": "AIVYmT6i8pk",
-      "video_title": "How to Take Your GOALS Seriously",
-      "hook": "Perché correre una maratona è l'obiettivo sbagliato",
-      "r2_key": "reels/AIVYmT6i8pk/AIVYmT6i8pk-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/AIVYmT6i8pk/AIVYmT6i8pk-3.mp4",
-      "caption": "Il tuo obiettivo non è \"corro 42 km\". È \"oggi esco a correre\".\nIl risultato dipende da mille cose fuori dal tuo controllo, il comportamento no: quello lo scegli ogni giorno. E così smetti di dipendere dall'umore per la qualità del tuo lavoro.\n20 clienti? Comincia da 100 offerte presentate.\n\n#obiettivi #disciplina #abitudini #crescitapersonale #produttivita #mentalita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-14T13:33:25Z",
-      "testo": "al posto che concentrarci su quello che è il risultato dovremmo concentrarci su quello che è il comportamento ad esempio se io voglio ottenere 20 clienti sicuramente dovrò presentare quella che l'ho offerta ad almeno un centinaio di persone come faccio ad ottenere a queste persone il comportamento giusto su cui concentrarsi allo stesso tempo potrebbe voler dire che se io voglio correre una maratona il risultato forse non deve essere corro 42 km ma deve essere facciamo che io ogni giorno ne corro 10 e il risultato rispetto che il comportamento o ancora meglio ogni giorno vado a correre il più possibile permette spesso di mantenere quella che è una certa disciplina",
-      "inizio": 204.7,
-      "fine": 237.8
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1081,6 +1067,14 @@
       "ig_media_id": "18094600226499567",
       "permalink": "https://www.instagram.com/reel/Dfw0Y7slAlp/",
       "published_at": "2026-11-15T12:49:50Z"
+    },
+    {
+      "clip_id": "AIVYmT6i8pk-3",
+      "video_id": "AIVYmT6i8pk",
+      "hook": "Perché correre una maratona è l'obiettivo sbagliato",
+      "ig_media_id": "17871572208662420",
+      "permalink": "https://www.instagram.com/reel/DfxSyYJmaBm/",
+      "published_at": "2026-11-15T17:15:42Z"
     }
   ],
   "archive_done": [
