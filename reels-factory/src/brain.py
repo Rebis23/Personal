@@ -323,6 +323,97 @@ def piu_forti(usable: list, quante: int, *, soglia: int = FORZA_MINIMA) -> list:
     return sorted(usable, key=lambda c: c.hook_strength, reverse=True)[:quante]
 
 
+# Quanto parlato il modello puo produrre scegliendo le clip. Il numero non
+# e il problema — vedi sotto — ma vive qui perche la rete lo stampa.
+BUDGET_SCELTA = 16000
+
+
+def _scelta_con_rete(client, *, model: str, system: str, user: str,
+                     tentativi: int = 3, attesa: float = 4.0):
+    """La scelta delle clip, con una rete sotto la risposta troncata.
+
+    Il 12 e il 17/11 due corse sono morte qui, dopo 52 e 41 minuti di lavoro
+    gia fatto — video scaricato, Whisper finito — su questo:
+
+        pydantic_core.ValidationError: 1 validation error for ClipSelection
+          Invalid JSON: EOF while parsing a string at line 1 column 5420
+          input_value='{"clips":[{"start_second...movie_query":"","movie_'
+
+    e la seconda volta tagliata ancora prima, alla colonna 3052, su
+    «"emphasis». Il JSON arriva mozzato a meta parola.
+
+    Due cose, e la seconda e peggio della prima.
+
+    La prima: client.messages.parse() valida il JSON PRIMA di restituire la
+    risposta. Quando il JSON e rotto solleva, e il codice che sta sotto —
+    quello che controlla stop_reason, che e l'unico numero che direbbe
+    PERCHE' la risposta si e fermata — non viene mai raggiunto. Negli altri
+    punti del progetto stop_reason si legge (chiusura.py, aggancio.py); qui
+    no, perche qui si usa lo schema. Due guasti in cinque giorni e nessuno
+    dei due ha lasciato quel numero: si ripara a tentoni, ed e esattamente
+    quello che Lorenzo ha chiesto di non fare.
+
+    La seconda: non essendo gestita, l'eccezione si porta via l'intera
+    lavorazione. Una risposta rotta costa 45 minuti di runner e un giorno di
+    pubblicazioni, quando basterebbe richiedere.
+
+    Quindi: si cattura, si STAMPA quello che serve a capire (stop_reason,
+    quanto era lungo il testo, quanti token sono usciti), e si riprova. Se
+    tutti i tentativi cadono si rilancia l'ultimo errore, perche una corsa
+    che fallisce in silenzio e peggio di una che fallisce.
+
+    Nota su cosa NON si fa: alzare BUDGET_SCELTA. Nelle corse riuscite la
+    scelta clip produce 9.776-13.149 token su 16.000, e il taglio del 17/11
+    e arrivato a 3.052 CARATTERI — un decimo del tetto. Alzare un limite che
+    non e stato raggiunto e ripararla a caso. Se stop_reason dira
+    «max_tokens», allora quel numero avra un senso e si alzera.
+    """
+    ultimo = None
+    for n in range(1, tentativi + 1):
+        try:
+            return client.messages.parse(
+                model=model,
+                max_tokens=BUDGET_SCELTA,
+                system=system,
+                messages=[{"role": "user", "content": user}],
+                output_format=ClipSelection,
+            )
+        except Exception as e:                            # noqa: BLE001
+            ultimo = e
+            print(f"  ⚠️ Scelta clip, tentativo {n}/{tentativi}: "
+                  f"{type(e).__name__}: {str(e)[:160]}")
+            print(f"     {_perche_si_e_fermata(client, model, system, user)}")
+            if n < tentativi:
+                time.sleep(attesa * n)
+    raise ultimo
+
+
+def _perche_si_e_fermata(client, model: str, system: str, user: str) -> str:
+    """Rifa' la stessa domanda SENZA schema, solo per leggere stop_reason.
+
+    Senza output_format l'SDK non valida niente e restituisce il testo cosi
+    com'e: si legge stop_reason, quanto e lungo davvero il testo e quanti
+    token sono usciti. E' una chiamata in piu e si paga, ma costa meno di 45
+    minuti buttati senza sapere perche — e lo paghiamo solo quando qualcosa
+    e gia andato storto.
+    """
+    try:
+        r = client.messages.create(
+            model=model,
+            max_tokens=BUDGET_SCELTA,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+        )
+        conto.segna('scelta clip (diagnosi)', r.usage)
+        testo = "".join(getattr(b, "text", "") for b in r.content)
+        return (f"stop_reason={r.stop_reason} · "
+                f"{len(testo)} caratteri · "
+                f"{getattr(r.usage, 'output_tokens', '?')} token in uscita "
+                f"su {BUDGET_SCELTA}")
+    except Exception as e:                                # noqa: BLE001
+        return f"(non si e potuto leggere stop_reason: {type(e).__name__})"
+
+
 def select_clips(
     timed_transcript: str,
     video_title: str,
@@ -353,13 +444,7 @@ def select_clips(
         f"Ricorda: prima individuane 8-10, poi tieni solo quelle con l'hook più forte."
     )
 
-    response = client.messages.parse(
-        model=model,
-        max_tokens=16000,
-        system=system,
-        messages=[{"role": "user", "content": user}],
-        output_format=ClipSelection,
-    )
+    response = _scelta_con_rete(client, model=model, system=system, user=user)
     conto.segna('scelta clip', response.usage)
 
     if response.stop_reason == "refusal":
