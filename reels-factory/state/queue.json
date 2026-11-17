@@ -327,21 +327,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "jUwVrkZMpLA-1",
-      "video_id": "jUwVrkZMpLA",
-      "video_title": "VALORI: il Semplice Sistema per RISCRIVERE la tua Vita",
-      "hook": "Perché ai soldi piace la velocità",
-      "r2_key": "reels/jUwVrkZMpLA/jUwVrkZMpLA-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/jUwVrkZMpLA/jUwVrkZMpLA-1.mp4",
-      "caption": "Smetti di cercare la risposta giusta: non esiste.\nLa domanda corretta non è \"come si fa\", è \"come posso farlo io\".\nCambia la domanda e cambia tutto.\n\n#crescitapersonale #decisioni #mentalita #psicologia #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-17T16:37:20Z",
-      "testo": "La coerenza non è utile perché spesso è verso gli altri. Il cambiamento è molto più prezioso. Basta che i valori di base rimangano invariati. Per il resto non cadere nella trappola della coerenza. Commento che mi sono aggiunto io. Poi, non lavorare con qualcuno con cui non andresti a cena volentieri. Questo mi piace molto. Sono molto selettivo anche con le persone con cui andrei a cena. Ogni tanto vado a cena con persone con cui non lavorerei. Ma sicuramente non lavorerei con persone con cui non vado a cena.",
-      "inizio": 713.5,
-      "fine": 740.0
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1119,6 +1105,14 @@
       "ig_media_id": "17890847388688954",
       "permalink": "https://www.instagram.com/reel/DfzfqD1jNm8/",
       "published_at": "2026-11-16T13:46:51Z"
+    },
+    {
+      "clip_id": "jUwVrkZMpLA-1",
+      "video_id": "jUwVrkZMpLA",
+      "hook": "Perché ai soldi piace la velocità",
+      "ig_media_id": "18121157120100704",
+      "permalink": "https://www.instagram.com/reel/Df2aI_RgRrt/",
+      "published_at": "2026-11-17T16:55:55Z"
     }
   ],
   "archive_done": [
