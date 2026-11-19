@@ -68,12 +68,39 @@ jobs:
       # aspettando il lock di unattended-upgrades, e nel frattempo l'apt di
       # WARP moriva in 22 secondi. Senza WARP YouTube ributta giu il
       # download, e il run e finito senza fare niente sembrando riuscito.
+      # Il 18 e il 19/11 questo passo e morto tre volte di fila, sempre cosi:
+      #     The action 'Installa i pacchetti di sistema' has timed out
+      #     after 12 minutes
+      # e in mezzo dodici minuti di silenzio. Di solito ci mette 15-35
+      # secondi.
+      #
+      # Il silenzio e colpa nostra: -qq zittisce anche la riga «Waiting for
+      # cache lock», che e esattamente quella che servirebbe. Quindi il log
+      # non dice se ha aspettato il lock, quale dei due comandi si e
+      # impiantato, ne per quanto.
+      #
+      # E c'e un conto che non torna, scritto qui sopra fin dal 4/09:
+      # DPkg::Lock::Timeout=300 vuol dire che OGNI chiamata ad apt aspetta
+      # il lock fino a 5 minuti. Le chiamate sono due. Fanno 10 minuti di
+      # sola attesa dentro un passo che ne concede 12: se il lock e tenuto
+      # a lungo — unattended-upgrades sull'immagine del runner — questo
+      # passo non PUO' farcela, e nessuno dei due numeri lo dice.
+      #
+      # Qui si cambia solo cosa si vede: -q al posto di -qq perche le righe
+      # sull'attesa escano, e un orario attorno a ogni comando per sapere
+      # quale si impianta e per quanto. I due numeri restano come sono:
+      # quale dei due alzare o abbassare dipende da cosa si vuole quando il
+      # lock e occupato — aspettare di piu o mollare subito e riprovare al
+      # giro dopo — ed e una decisione di Lorenzo, non una da indovinare.
       - name: Installa i pacchetti di sistema
         timeout-minutes: 12
         run: |
-          sudo apt-get -o DPkg::Lock::Timeout=300 update -qq
-          sudo apt-get -o DPkg::Lock::Timeout=300 install -y -qq --no-install-recommends \
+          date -u +'  ⏱️ update  inizio  %H:%M:%S'
+          sudo apt-get -o DPkg::Lock::Timeout=300 update -q
+          date -u +'  ⏱️ update  fine    %H:%M:%S'
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y -q --no-install-recommends \
             wireguard-tools ffmpeg fonts-dejavu-core
+          date -u +'  ⏱️ install fine    %H:%M:%S'
           wg --version && ffmpeg -version | head -1
 
       # Il tunnel si PREPARA qui e si alza altrove: lo accende src/tunnel.py
