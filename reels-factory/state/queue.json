@@ -341,19 +341,6 @@
   ],
   "queue": [
     {
-      "clip_id": "gpqBRyiqPFE-2",
-      "video_id": "gpqBRyiqPFE",
-      "video_title": "I Requisiti necessari per Cambiare chi Sei",
-      "hook": "Devo allenarmi o voglio allenarmi?",
-      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-2.mp4",
-      "caption": "La disciplina da sola non basta. Se bastasse, saremmo tutti in forma e tutti ricchi.\nIl cambio di paradigma che ha funzionato per me: smettere di dire \"devo\" e ricordarmi ogni volta perche lo voglio.\n\n#disciplina #crescitapersonale #abitudini #motivazione #mentalita #costanza #allenamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-20T02:18:10Z",
-      "testo": "la disciplina è quello che ti permette, anche nei giorni in cui non avresti voglia, anche le volte in cui sei preso male, le volte in cui piove, le volte in cui sei preso bene, le volte in cui non hai voglia, le volte in cui sei stanco, eccetera, comunque di fare quello che devi fare, ma spesso la disciplina non muove, non basta perché altrimenti lo farebbero tutti. E qui c'è stato un cambio di paradigma che ha funzionato molto bene per me per superare momenti come questi, e il cambio di paradigma è, al posto che devo fare una certa cosa, devo andare ad allenarmi come me in questo momento, visto che negli ultimi mesi non mi sono allenato, e adesso metto una clip di me che mi alleno, voglio allenarmi.",
-      "inizio": 627.0,
-      "fine": 661.5
-    },
-    {
       "clip_id": "gpqBRyiqPFE-3",
       "video_id": "gpqBRyiqPFE",
       "video_title": "I Requisiti necessari per Cambiare chi Sei",
@@ -1160,6 +1147,14 @@
       "ig_media_id": "18134275294896152",
       "permalink": "https://www.instagram.com/reel/Df91NEVj8pp/",
       "published_at": "2026-11-20T14:07:21Z"
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-2",
+      "video_id": "gpqBRyiqPFE",
+      "hook": "Devo allenarmi o voglio allenarmi?",
+      "ig_media_id": "18162049753507538",
+      "permalink": "https://www.instagram.com/reel/Df-UW_IDJQw/",
+      "published_at": "2026-11-20T18:39:24Z"
     }
   ],
   "archive_done": [
