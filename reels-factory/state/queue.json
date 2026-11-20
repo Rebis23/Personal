@@ -325,9 +325,74 @@
       "clips": [
         "jUwVrkZMpLA-1"
       ]
+    },
+    {
+      "video_id": "gpqBRyiqPFE",
+      "title": "I Requisiti necessari per Cambiare chi Sei",
+      "status": "done",
+      "processed_at": "2026-11-20T02:24:39Z",
+      "clips": [
+        "gpqBRyiqPFE-1",
+        "gpqBRyiqPFE-2",
+        "gpqBRyiqPFE-3",
+        "gpqBRyiqPFE-4"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "gpqBRyiqPFE-1",
+      "video_id": "gpqBRyiqPFE",
+      "video_title": "I Requisiti necessari per Cambiare chi Sei",
+      "hook": "La curva della motivazione: dove tutti mollano",
+      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-1.mp4",
+      "caption": "La curva e sempre la stessa: carica iniziale, poi discesa, dubbi, e il punto in cui quasi tutti mollano.\nChi lo supera vede arrivare i risultati tutti insieme. Il problema e che quel punto sembra la fine, non l'inizio.\n\n#crescitapersonale #motivazione #costanza #disciplina #obiettivi #mentalita #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-20T02:14:37Z",
+      "testo": "Di solito la curva emotiva di ogni persona che prova a intraprendere una nuova strada, è la seguente, si parte diciamo da uno stato di felicità che è zero, e poi si è subito carichi, quindi la motivazione aumenta, perché uno dice ah che figata sto iniziando un nuovo percorso, però quando inizia a passare del tempo, e i risultati che in nessun ambito sono immediati, non sembrano arrivare, c'è una discesa, e uno dice ah ma forse, ah ma forse no, non lo so, dubbi, dubbi, dubbi, dubbi. Di solito si arriva ad un punto che è il punto di svolta, in questo punto qua, la maggior parte delle persone mollano, e mollano per il semplice fatto che è il punto più difficile di tutti, chiaramente, ma se uno riesce a superarlo, improvvisamente le cose iniziano a funzionare bene, e quindi si ottengono una marea di risultati.",
+      "inizio": 571.6,
+      "fine": 617.0
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-2",
+      "video_id": "gpqBRyiqPFE",
+      "video_title": "I Requisiti necessari per Cambiare chi Sei",
+      "hook": "Devo allenarmi o voglio allenarmi?",
+      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-2.mp4",
+      "caption": "La disciplina da sola non basta. Se bastasse, saremmo tutti in forma e tutti ricchi.\nIl cambio di paradigma che ha funzionato per me: smettere di dire \"devo\" e ricordarmi ogni volta perche lo voglio.\n\n#disciplina #crescitapersonale #abitudini #motivazione #mentalita #costanza #allenamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-20T02:18:10Z",
+      "testo": "la disciplina è quello che ti permette, anche nei giorni in cui non avresti voglia, anche le volte in cui sei preso male, le volte in cui piove, le volte in cui sei preso bene, le volte in cui non hai voglia, le volte in cui sei stanco, eccetera, comunque di fare quello che devi fare, ma spesso la disciplina non muove, non basta perché altrimenti lo farebbero tutti. E qui c'è stato un cambio di paradigma che ha funzionato molto bene per me per superare momenti come questi, e il cambio di paradigma è, al posto che devo fare una certa cosa, devo andare ad allenarmi come me in questo momento, visto che negli ultimi mesi non mi sono allenato, e adesso metto una clip di me che mi alleno, voglio allenarmi.",
+      "inizio": 627.0,
+      "fine": 661.5
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-3",
+      "video_id": "gpqBRyiqPFE",
+      "video_title": "I Requisiti necessari per Cambiare chi Sei",
+      "hook": "Riprogrammare le abitudini: 10 flessioni per Instagram",
+      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-3.mp4",
+      "caption": "Ogni volta che apri Instagram senza averlo scelto: 10 flessioni.\nLa punizione deve lavorare per il tuo obiettivo, e anche il premio. Se vai in palestra e poi ti premi col McDonald's, hai appena annullato tutto.\n\n#abitudini #crescitapersonale #disciplina #dopamina #produttivita #socialmedia #cambiamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-20T02:21:49Z",
+      "testo": "Ogni volta che apri Instagram in maniera completamente inconscia, quindi non per scelta, ma ti accendi il telefono e ti viene ad aprire Instagram, 10 flessioni. Perché? Perché vuoi tornare in forma. Le flessioni sono utili, sono una punizione perché non hai voglia di farle, magari sei in giro per strada e la fai comunque, però intanto stai riprogrammando il tuo cervello. Questa cosa è cattiva. No, male. Aspetta che faccio 10 flessioni, che tra l'altro aiutano il mio obiettivo. Invece, ogni volta che ottieni un certo risultato che è positivo, fai una certa azione che è positiva, lì fai un qualcosa per premiarti, che sai che il tuo cervello apprezza, ma che è sempre utile al tuo obiettivo. Non è che vai in palestra e poi vai al McDonald's come premio, perché altrimenti sarebbe inutile.",
+      "inizio": 800.1,
+      "fine": 835.4
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-4",
+      "video_id": "gpqBRyiqPFE",
+      "video_title": "I Requisiti necessari per Cambiare chi Sei",
+      "hook": "Il tuo picco di dopamina sono i social",
+      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-4.mp4",
+      "caption": "Noia in palestra, noia al lavoro, e poi il picco di dopamina lo dai ai social nelle pause.\nE una battaglia che perdi sempre. L'unica via e rendere il lavoro la cosa piu interessante della giornata.\n\n#dopamina #produttivita #abitudini #crescitapersonale #concentrazione #socialmedia #lavoro\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-20T02:24:39Z",
+      "testo": "È chiaro che è una battaglia che fai molta fatica a vincere, perché il tuo cervello vede. Molte persone che cosa fanno? Cercano di essere produttivi, di essere in forma, e quindi vanno in palestra, magari lavorano, e poi nelle pause guardano i social. È chiaro che è una battaglia che fai molta fatica a vincere, perché il tuo cervello vede. Noia, noia, noia in palestra. Picco di dopamina per i social. Noia, noia, noia perché stai lavorando. Picco di dopamina per i social. Non può funzionare così. Allora, prova a trovare un'alternativa. Prova a rendere il lavoro interessante.",
+      "inizio": 846.1,
+      "fine": 869.3
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1133,7 +1198,8 @@
     "uEID8OoAmRA",
     "AIVYmT6i8pk",
     "9ivXef8shkg",
-    "jUwVrkZMpLA"
+    "jUwVrkZMpLA",
+    "gpqBRyiqPFE"
   ],
   "sospese": [
     {
@@ -1301,7 +1367,7 @@
       "motivo": "il banner non dice di cosa si parla — e il difetto della zanzara — e puntato contro chi guarda, mentre nel parlato Lorenzo lo dice della PROPRIA vita a quindici anni. Il testo e buono: va rifatto il banner, ma e cotto dentro il video e non si corregge senza ri-renderizzare"
     }
   ],
-  "last_archive_at": "2026-11-17T16:37:20Z",
+  "last_archive_at": "2026-11-20T02:24:39Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
