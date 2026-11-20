@@ -341,19 +341,6 @@
   ],
   "queue": [
     {
-      "clip_id": "gpqBRyiqPFE-1",
-      "video_id": "gpqBRyiqPFE",
-      "video_title": "I Requisiti necessari per Cambiare chi Sei",
-      "hook": "La curva della motivazione: dove tutti mollano",
-      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-1.mp4",
-      "caption": "La curva e sempre la stessa: carica iniziale, poi discesa, dubbi, e il punto in cui quasi tutti mollano.\nChi lo supera vede arrivare i risultati tutti insieme. Il problema e che quel punto sembra la fine, non l'inizio.\n\n#crescitapersonale #motivazione #costanza #disciplina #obiettivi #mentalita #abitudini\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-20T02:14:37Z",
-      "testo": "Di solito la curva emotiva di ogni persona che prova a intraprendere una nuova strada, è la seguente, si parte diciamo da uno stato di felicità che è zero, e poi si è subito carichi, quindi la motivazione aumenta, perché uno dice ah che figata sto iniziando un nuovo percorso, però quando inizia a passare del tempo, e i risultati che in nessun ambito sono immediati, non sembrano arrivare, c'è una discesa, e uno dice ah ma forse, ah ma forse no, non lo so, dubbi, dubbi, dubbi, dubbi. Di solito si arriva ad un punto che è il punto di svolta, in questo punto qua, la maggior parte delle persone mollano, e mollano per il semplice fatto che è il punto più difficile di tutti, chiaramente, ma se uno riesce a superarlo, improvvisamente le cose iniziano a funzionare bene, e quindi si ottengono una marea di risultati.",
-      "inizio": 571.6,
-      "fine": 617.0
-    },
-    {
       "clip_id": "gpqBRyiqPFE-2",
       "video_id": "gpqBRyiqPFE",
       "video_title": "I Requisiti necessari per Cambiare chi Sei",
@@ -1165,6 +1152,14 @@
       "ig_media_id": "18121157120100704",
       "permalink": "https://www.instagram.com/reel/Df2aI_RgRrt/",
       "published_at": "2026-11-17T16:55:55Z"
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-1",
+      "video_id": "gpqBRyiqPFE",
+      "hook": "La curva della motivazione: dove tutti mollano",
+      "ig_media_id": "18134275294896152",
+      "permalink": "https://www.instagram.com/reel/Df91NEVj8pp/",
+      "published_at": "2026-11-20T14:07:21Z"
     }
   ],
   "archive_done": [
