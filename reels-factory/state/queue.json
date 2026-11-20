@@ -378,19 +378,6 @@
       "testo": "Ogni volta che apri Instagram in maniera completamente inconscia, quindi non per scelta, ma ti accendi il telefono e ti viene ad aprire Instagram, 10 flessioni. Perché? Perché vuoi tornare in forma. Le flessioni sono utili, sono una punizione perché non hai voglia di farle, magari sei in giro per strada e la fai comunque, però intanto stai riprogrammando il tuo cervello. Questa cosa è cattiva. No, male. Aspetta che faccio 10 flessioni, che tra l'altro aiutano il mio obiettivo. Invece, ogni volta che ottieni un certo risultato che è positivo, fai una certa azione che è positiva, lì fai un qualcosa per premiarti, che sai che il tuo cervello apprezza, ma che è sempre utile al tuo obiettivo. Non è che vai in palestra e poi vai al McDonald's come premio, perché altrimenti sarebbe inutile.",
       "inizio": 800.1,
       "fine": 835.4
-    },
-    {
-      "clip_id": "gpqBRyiqPFE-4",
-      "video_id": "gpqBRyiqPFE",
-      "video_title": "I Requisiti necessari per Cambiare chi Sei",
-      "hook": "Il tuo picco di dopamina sono i social",
-      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-4.mp4",
-      "caption": "Noia in palestra, noia al lavoro, e poi il picco di dopamina lo dai ai social nelle pause.\nE una battaglia che perdi sempre. L'unica via e rendere il lavoro la cosa piu interessante della giornata.\n\n#dopamina #produttivita #abitudini #crescitapersonale #concentrazione #socialmedia #lavoro\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-20T02:24:39Z",
-      "testo": "È chiaro che è una battaglia che fai molta fatica a vincere, perché il tuo cervello vede. Molte persone che cosa fanno? Cercano di essere produttivi, di essere in forma, e quindi vanno in palestra, magari lavorano, e poi nelle pause guardano i social. È chiaro che è una battaglia che fai molta fatica a vincere, perché il tuo cervello vede. Noia, noia, noia in palestra. Picco di dopamina per i social. Noia, noia, noia perché stai lavorando. Picco di dopamina per i social. Non può funzionare così. Allora, prova a trovare un'alternativa. Prova a rendere il lavoro interessante.",
-      "inizio": 846.1,
-      "fine": 869.3
     }
   ],
   "published": [
@@ -1365,6 +1352,18 @@
       "created_at": "2026-11-15T21:30:53Z",
       "sospesa_il": "2026-11-16T08:16:41Z",
       "motivo": "il banner non dice di cosa si parla — e il difetto della zanzara — e puntato contro chi guarda, mentre nel parlato Lorenzo lo dice della PROPRIA vita a quindici anni. Il testo e buono: va rifatto il banner, ma e cotto dentro il video e non si corregge senza ri-renderizzare"
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-4",
+      "video_id": "gpqBRyiqPFE",
+      "video_title": "I Requisiti necessari per Cambiare chi Sei",
+      "hook": "Il tuo picco di dopamina sono i social",
+      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-4.mp4",
+      "caption": "Noia in palestra, noia al lavoro, e poi il picco di dopamina lo dai ai social nelle pause.\nE una battaglia che perdi sempre. L'unica via e rendere il lavoro la cosa piu interessante della giornata.\n\n#dopamina #produttivita #abitudini #crescitapersonale #concentrazione #socialmedia #lavoro\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-20T02:24:39Z",
+      "sospesa_il": "2026-11-20T08:17:20Z",
+      "motivo": "due difetti. Il banner e di OTTO parole, sopra il limite di sette. E la prima cosa che si sente non e la riga verificata («Molte persone che cosa fanno?») ma il cold open da 4,5s che le e stato incollato davanti: «E' chiaro che e una battaglia che fai molta fatica a vincere, perche il tuo cervello vede.» — quale battaglia, e vede cosa"
     }
   ],
   "last_archive_at": "2026-11-20T02:24:39Z",
