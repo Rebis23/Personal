@@ -353,19 +353,6 @@
   ],
   "queue": [
     {
-      "clip_id": "HPLoKzxUQOg-1",
-      "video_id": "HPLoKzxUQOg",
-      "video_title": "Being a MISFIT Changed My Life",
-      "hook": "La vita è peggiorata",
-      "r2_key": "reels/HPLoKzxUQOg/HPLoKzxUQOg-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/HPLoKzxUQOg/HPLoKzxUQOg-1.mp4",
-      "caption": "Ho provato a rendermi più normale. Risultato: ho perso potenza.\nEssere comprensibile a tutti ha un costo altissimo: l'attenzione frammentata fra aspettative, convenzioni e conversazioni che non interessano a nessuno.\nNel video completo spiego perché sto tornando indietro.\n\n#crescitapersonale #autenticità #mentalità #abitudini #psicologia #obiettivi #disadattati\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-21T15:03:39Z",
-      "testo": "Ho iniziato a cercare di rendermi un pochino più comprensibile, di parlare con più persone, di avere delle conversazioni che potessero essere interessanti anche per loro. E la mia vita è peggiorata, che è una cosa assurda da dire, ma in un qualche modo. Ho perso potenza, ho perso potenza per raggiungere certi risultati, per farlo velocemente, per stupire le persone, che è un punto comunque importante, perché quando fai cose grandi, queste cose grandi stupiscono. E quindi, in questo momento della mia vita, quello che io sto cercando è cercare di tornare a diventare disadattato.",
-      "inizio": 45.4,
-      "fine": 74.0
-    },
-    {
       "clip_id": "HPLoKzxUQOg-2",
       "video_id": "HPLoKzxUQOg",
       "video_title": "Being a MISFIT Changed My Life",
@@ -1214,6 +1201,14 @@
       "ig_media_id": "18123829601069548",
       "permalink": "https://www.instagram.com/reel/DgAWHm0AQft/",
       "published_at": "2026-11-21T13:33:37Z"
+    },
+    {
+      "clip_id": "HPLoKzxUQOg-1",
+      "video_id": "HPLoKzxUQOg",
+      "hook": "La vita è peggiorata",
+      "ig_media_id": "18087283757709010",
+      "permalink": "https://www.instagram.com/reel/DgAyEI7nFgk/",
+      "published_at": "2026-11-21T17:37:23Z"
     }
   ],
   "archive_done": [
