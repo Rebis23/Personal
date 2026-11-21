@@ -337,9 +337,74 @@
         "gpqBRyiqPFE-3",
         "gpqBRyiqPFE-4"
       ]
+    },
+    {
+      "video_id": "HPLoKzxUQOg",
+      "title": "Being a MISFIT Changed My Life",
+      "status": "done",
+      "processed_at": "2026-11-21T15:12:25Z",
+      "clips": [
+        "HPLoKzxUQOg-1",
+        "HPLoKzxUQOg-2",
+        "HPLoKzxUQOg-3",
+        "HPLoKzxUQOg-4"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "HPLoKzxUQOg-1",
+      "video_id": "HPLoKzxUQOg",
+      "video_title": "Being a MISFIT Changed My Life",
+      "hook": "La vita è peggiorata",
+      "r2_key": "reels/HPLoKzxUQOg/HPLoKzxUQOg-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/HPLoKzxUQOg/HPLoKzxUQOg-1.mp4",
+      "caption": "Ho provato a rendermi più normale. Risultato: ho perso potenza.\nEssere comprensibile a tutti ha un costo altissimo: l'attenzione frammentata fra aspettative, convenzioni e conversazioni che non interessano a nessuno.\nNel video completo spiego perché sto tornando indietro.\n\n#crescitapersonale #autenticità #mentalità #abitudini #psicologia #obiettivi #disadattati\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-21T15:03:39Z",
+      "testo": "Ho iniziato a cercare di rendermi un pochino più comprensibile, di parlare con più persone, di avere delle conversazioni che potessero essere interessanti anche per loro. E la mia vita è peggiorata, che è una cosa assurda da dire, ma in un qualche modo. Ho perso potenza, ho perso potenza per raggiungere certi risultati, per farlo velocemente, per stupire le persone, che è un punto comunque importante, perché quando fai cose grandi, queste cose grandi stupiscono. E quindi, in questo momento della mia vita, quello che io sto cercando è cercare di tornare a diventare disadattato.",
+      "inizio": 45.4,
+      "fine": 74.0
+    },
+    {
+      "clip_id": "HPLoKzxUQOg-2",
+      "video_id": "HPLoKzxUQOg",
+      "video_title": "Being a MISFIT Changed My Life",
+      "hook": "2.073 euro a 16 anni, online",
+      "r2_key": "reels/HPLoKzxUQOg/HPLoKzxUQOg-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/HPLoKzxUQOg/HPLoKzxUQOg-2.mp4",
+      "caption": "2.073 euro in un mese a 16 anni. Mio padre ha chiesto: \"ma diviso 3?\"\nPer farli avevo smesso di dirgli cosa facevo. E avevo smesso di uscire con mezza gente.\nIl risultato lo ottieni quando accetti di diventare un disadattato.\n\n#soldi #primiguadagni #adolescenza #mentalità #lavoroonline #obiettivi #famiglia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-21T15:06:42Z",
+      "testo": "sono riuscito, e mi ricordo ancora la cifra, a produrre 2073 euro, in un mese. Che per me erano un numero folle, mi sono sentito la persona più ricca del mondo, perché 2073 euro, quando hai 16 anni, sono una cifra enorme, tutto quello che vuoi. E questa cifra qua, insomma, mi è rimasta in testa. C'era solo un problema. Per poterla ricevere, avevo bisogno di un conto. Perché da minorenne non è che me lo potessi aprire da solo.",
+      "inizio": 163.2,
+      "fine": 188.2
+    },
+    {
+      "clip_id": "HPLoKzxUQOg-3",
+      "video_id": "HPLoKzxUQOg",
+      "video_title": "Being a MISFIT Changed My Life",
+      "hook": "Van Gogh e Steve Jobs",
+      "r2_key": "reels/HPLoKzxUQOg/HPLoKzxUQOg-3.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/HPLoKzxUQOg/HPLoKzxUQOg-3.mp4",
+      "caption": "Van Gogh era un pazzo. Jobs cercava il click del mouse giusto fra mille test. Nietzsche è stato anni in solitudine, disprezzato da tutti.\nNon sono nati geni: li chiamiamo geni perché erano fuori dalle righe.\nTrova la tua massima stranezza e rendila monetizzabile.\n\n#creatività #unicità #mentalità #crescitapersonale #arte #talento #disadattati\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-21T15:09:28Z",
+      "testo": "per essere grandi in una qualsiasi disciplina, non devi per forza essere un genio, non devi per forza essere una persona superdisciplinata, non devi per forza essere una caratteristica specifica, devi solo essere te, quella strada poi dopo esce in automatico. Ne parla benissimo in un libro che si chiama Mastery di Robert Greene, link in descrizione anche questo, che è quello che ti permette di capire la tua strada, ci ho fatto proprio un intero video a riguardo che trovi qua. Il punto diventa proprio, trova la tua massima stranezza ed esprimila in un modo che sia monetizzabile.",
+      "inizio": 523.9,
+      "fine": 549.9
+    },
+    {
+      "clip_id": "HPLoKzxUQOg-4",
+      "video_id": "HPLoKzxUQOg",
+      "video_title": "Being a MISFIT Changed My Life",
+      "hook": "Sei perfezionista? In realtà stai procrastinando",
+      "r2_key": "reels/HPLoKzxUQOg/HPLoKzxUQOg-4.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/HPLoKzxUQOg/HPLoKzxUQOg-4.mp4",
+      "caption": "Veloce è meglio che bene.\nIl perfezionismo non è alta qualità: è paura del giudizio degli altri travestita da standard. Ogni volta che punti al perfetto, stai solo rimandando.\nEseguire male e subito batte pianificare bene e tardi.\n\n#procrastinazione #perfezionismo #produttività #abitudini #mentalità #azione #crescitapersonale\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-21T15:12:25Z",
+      "testo": "io sono un grandissimo perfezionista, ogni volta che uno punta al perfezionismo in realtà sta trovando una scusa per procrastinare, perché il perfezionismo è esattamente questo, è la paura del giudizio degli altri su un qualcosa che noi facciamo. E quindi sto cercando di eseguire in maniera imperfetta ma veloce, che è meglio di pianificare un qualcosa di perfetto ma eseguirlo tardi, e soprattutto di farlo seguendo quello che è il mio istinto. Perché l'istinto mi sembra la forma migliore di espressione di quella parte completamente disadattata, assurda che io ho dentro, e quindi la sto seguendo.",
+      "inizio": 653.0,
+      "fine": 682.1
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1170,7 +1235,8 @@
     "AIVYmT6i8pk",
     "9ivXef8shkg",
     "jUwVrkZMpLA",
-    "gpqBRyiqPFE"
+    "gpqBRyiqPFE",
+    "HPLoKzxUQOg"
   ],
   "sospese": [
     {
@@ -1350,7 +1416,7 @@
       "motivo": "due difetti. Il banner e di OTTO parole, sopra il limite di sette. E la prima cosa che si sente non e la riga verificata («Molte persone che cosa fanno?») ma il cold open da 4,5s che le e stato incollato davanti: «E' chiaro che e una battaglia che fai molta fatica a vincere, perche il tuo cervello vede.» — quale battaglia, e vede cosa"
     }
   ],
-  "last_archive_at": "2026-11-20T02:24:39Z",
+  "last_archive_at": "2026-11-21T15:12:25Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
