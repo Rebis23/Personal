@@ -68,32 +68,43 @@ jobs:
       # aspettando il lock di unattended-upgrades, e nel frattempo l'apt di
       # WARP moriva in 22 secondi. Senza WARP YouTube ributta giu il
       # download, e il run e finito senza fare niente sembrando riuscito.
-      # Il 18 e il 19/11 questo passo e morto tre volte di fila, sempre cosi:
+      # Dal 18 al 20/11 questo passo e morto quattro volte, sempre cosi:
       #     The action 'Installa i pacchetti di sistema' has timed out
       #     after 12 minutes
-      # e in mezzo dodici minuti di silenzio. Di solito ci mette 15-35
-      # secondi.
+      # e in mezzo dodici minuti di silenzio, perche -qq zittiva tutto. Di
+      # solito ci mette 15-35 secondi.
       #
-      # Il silenzio e colpa nostra: -qq zittisce anche la riga «Waiting for
-      # cache lock», che e esattamente quella che servirebbe. Quindi il log
-      # non dice se ha aspettato il lock, quale dei due comandi si e
-      # impiantato, ne per quanto.
+      # Il 19/11 avevo scritto che era il lock di dpkg: DPkg::Lock::Timeout
+      # =300 per due chiamate fa 10 minuti di attesa dentro un passo che ne
+      # concede 12, e il conto tornava. ERA SBAGLIATO. Messo -q e gli orari,
+      # il run del 20/11 alle 15:02 ha detto cos'era davvero:
       #
-      # E c'e un conto che non torna, scritto qui sopra fin dal 4/09:
-      # DPkg::Lock::Timeout=300 vuol dire che OGNI chiamata ad apt aspetta
-      # il lock fino a 5 minuti. Le chiamate sono due. Fanno 10 minuti di
-      # sola attesa dentro un passo che ne concede 12: se il lock e tenuto
-      # a lungo — unattended-upgrades sull'immagine del runner — questo
-      # passo non PUO' farcela, e nessuno dei due numeri lo dice.
+      #     Need to get 66.5 MB of archives
+      #     Get:9  libcodec2    9.0 MB   15:02:30 → 15:04:11   89 KB/s
+      #     Get:31 libavcodec62 10.2 MB  15:06:41 → 15:08:38   87 KB/s
+      #     Get:50 libflite1    13.5 MB  15:09:25 → 15:12:05   84 KB/s
       #
-      # Qui si cambia solo cosa si vede: -q al posto di -qq perche le righe
-      # sull'attesa escano, e un orario attorno a ogni comando per sapere
-      # quale si impianta e per quanto. I due numeri restano come sono:
-      # quale dei due alzare o abbassare dipende da cosa si vuole quando il
-      # lock e occupato — aspettare di piu o mollare subito e riprovare al
-      # giro dopo — ed e una decisione di Lorenzo, non una da indovinare.
+      # Nessuna attesa del lock: il mirror azure.archive.ubuntu.com serviva
+      # a 85-90 KB/s invece dei soliti 3 MB/s. 66,5 MB a 87 KB/s sono ~13
+      # minuti di solo scarico, dentro un passo che ne da 12: non e un
+      # intoppo, e un'impossibilita aritmetica. Era arrivato al pacchetto 63
+      # di 82.
+      #
+      # Quindi si alzano i minuti, e non si tocca il lock — che non c'entra.
+      # 30 e 66,5 MB a 40 KB/s, cioe meta della lentezza misurata: se il
+      # mirror va come sempre il passo finisce in 37 secondi e questo numero
+      # non si vede nemmeno. Il job intero ne ha 150 e una lavorazione piena
+      # ne usa 45-75, quindi lo spazio c'e.
+      #
+      # Resta la cosa vera, che e piu grossa e non la decido io: scarichiamo
+      # 66,5 MB a OGNI run per avere ffmpeg, e dentro ci sono libflite1 (un
+      # sintetizzatore vocale), libsdl2, libopenal, libdc1394 e libraw1394
+      # (telecamere firewire). Per tagliare e ricodificare un video non
+      # servono. Mettere i .deb in cache come si fa gia per Whisper,
+      # Remotion e WARP farebbe scendere il passo a pochi secondi sempre,
+      # ma va provato su un runner vero prima di fidarsi.
       - name: Installa i pacchetti di sistema
-        timeout-minutes: 12
+        timeout-minutes: 30
         run: |
           date -u +'  ⏱️ update  inizio  %H:%M:%S'
           sudo apt-get -o DPkg::Lock::Timeout=300 update -q
