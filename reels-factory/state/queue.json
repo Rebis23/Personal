@@ -339,21 +339,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "gpqBRyiqPFE-3",
-      "video_id": "gpqBRyiqPFE",
-      "video_title": "I Requisiti necessari per Cambiare chi Sei",
-      "hook": "Riprogrammare le abitudini: 10 flessioni per Instagram",
-      "r2_key": "reels/gpqBRyiqPFE/gpqBRyiqPFE-3.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/gpqBRyiqPFE/gpqBRyiqPFE-3.mp4",
-      "caption": "Ogni volta che apri Instagram senza averlo scelto: 10 flessioni.\nLa punizione deve lavorare per il tuo obiettivo, e anche il premio. Se vai in palestra e poi ti premi col McDonald's, hai appena annullato tutto.\n\n#abitudini #crescitapersonale #disciplina #dopamina #produttivita #socialmedia #cambiamento\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-20T02:21:49Z",
-      "testo": "Ogni volta che apri Instagram in maniera completamente inconscia, quindi non per scelta, ma ti accendi il telefono e ti viene ad aprire Instagram, 10 flessioni. Perché? Perché vuoi tornare in forma. Le flessioni sono utili, sono una punizione perché non hai voglia di farle, magari sei in giro per strada e la fai comunque, però intanto stai riprogrammando il tuo cervello. Questa cosa è cattiva. No, male. Aspetta che faccio 10 flessioni, che tra l'altro aiutano il mio obiettivo. Invece, ogni volta che ottieni un certo risultato che è positivo, fai una certa azione che è positiva, lì fai un qualcosa per premiarti, che sai che il tuo cervello apprezza, ma che è sempre utile al tuo obiettivo. Non è che vai in palestra e poi vai al McDonald's come premio, perché altrimenti sarebbe inutile.",
-      "inizio": 800.1,
-      "fine": 835.4
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1155,6 +1141,14 @@
       "ig_media_id": "18162049753507538",
       "permalink": "https://www.instagram.com/reel/Df-UW_IDJQw/",
       "published_at": "2026-11-20T18:39:24Z"
+    },
+    {
+      "clip_id": "gpqBRyiqPFE-3",
+      "video_id": "gpqBRyiqPFE",
+      "hook": "Riprogrammare le abitudini: 10 flessioni per Instagram",
+      "ig_media_id": "18123829601069548",
+      "permalink": "https://www.instagram.com/reel/DgAWHm0AQft/",
+      "published_at": "2026-11-21T13:33:37Z"
     }
   ],
   "archive_done": [
