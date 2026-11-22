@@ -537,8 +537,37 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
             start = transcript.inizio_pulito(words, detta["start"])
             banner_usati.add(" ".join(aggancio.parole(detta["testo"])))
         else:
-            print("      ▶️ Nessuna riga d'apertura scelta: la clip parte dove "
-                  "l'ha tagliata Claude")
+            # QUI NON SI SA DA DOVE PARTE, e fino al 22/11 si pubblicava
+            # lo stesso. Il 21/11 alle 17:37 e uscito su Instagram «La vita
+            # e peggiorata», e nel log di quella clip c'erano queste due
+            # righe una sotto l'altra:
+            #
+            #     ⚠️ «nell'ultimo anno, piu o meno, ho smesso, in un» non
+            #        si ritrova nell'audio
+            #     ▶️ Nessuna riga d'apertura scelta: la clip parte dove
+            #        l'ha tagliata Claude
+            #
+            # Cioe: il controllo sull'inizio si e arreso, e il ramo else si
+            # limitava a dirlo e tirare dritto col taglio grezzo. Era la
+            # terza volta — 15/11, 20/11, 21/11 — e la prima in cui il Reel
+            # e arrivato al profilo, perche il turno di pubblicazione passa
+            # prima del controllo del mattino.
+            #
+            # Sopra, quando scegli_inizio dice SCARTA, la clip si butta: e
+            # la regola di Lorenzo del 17/10, «la clip si puo anche
+            # BUTTARE», ed e gia scritta in inizio.md. Qui il caso e
+            # diverso — non «non c'e un inizio buono» ma «non si e riusciti
+            # a trovarlo nell'audio» — e la differenza vera e fra SAPERE che
+            # va male e NON SAPERE. Pubblicare un non-so come se fosse un si
+            # non e una terza possibilita che qualcuno ha scelto: e solo
+            # quello che il codice faceva in mancanza d'altro.
+            #
+            # Quindi non si monta. Il messaggio resta distinto da quello di
+            # SCARTA perche i due motivi non vanno confusi leggendo il log.
+            print(f"   🗑️ Clip {n} non montata: la riga d'apertura non si e "
+                  f"ritrovata nell'audio, e non si pubblica una clip senza "
+                  f"sapere da dove parte")
+            continue
 
         # E DEVE ANCHE FINIRE. Lorenzo, 11/09, sul Reel uscito quella
         # mattina: "ha una conclusione sbagliata, lascia in sospeso, poi si
