@@ -360,21 +360,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "S6lmu6yuYkE-1",
-      "video_id": "S6lmu6yuYkE",
-      "video_title": "If You Feel LOST, This Video Is For You",
-      "hook": "PERCHÉ NON TROVERAI MAI IL TUO SCOPO",
-      "r2_key": "reels/S6lmu6yuYkE/S6lmu6yuYkE-1.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/S6lmu6yuYkE/S6lmu6yuYkE-1.mp4",
-      "caption": "La tua direzione non la trovi: la scegli.\nTrattiamo lo scopo come una caccia al tesoro — cerchiamo sotto il cuscino, sotto il divano. Ma se la risposta non arriva mai, resti fermo per sempre.\nLa direzione non è un oggetto raro: è una conseguenza dell'azione.\n\n#crescitapersonale #direzione #obiettivi #scelte #motivazione #consapevolezza #mentalita\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-22T21:56:40Z",
-      "testo": "La tua direzione non la trovi. Mi spiego meglio. Noi spesso trattiamo questa questione dell'obiettivo, della direzione, come una risposta da trovare. È come se fosse una caccia al tesoro, no? Cerco sotto al cuscino, cerco sotto al divano, sotto al letto e alla fine forse la trovo. Il problema è che ragionando in questo modo il rischio è che la risposta non la trovi mai. Magari è nascosta così bene, o magari è così palese, che non te ne accorgi. E se non dovessi mai trovarla, il rischio è quello di non essere mai felice, di non fare mai nulla della tua vita, di perderti completamente, perché fin quando non la trovi questa è la condizione sine qua non, o anche detto in parole povere, diciamo la condizione senza la quale tu non puoi procedere con la tua vita. E quindi la direzione in realtà non si trova. Cioè proviamo a cambiare la prospettiva. Magari la direzione la si sceglie.",
-      "inizio": 40.1,
-      "fine": 82.2
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1208,6 +1194,14 @@
       "ig_media_id": "18110646013950874",
       "permalink": "https://www.instagram.com/reel/DgDYp-oFJcm/",
       "published_at": "2026-11-22T17:53:04Z"
+    },
+    {
+      "clip_id": "S6lmu6yuYkE-1",
+      "video_id": "S6lmu6yuYkE",
+      "hook": "PERCHÉ NON TROVERAI MAI IL TUO SCOPO",
+      "ig_media_id": "18080156126758050",
+      "permalink": "https://www.instagram.com/reel/DgFxUzVDPMi/",
+      "published_at": "2026-11-23T16:07:06Z"
     }
   ],
   "archive_done": [
