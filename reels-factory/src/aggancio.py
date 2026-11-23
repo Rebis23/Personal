@@ -1163,7 +1163,23 @@ def scegli_inizio(words: list[dict], da: float, a: float, *, tema: str,
                 return None
             quando = trova_nel_parlato(dentro, frase, da - 0.5, a)
             if quando is None:
-                print(f"      ⚠️ «{frase[:46]}» non si ritrova nell'audio")
+                # LA FRASE INTERA, non i primi 46 caratteri. Dal 22/11 questo
+                # ramo non lascia piu passare la clip — si butta — quindi
+                # ogni volta che scatta costa un Reel, e la domanda «perche
+                # non si ritrova?» e diventata quella che conta.
+                #
+                # Col taglio a 46 caratteri non si puo rispondere. Il 21 e
+                # il 22/11 le due frasi comparivano nel log cosi:
+                #     «nell'ultimo anno, piu o meno, ho smesso, in un»
+                #     «ho l'impressione che nel mondo di oggi tu poss»
+                # tagliate a meta parola, e mi ero convinto che fosse la
+                # frase cercata a essere mozzata. Non lo era: era solo
+                # l'ellissi della stampa. Ho perso tempo su un sospetto che
+                # il log stesso aveva creato.
+                #
+                # Un messaggio che tronca la cosa su cui si indaga non e un
+                # messaggio: e un indizio falso. Qui non si tronca piu.
+                print(f"      ⚠️ «{frase}» non si ritrova nell'audio")
                 return None
             return {"testo": frase, "start": quando}
         except Exception as e:                  # noqa: BLE001
