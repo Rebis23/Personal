@@ -372,21 +372,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "VtoR_LD3OAs-4",
-      "video_id": "VtoR_LD3OAs",
-      "video_title": "Come Diventare NOMADE DIGITALE e Viaggiare mentre Lavori | 2025",
-      "hook": "Cosa scrivere al recruiter per essere assunto",
-      "r2_key": "reels/VtoR_LD3OAs/VtoR_LD3OAs-4.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/VtoR_LD3OAs/VtoR_LD3OAs-4.mp4",
-      "caption": "Cercavo un venditore. Uno mi ha scritto: rispondi a me per primo, facciamo una chiamata, ti risparmio una marea di tempo.\nIn una frase mi ha dimostrato di saper vendere e mi ha dato esattamente quello che volevo.\nSelezionare è noioso: chi lo capisce viene assunto.\n\n#lavoro #vendita #colloquio #carriera #empatia #crescitapersonale\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-24T17:46:41Z",
-      "testo": "la cosa più efficace che tu possa fare è entrare in empatia con chi ti deve selezionare e dargli esattamente quello che vuole. Io sogno una persona, facevo l'esempio nelle mie storie su Instagram, link in descrizione nel caso, perché spesso pubblico cose interessanti, facevo l'esempio del fatto che una persona, mentre cercavo un venditore, mi ha scritto guarda, sei risposto? Rispondi a me per primo e ci facciamo una chiamata, ti risparmierò una marea di tempo. Questo è esattamente quello che voglio, perché la maggior parte delle selezioni sono lunghe, sono complesse, sono tempo che io devo perdere e che potrei utilizzare per fare altro.",
-      "inizio": 340.7,
-      "fine": 368.2
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1252,6 +1238,14 @@
       "ig_media_id": "18113149907523896",
       "permalink": "https://www.instagram.com/reel/DgK4V2JNSO5/",
       "published_at": "2026-11-25T15:44:37Z"
+    },
+    {
+      "clip_id": "VtoR_LD3OAs-4",
+      "video_id": "VtoR_LD3OAs",
+      "hook": "Cosa scrivere al recruiter per essere assunto",
+      "ig_media_id": "17917598349555548",
+      "permalink": "https://www.instagram.com/reel/DgLRhwaScs7/",
+      "published_at": "2026-11-25T19:24:42Z"
     }
   ],
   "archive_done": [
