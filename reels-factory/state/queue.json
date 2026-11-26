@@ -381,21 +381,7 @@
       ]
     }
   ],
-  "queue": [
-    {
-      "clip_id": "JJS50iKEsjI-2",
-      "video_id": "JJS50iKEsjI",
-      "video_title": "I'm TIRED of Thinking So Much (Now I Know How to Stop)",
-      "hook": "Perché l'evoluzione decide meglio della tua testa",
-      "r2_key": "reels/JJS50iKEsjI/JJS50iKEsjI-2.mp4",
-      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/JJS50iKEsjI/JJS50iKEsjI-2.mp4",
-      "caption": "La natura non ragiona: fa test. Quello che funziona resta, quello che non funziona si ferma.\nEvoluzione, piante, vita: tutto si comporta così.\nE tu pretendi di risolvere la tua vita pensandoci sopra.\n\n#crescitapersonale #ego #mentalita #overthinking #consapevolezza #filosofia\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
-      "created_at": "2026-11-26T16:57:22Z",
-      "testo": "pensa meno agisci di più e itera in base a ciò che scopri cioè feedback positivo continuo feedback negativo fermati e prova un'altra strada anche perché alla fine in tutti i miei studi un pattern ricorrente l'ho notato e il pattern ricorrente è che la natura l'universo la vita in generale si comportano esattamente in questo modo cioè continuano a fare dei test quelli che funzionano li mantengono quelli che non funzionano li fermano lì questo accade con l'evoluzione accade con la vita e la creazione con la natura e le piante che sopravvivono chi sei tu per modificare questo equilibrio",
-      "inizio": 400.4,
-      "fine": 431.4
-    }
-  ],
+  "queue": [],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1269,6 +1255,14 @@
       "ig_media_id": "17917598349555548",
       "permalink": "https://www.instagram.com/reel/DgLRhwaScs7/",
       "published_at": "2026-11-25T19:24:42Z"
+    },
+    {
+      "clip_id": "JJS50iKEsjI-2",
+      "video_id": "JJS50iKEsjI",
+      "hook": "Perché l'evoluzione decide meglio della tua testa",
+      "ig_media_id": "17922623040465643",
+      "permalink": "https://www.instagram.com/reel/DgNl2xyp-f2/",
+      "published_at": "2026-11-26T17:01:06Z"
     }
   ],
   "archive_done": [
