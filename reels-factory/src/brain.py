@@ -559,9 +559,25 @@ def select_clips(
             ricontrollo = prova_a_freddo([usable[i].hook for i in sorted(nuovi)],
                                          model=model)
             for pos, i in enumerate(sorted(nuovi)):
-                if ricontrollo and not ricontrollo.get(pos, (True, ""))[0]:
+                passa, perche = ricontrollo.get(pos, (True, "")) if ricontrollo \
+                    else (True, "")
+                if not passa:
                     nuovi.pop(i, None)
-                    print(f"   ❄️ anche la riscrittura cade: «{usable[i].hook[:48]}»")
+                    # IL MOTIVO C'ERA GIA'. prova_a_freddo torna (passa,
+                    # perche) e il primo giro lo stampa — «❄️ hook bocciato
+                    # ... — Massima generica, vera per tutti». Qui si leggeva
+                    # solo [0] e si buttava [1].
+                    #
+                    # Conta perche questo e il punto dove si perde piu roba.
+                    # Sul video del 26/11 il conto e stato: 6 candidate, 4
+                    # tolte proprio qui, 1 scartata sull'inizio, 1 Reel. Con
+                    # «cade» e nient'altro non si puo dire se il filtro abbia
+                    # ragione o sia troppo severo: fra quelle cadute c'era
+                    # «Perche l'overthinking non ti dara mai risposte», che a
+                    # occhio nomina l'argomento e regge da sola.
+                    print(f"   ❄️ anche la riscrittura cade: "
+                          f"«{usable[i].hook}»"
+                          + (f" — {perche}" if perche else ""))
                     # La clip esce comunque, ma l'hook caduto non deve
                     # restare appeso all'oggetto: se un domani qualcuno
                     # rimette in gioco queste clip, deve trovare la frase
