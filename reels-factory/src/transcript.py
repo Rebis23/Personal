@@ -313,3 +313,85 @@ def finestra(timed: str, da: float, a: float, contorno: float = CONTORNO) -> str
         if da - contorno <= quando <= a + contorno:
             fuori.append(marcatore + testo)
     return "\n".join(fuori).strip()
+
+
+def cold_open_valido(words: list[dict], punch: tuple[float, float],
+                     start: float, end: float,
+                     tetto: float) -> tuple[bool, str]:
+    """Il cold open passa i controlli che gli altri pezzi passano gia?
+
+    Il cold open e la frase piu tagliente della clip, staccata e rimontata
+    in testa. E' una bella idea e non si tocca. Il problema e che viene
+    assemblato DOPO i controlli, quindi li scavalca tutti e tre le volte
+    che ha fatto danni:
+
+      11/11  una clip e uscita a 51 secondi. Taglio 47,8s dentro il tetto
+             di 50, piu 3,2s di cold open appiccicati sopra. Il tetto si
+             verificava su end-start, e quei secondi non li contava
+             nessuno.
+      20/11  la prima cosa che si sentiva era «E' chiaro che e una
+             battaglia che fai molta fatica a vincere, perche il tuo
+             cervello vede.» — quale battaglia, e vede cosa. La riga
+             d'apertura scelta e verificata era un'altra: il cold open le
+             stava davanti.
+      28/11  «Finisco per odiarmi per aver sprecato tempo che non tornera
+             mai. E» — un troncone che si ferma su «E», e la stessa frase
+             si risente dentro la clip trenta secondi dopo.
+
+    Il commento sopra al cold open in main.py diceva gia «deve stare
+    almeno 6s dopo l'inizio, altrimenti si sentirebbe due volte di fila»:
+    chi l'ha scritto il problema l'aveva visto. Ma la distanza non basta,
+    perche la frase puo ricomparire piu avanti nel parlato, ed e
+    esattamente quello che e successo il 28/11.
+
+    Qui non si inventa una regola nuova: si applicano al cold open quelle
+    che valgono gia per il resto. Chi non passa non viene usato — la clip
+    esce senza cold open, intera e pulita. Non si butta niente: il difetto
+    sta nella decorazione, non nel contenuto.
+
+    Ritorna (va bene, motivo). Il motivo serve al log: un controllo che
+    scarta senza dire perche e quello che ci ha fatto perdere tre giorni
+    su aggancio.py.
+    """
+    dentro = [w for w in words if punch[0] <= w["start"] <= punch[1]]
+    if not dentro:
+        return False, "non ci sono parole nel tratto scelto"
+    testo = " ".join(w["word"] for w in dentro)
+
+    # 1. I SECONDI SI CONTANO. Il cold open si aggiunge alla clip, quindi
+    #    la durata vera e la somma. Il tetto e uno.
+    totale = (end - start) + (punch[1] - punch[0])
+    if totale > tetto:
+        return False, (f"il Reel verrebbe {totale:.0f}s, oltre il tetto di "
+                       f"{tetto:.0f} ({end - start:.0f} di clip + "
+                       f"{punch[1] - punch[0]:.0f} di cold open)")
+
+    # 2. NON SI CHIUDE A META'. Il caso del 28/11: un punto fermo e poi una
+    #    parola orfana appesa dopo («...non tornera mai. E»). Chi guarda
+    #    sente una frase intera e poi un moncone.
+    if len(dentro) >= 2:
+        coda = [w["word"] for w in dentro[-2:]]
+        if _closes_sentence(coda[0]) and not _closes_sentence(coda[1]):
+            return False, (f"finisce con una parola orfana dopo il punto "
+                           f"(«{coda[0]} {coda[1]}»)")
+
+    # 3. NON SI DICE DUE VOLTE. Se quelle parole tornano piu avanti nella
+    #    clip, chi guarda le sente due volte e sembra un errore di
+    #    montaggio. Il confronto e sulle parole nude, senza punteggiatura,
+    #    perche Whisper la mette e la toglie a caso.
+    def nude(elenco):
+        return [re.sub(r"[^\wàèéìòóùç']", "", w.lower()) for w in elenco]
+
+    chiave = [p for p in nude(w["word"] for w in dentro) if p]
+    if len(chiave) >= 4:
+        corpo = [p for p in nude(w["word"] for w in words
+                                 if start <= w["start"] <= end
+                                 and not punch[0] <= w["start"] <= punch[1])
+                 if p]
+        n = len(chiave)
+        for i in range(len(corpo) - n + 1):
+            if corpo[i:i + n] == chiave:
+                return False, ("quelle parole si risentono dentro la clip: "
+                               "uscirebbe due volte")
+
+    return True, testo

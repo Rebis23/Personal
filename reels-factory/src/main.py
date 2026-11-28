@@ -622,9 +622,26 @@ def _process_video(v: dict, cfg: dict, st: dict) -> bool:
                     max_seconds=float(clip_cfg.get("cold_open_max_seconds", 6)),
                 )
                 if punch is not None:
-                    ptxt = " ".join(w["word"] for w in words
-                                    if punch[0] <= w["start"] <= punch[1])
-                    print(f"      ⚡ Cold open ({punch[1]-punch[0]:.1f}s): «{ptxt}»")
+                    # I CONTROLLI CHE IL COLD OPEN SCAVALCAVA. Era montato
+                    # dopo che tutto era stato verificato, quindi non
+                    # passava da nessuna parte: l'11/11 ha portato una clip
+                    # a 51s col tetto a 50, il 20/11 ha messo in testa un
+                    # troncone («perche il tuo cervello vede»), il 28/11 ha
+                    # ripetuto una frase che si risentiva trenta secondi
+                    # dopo. Tre difetti, una causa sola.
+                    #
+                    # Chi non passa non si usa: la clip esce senza cold
+                    # open. Non si butta niente — il difetto sta nella
+                    # decorazione, non nel contenuto.
+                    ok, perche = transcript.cold_open_valido(
+                        words, punch, start, end,
+                        float(clip_cfg["max_seconds"]))
+                    if not ok:
+                        print(f"      ⚡ Cold open scartato: {perche}")
+                        punch = None
+                    else:
+                        print(f"      ⚡ Cold open ({punch[1]-punch[0]:.1f}s): "
+                              f"«{perche}»")
         # TETTO INVALICABILE SULLA DURATA. Il 6/09 la clip 5 e uscita di
         # 269 secondi — quattro minuti e mezzo di "Reel" — con max_seconds
         # a 75. snap_to_sentences accorcia togliendo frasi dal fondo, ma se
