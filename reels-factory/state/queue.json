@@ -379,9 +379,46 @@
       "clips": [
         "JJS50iKEsjI-2"
       ]
+    },
+    {
+      "video_id": "rRZqc3bGFm0",
+      "title": "Come smettere PER SEMPRE con le CATTIVE ABITUDINI (tiktok, p*rno, etc)",
+      "status": "done",
+      "processed_at": "2026-11-28T00:31:17Z",
+      "clips": [
+        "rRZqc3bGFm0-1",
+        "rRZqc3bGFm0-2"
+      ]
     }
   ],
-  "queue": [],
+  "queue": [
+    {
+      "clip_id": "rRZqc3bGFm0-1",
+      "video_id": "rRZqc3bGFm0",
+      "video_title": "Come smettere PER SEMPRE con le CATTIVE ABITUDINI (tiktok, p*rno, etc)",
+      "hook": "Cattive abitudini non sono il problema",
+      "r2_key": "reels/rRZqc3bGFm0/rRZqc3bGFm0-1.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/rRZqc3bGFm0/rRZqc3bGFm0-1.mp4",
+      "caption": "Il tuo cervello non si è evoluto per fumare o per scrollare.\nSi è evoluto per alleviare lo stress. L'abitudine è solo il modo peggiore che ha trovato per farlo.\n\n#abitudini #psicologia #cervello #dipendenze #crescitapersonale #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-28T00:28:31Z",
+      "testo": "Le tue cattive abitudini sono in realtà un tentativo che il tuo cervello, conscio o inconscio che sia, fa per soddisfare quello che ha un bisogno molto più profondo, molto più importante. E finché non trovi un modo alternativo per soddisfare quel bisogno, le tue cattive abitudini continueranno ad esserti utili in un qualche modo, perché stanno realmente portandoti un beneficio in un modo un po'controverso e contorto.",
+      "inizio": 123.1,
+      "fine": 144.4
+    },
+    {
+      "clip_id": "rRZqc3bGFm0-2",
+      "video_id": "rRZqc3bGFm0",
+      "video_title": "Come smettere PER SEMPRE con le CATTIVE ABITUDINI (tiktok, p*rno, etc)",
+      "hook": "Ho scritto cosa mi fa lo scrolling",
+      "r2_key": "reels/rRZqc3bGFm0/rRZqc3bGFm0-2.mp4",
+      "media_url": "https://pub-7b9bf9d4e2184eed8cb793a1c160320c.r2.dev/reels/rRZqc3bGFm0/rRZqc3bGFm0-2.mp4",
+      "caption": "Ho scritto nero su bianco cosa mi fa lo scrolling. Poi l'ho riletto ogni volta che prendevo il telefono.\nDare la tua mente a un algoritmo che prospera sulla tua distrazione non è gratis: lo paghi in tempo che non torna.\n\n#abitudini #socialdetox #dopamina #focus #crescitapersonale #consapevolezza\n\n🎵 Kevin MacLeod – incompetech.com · CC BY 4.0",
+      "created_at": "2026-11-28T00:31:09Z",
+      "testo": "Finisco per odiarmi per aver sprecato tempo che non tornerà mai. Ogni volta che cado nello scrolling su YouTube, sto dando la mia mente ad un algoritmo che prospera sulla mia distrazione e sulla mia disperazione. Mi trascina in un mondo progettato per manipolarmi, suscitare invidia, alimentare desideri e schiacciare la mia pace interiore. Ne esco confuso, irritato, come se mi fossi tradito. Riprogramma il mio cervello a desiderare stimolazione costante e mi lascia insensibile alla bellezza della vita reale. Uccide il momentum, drena la mia energia e sostituisce qualsiasi azione significativa con una dipendenza dove sono passivo. Finisco per odiarmi per aver sprecato tempo che non tornerà mai. È cibo spazzatura per la mia mente.",
+      "inizio": 556.8,
+      "fine": 591.8
+    }
+  ],
   "published": [
     {
       "clip_id": "tCyZ18Ubms4-1",
@@ -1288,7 +1325,8 @@
     "HPLoKzxUQOg",
     "S6lmu6yuYkE",
     "VtoR_LD3OAs",
-    "JJS50iKEsjI"
+    "JJS50iKEsjI",
+    "rRZqc3bGFm0"
   ],
   "sospese": [
     {
@@ -1480,7 +1518,7 @@
       "motivo": "il banner nomina due persone e non dice di cosa si parla — e il difetto della zanzara — e per di piu punta dalla parte sbagliata: la clip dice «per essere grandi non devi per forza essere un genio» e il titolo mette in prima pagina i due geni che sostiene non servano. Il parlato e buono (apre e chiude bene): va rifatto il banner, ma e cotto nel video"
     }
   ],
-  "last_archive_at": "2026-11-26T16:57:22Z",
+  "last_archive_at": "2026-11-28T00:31:17Z",
   "shorts_done": [
     {
       "clip_id": "tCyZ18Ubms4-1",
